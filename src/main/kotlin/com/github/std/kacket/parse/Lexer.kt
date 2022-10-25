@@ -8,18 +8,19 @@ import java.lang.StringBuilder
 class Lexer(input: InputStreamReader) {
     private val reader = BufferedReader(input)
     private val tokenBuffer = mutableListOf<Token>()
+    private var columnNum = 0
+    private var lineNum = 0
 
     companion object {
         const val BUFFER_SIZE = 50
     }
 
     private fun lex() {
-        var columnNum = 0
-        var lineNum = 0
+
         var tokenCount = 0
         var read = reader.read()
         if (read == -1) {
-            tokenBuffer.add(EOF)
+            tokenBuffer.add(EOF(lineNum, columnNum))
             return
         }
         while (read != -1 && tokenCount < BUFFER_SIZE) {
@@ -84,7 +85,7 @@ class Lexer(input: InputStreamReader) {
             count++
             read = reader.read()
         }
-        tokenBuffer.add(NotInterested)
+        tokenBuffer.add(NotInterested(lineNum, columnNum))
         return read to count
     }
 
@@ -106,7 +107,7 @@ class Lexer(input: InputStreamReader) {
             count++
             read = reader.read()
         }
-        tokenBuffer.add(NotInterested)
+        tokenBuffer.add(NotInterested(lineNum, columnNum))
         return read to count
     }
 
@@ -115,7 +116,7 @@ class Lexer(input: InputStreamReader) {
         char == '(' || char == ')' || char == '[' || char == ']'
 
     private fun lexParenthesis(first: Char): Pair<Int, Int> {
-        tokenBuffer.add(Parenthesis(first))
+        tokenBuffer.add(Parenthesis(first, lineNum, columnNum))
         return reader.read() to 1
     }
 
@@ -127,7 +128,7 @@ class Lexer(input: InputStreamReader) {
             read = reader.read()
             count++
         }
-        tokenBuffer.add(NotInterested)
+        tokenBuffer.add(NotInterested(lineNum, columnNum))
         return read to count
     }
 
@@ -135,7 +136,7 @@ class Lexer(input: InputStreamReader) {
 
     private fun lexChar(): Pair<Int, Int> {
         reader.read()
-        tokenBuffer.add(NotInterested)
+        tokenBuffer.add(NotInterested(lineNum, columnNum))
         return reader.read() to 1
     }
 
@@ -163,7 +164,7 @@ class Lexer(input: InputStreamReader) {
             builder.append(read.toChar())
             read = reader.read()
         }
-        tokenBuffer.add(Identifier(builder.toString()))
+        tokenBuffer.add(Identifier(builder.toString(), lineNum, columnNum))
         return read to count
     }
 

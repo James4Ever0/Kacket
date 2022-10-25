@@ -8,7 +8,6 @@
     <groupId>com.github.std</groupId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
     <name>kacket</name>
 
     <properties>
@@ -91,6 +90,19 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

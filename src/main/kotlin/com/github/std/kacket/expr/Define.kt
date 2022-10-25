@@ -1,4 +1,7 @@
 package com.github.std.kacket.expr
 
-class Define:Expression {
+class Define(
+    private val name: String,
+    private val expr: Expression
+) : Expression {
 }
