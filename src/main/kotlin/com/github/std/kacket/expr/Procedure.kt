@@ -2,6 +2,6 @@ package com.github.std.kacket.expr
 
 class Procedure(
     private val args: List<String>,
-    private val body: Expression
+    private val body: List<Expression>
 ) {
 }

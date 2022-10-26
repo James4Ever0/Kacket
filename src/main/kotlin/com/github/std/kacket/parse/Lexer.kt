@@ -51,6 +51,11 @@ class Lexer(input: InputStreamReader) {
                     lexChar()
                 }
 
+                isBoolStart(char) -> {
+                    tokenCount++
+                    lexBool()
+                }
+
                 isStringStart(char) -> {
                     tokenCount++
                     lexString(char)
@@ -75,17 +80,40 @@ class Lexer(input: InputStreamReader) {
         }
     }
 
+    private fun lexBool(): Pair<Int, Int> {
+        val read = reader.read()
+        val value = read.toChar() == 't'
+        tokenBuffer.add(Bool(lineNum, columnNum, value))
+        return reader.read() to 1
+    }
+
+    private fun isBoolStart(char: Char): Boolean {
+        if (char == '#') {
+            reader.mark(1)
+            val next = reader.read().toChar()
+            if (next == 'f' || next == 't') {
+                reader.reset()
+                return true
+            }
+            reader.reset()
+            return false
+        }
+        return false
+    }
+
     private fun lexSymbol(first: Char): Pair<Int, Int> {
         fun isSymbolChar(char: Char): Boolean =
             !char.isWhitespace() && isAsciiPrintable(char)
 
         var read = reader.read()
+        val builder = StringBuilder()
         var count = 0
         while (read != -1 && isSymbolChar(read.toChar())) {
             count++
+            builder.append(read.toChar().toString())
             read = reader.read()
         }
-        tokenBuffer.add(NotInterested(lineNum, columnNum))
+        tokenBuffer.add(Symbol(lineNum, columnNum, builder.toString()))
         return read to count
     }
 
@@ -95,19 +123,23 @@ class Lexer(input: InputStreamReader) {
     private fun lexNumber(first: Char): Pair<Int, Int> {
         var count = 0
         var read = first.code
+        val builder = StringBuilder()
         while (read != -1 && read.toChar().isDigit()) {
             count++
+            builder.append(read.toChar().toString())
             read = reader.read()
         }
         if (read.toChar() == '.') {
             count++
+            builder.append(".")
             read = reader.read()
         }
         while (read.toChar().isDigit()) {
             count++
+            builder.append(read.toChar().toString())
             read = reader.read()
         }
-        tokenBuffer.add(NotInterested(lineNum, columnNum))
+        tokenBuffer.add(Number(lineNum, columnNum, builder.toString()))
         return read to count
     }
 
@@ -123,21 +155,24 @@ class Lexer(input: InputStreamReader) {
     private fun lexString(first: Char): Pair<Int, Int> {
         // TODO: escape characters
         var read = reader.read()
+        val builder = StringBuilder()
         var count = 0
         while (read != -1 && read.toChar() != '\"') {
+            builder.append(read.toChar().toString())
             read = reader.read()
             count++
         }
-        tokenBuffer.add(NotInterested(lineNum, columnNum))
-        return read to count
+        read = reader.read()
+        tokenBuffer.add(Text(lineNum, columnNum, builder.toString()))
+        return read to count + 2
     }
 
     private fun isStringStart(char: Char): Boolean = char == '\"'
 
     private fun lexChar(): Pair<Int, Int> {
-        reader.read()
-        tokenBuffer.add(NotInterested(lineNum, columnNum))
-        return reader.read() to 1
+        val value = reader.read().toChar()
+        tokenBuffer.add(Character(lineNum, columnNum, value))
+        return reader.read() to 3
     }
 
     private fun isCharStart(char: Char): Boolean {
@@ -170,13 +205,22 @@ class Lexer(input: InputStreamReader) {
 
     // TODO: check standard
     private fun isIdentifierStart(char: Char): Boolean =
-        !char.isWhitespace() && !char.isDigit() && isAsciiPrintable(char)
+        char != '\'' &&
+                char != '#' &&
+                char != '"' &&
+                !char.isWhitespace() &&
+                !char.isDigit() &&
+                isAsciiPrintable(char)
 
 
     fun nextToken(): Token {
         if (tokenBuffer.isEmpty()) {
             lex()
         }
-        return tokenBuffer.removeFirst()
+        val token = tokenBuffer.removeFirst()
+        if (token is EOF) {
+            reader.close()
+        }
+        return token
     }
 }

@@ -1,13 +1,12 @@
 package com.github.std.kacket.parse
 
-class Identifier(
-    val value: String,
+class Character(
     private val lineNum: Int,
-    private val columnNum: Int
+    private val columnNum: Int,
+    val value: Char
 ) : Token {
     override fun lineNumber(): Int = lineNum
 
     override fun columnNumber(): Int = columnNum
-
-    override fun toString(): String = "Identifier#$value"
+    override fun toString(): String = "Character#$value"
 }

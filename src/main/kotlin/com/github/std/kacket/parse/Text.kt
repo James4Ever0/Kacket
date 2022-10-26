@@ -1,13 +1,13 @@
 package com.github.std.kacket.parse
 
-// character, string, number, symbol
-class NotInterested(
+class Text(
     private val lineNum: Int,
-    private val columnNum: Int
+    private val columnNum: Int,
+    val value: String
 ) : Token {
     override fun lineNumber(): Int = lineNum
 
     override fun columnNumber(): Int = columnNum
+    override fun toString(): String = "Text#$value"
 
-    override fun toString(): String = "NotInterested"
 }
