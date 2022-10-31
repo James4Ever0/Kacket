@@ -1,7 +1,7 @@
 package com.github.std.kacket.expr
 
 class Call(
-    caller: Expression,
-    callee: Expression
+    proc: Expression,
+    args: List<Expression>
 ) : Expression {
 }

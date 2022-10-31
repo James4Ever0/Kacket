@@ -8,6 +8,6 @@ class Text(
     override fun lineNumber(): Int = lineNum
 
     override fun columnNumber(): Int = columnNum
-    override fun toString(): String = "Text#$value"
+    override fun toString(): String = "Text#$value@(${lineNumber()},${columnNumber()})"
 
 }

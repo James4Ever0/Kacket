@@ -13,5 +13,5 @@ class Bool(
         return columnNum
     }
 
-    override fun toString(): String = "Bool#$value"
+    override fun toString(): String = "Bool#$value@(${lineNumber()},${columnNumber()})"
 }

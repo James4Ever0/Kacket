@@ -4,10 +4,12 @@ import org.apache.commons.lang3.CharUtils.isAsciiPrintable
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.StringBuilder
+import java.util.Deque
+import java.util.LinkedList
 
 class Lexer(input: InputStreamReader) {
     private val reader = BufferedReader(input)
-    private val tokenBuffer = mutableListOf<Token>()
+    private val tokenBuffer = LinkedList<Token>()
     private var columnNum = 0
     private var lineNum = 0
 
@@ -23,7 +25,10 @@ class Lexer(input: InputStreamReader) {
             tokenBuffer.add(EOF(lineNum, columnNum))
             return
         }
-        while (read != -1 && tokenCount < BUFFER_SIZE) {
+        while (read != -1) {
+            if (tokenCount > BUFFER_SIZE) {
+                break
+            }
             val char = read.toChar()
             val (readNext, count) = when {
                 char == '\n' -> {
@@ -34,6 +39,10 @@ class Lexer(input: InputStreamReader) {
 
                 char.isWhitespace() -> {
                     reader.read() to 1
+                }
+
+                char == ';' -> {
+                    lexComment()
                 }
 
                 isParenthesis(char) -> {
@@ -58,7 +67,7 @@ class Lexer(input: InputStreamReader) {
 
                 isStringStart(char) -> {
                     tokenCount++
-                    lexString(char)
+                    lexString()
                 }
 
                 isNumberStart(char) -> {
@@ -68,16 +77,24 @@ class Lexer(input: InputStreamReader) {
 
                 isSymbolStart(char) -> {
                     tokenCount++
-                    lexSymbol(char)
+                    lexSymbol()
                 }
 
                 else -> {
-                    throw RuntimeException("Unknown Token at ($lineNum, $columnNum)")
+                    throw LexError("Unknown Token at ($lineNum, $columnNum)")
                 }
             }
             read = readNext
             columnNum += count
         }
+    }
+
+    private fun lexComment(): Pair<Int, Int> {
+        var read = reader.read()
+        while (read != -1 && read.toChar() != '\n') {
+            read = reader.read()
+        }
+        return read to 0
     }
 
     private fun lexBool(): Pair<Int, Int> {
@@ -101,9 +118,9 @@ class Lexer(input: InputStreamReader) {
         return false
     }
 
-    private fun lexSymbol(first: Char): Pair<Int, Int> {
+    private fun lexSymbol(): Pair<Int, Int> {
         fun isSymbolChar(char: Char): Boolean =
-            !char.isWhitespace() && isAsciiPrintable(char)
+            !isParenthesis(char) && !char.isWhitespace() && isAsciiPrintable(char)
 
         var read = reader.read()
         val builder = StringBuilder()
@@ -112,6 +129,9 @@ class Lexer(input: InputStreamReader) {
             count++
             builder.append(read.toChar().toString())
             read = reader.read()
+        }
+        if (count == 0) {
+            throw LexError("Bad Token at ($lineNum, $columnNum)")
         }
         tokenBuffer.add(Symbol(lineNum, columnNum, builder.toString()))
         return read to count
@@ -139,7 +159,7 @@ class Lexer(input: InputStreamReader) {
             builder.append(read.toChar().toString())
             read = reader.read()
         }
-        tokenBuffer.add(Number(lineNum, columnNum, builder.toString()))
+        tokenBuffer.add(Num(lineNum, columnNum, builder.toString()))
         return read to count
     }
 
@@ -152,7 +172,7 @@ class Lexer(input: InputStreamReader) {
         return reader.read() to 1
     }
 
-    private fun lexString(first: Char): Pair<Int, Int> {
+    private fun lexString(): Pair<Int, Int> {
         // TODO: escape characters
         var read = reader.read()
         val builder = StringBuilder()
@@ -187,9 +207,10 @@ class Lexer(input: InputStreamReader) {
         return false
     }
 
+
     private fun lexIdentifier(first: Char): Pair<Int, Int> {
         fun isIdentifierChar(char: Char): Boolean =
-            !char.isWhitespace() && isAsciiPrintable(char)
+            !isParenthesis(char) && !char.isWhitespace() && isAsciiPrintable(char)
 
         var read = first.code
         var count = 0
@@ -217,10 +238,17 @@ class Lexer(input: InputStreamReader) {
         if (tokenBuffer.isEmpty()) {
             lex()
         }
-        val token = tokenBuffer.removeFirst()
-        if (token is EOF) {
+        if (tokenBuffer.peek() is EOF) {
             reader.close()
+            return EOF(lineNum, columnNum)
         }
-        return token
+        return tokenBuffer.removeFirst()
+    }
+
+    fun peekToken(): Token {
+        if (tokenBuffer.isEmpty()) {
+            lex()
+        }
+        return tokenBuffer.peek()
     }
 }

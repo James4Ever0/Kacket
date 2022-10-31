@@ -8,5 +8,5 @@ class Character(
     override fun lineNumber(): Int = lineNum
 
     override fun columnNumber(): Int = columnNum
-    override fun toString(): String = "Character#$value"
+    override fun toString(): String = "Character#$value@(${lineNumber()},${columnNumber()})"
 }

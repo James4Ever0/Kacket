@@ -9,5 +9,5 @@ class Identifier(
 
     override fun columnNumber(): Int = columnNum
 
-    override fun toString(): String = "Identifier#$value"
+    override fun toString(): String = "Identifier#$value@(${lineNumber()},${columnNumber()})"
 }

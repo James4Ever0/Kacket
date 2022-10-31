@@ -20,10 +20,10 @@ class LexerTest {
 
     @Test
     fun nextToken2() {
-        val code = """
-            (define bool #f)
+        val code = """(define bool #f)
             (define char #\a)
-            (define text "hello")
+            (define text "hello") ; comment
+            ;;; comment
             (define symbol 'sym)
             (define number 114.514)
         """

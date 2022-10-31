@@ -8,5 +8,5 @@ class EOF(
 
     override fun columnNumber(): Int = columnNum
 
-    override fun toString(): String = "EOF"
+    override fun toString(): String = "EOF@(${lineNumber()},${columnNumber()})"
 }
