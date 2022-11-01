@@ -5,7 +5,7 @@ DefineExpr := ( define ( Identifier {Identifier}* ) {Expr}+ )
             | ( define Identifier Expr )
 IfExpr := ( if Expr Expr Expr )
 ProcedureExpr := ( lambda ( {Identifier}* ) {Expr}+ )
-LetExpr := ( let ( {Identifier Expr}+ ) {Expr}+ )
+LetExpr := ( let (  {(Identifier Expr)}+  ) {Expr}+ )
 CallExpr := ( SExpr {Expr}* ) | ( VarExpr {Expr}* )
 VarExpr := Identifier
 Const := String | Number | Symbol | Bool

@@ -1,11 +1,9 @@
 package com.github.std.kacket.parse
 
-import com.github.std.kacket.expr.Call
-import com.github.std.kacket.expr.Const
-import com.github.std.kacket.expr.Expression
-import com.github.std.kacket.expr.Var
+import com.github.std.kacket.expr.*
 import java.io.InputStreamReader
 
+// TODO: Test
 class Parser(input: InputStreamReader) {
     private val lexer = Lexer(input)
     fun parseExpr(): Expression {
@@ -41,6 +39,7 @@ class Parser(input: InputStreamReader) {
         val result = when {
             token is Identifier && token.value == "define" -> parseDefine()
             token is Identifier && token.value == "if" -> parseIf()
+            token is Identifier && token.value == "let" -> parseLet()
             token is Identifier && token.value == "lambda" -> parseProc()
             token is Identifier -> parseCall(token)
             token is Parenthesis && token.isLeft() -> parseCall(token)
@@ -82,18 +81,139 @@ class Parser(input: InputStreamReader) {
     }
 
     private fun parseLet(): Expression {
-        TODO("Not yet implemented")
+        fun parseLetPair(variables: MutableList<String>, values: MutableList<Expression>) {
+            val start = lexer.nextToken()
+            if (start !is Parenthesis || !start.isLeft()) {
+                throw ParseError(start)
+            }
+            val id = lexer.nextToken()
+            if (id !is Identifier || isReservedWord(id.value)) {
+                throw ParseError(id)
+            }
+            variables.add(id.value)
+            val value = parseExpr()
+            values.add(value)
+            val end = lexer.nextToken()
+            if (end !is Parenthesis || end.isLeft()) {
+                throw ParseError(end)
+            }
+        }
+
+        val token = lexer.nextToken()
+        if (token !is Parenthesis || !token.isLeft()) {
+            throw ParseError(token)
+        }
+
+        val variables = mutableListOf<String>()
+        val values = mutableListOf<Expression>()
+        parseLetPair(variables, values)
+
+        var peek = lexer.peekToken()
+        while (peek is Parenthesis && peek.isLeft()) {
+            parseLetPair(variables, values)
+            peek = lexer.peekToken()
+        }
+
+        val end = lexer.nextToken()
+        if (end !is Parenthesis || end.isLeft()) {
+            throw ParseError(end)
+        }
+
+        val body = mutableListOf<Expression>()
+        body.add(parseExpr())
+
+        peek = lexer.peekToken()
+        while (peek !is Parenthesis || peek.isLeft()) {
+            body.add(parseExpr())
+        }
+        return Let(variables, values, body)
     }
 
     private fun parseProc(): Expression {
-        TODO("Not yet implemented")
+        val start = lexer.nextToken()
+        if (start !is Parenthesis || !start.isLeft()) {
+            throw ParseError(start)
+        }
+        val args = mutableListOf<String>()
+        var peek = lexer.peekToken()
+        while (peek !is Parenthesis || peek.isLeft()) {
+            val id = lexer.nextToken()
+            if (id !is Identifier || isReservedWord(id.value)) {
+                throw ParseError(id)
+            }
+            args.add(id.value)
+            peek = lexer.peekToken()
+        }
+
+        val endOfArgs = lexer.nextToken()
+        if (endOfArgs !is Parenthesis || endOfArgs.isLeft()) {
+            throw ParseError(endOfArgs)
+        }
+
+        val body = mutableListOf<Expression>()
+        body.add(parseExpr())
+        peek = lexer.peekToken()
+        while (peek !is Parenthesis || peek.isLeft()) {
+            body.add(parseExpr())
+            peek = lexer.peekToken()
+        }
+        return Procedure(args, body)
     }
 
     private fun parseIf(): Expression {
-        TODO("Not yet implemented")
+        val pred = parseExpr()
+        val conseq = parseExpr()
+        val alter = parseExpr()
+        return If(pred, conseq, alter)
     }
 
     private fun parseDefine(): Expression {
-        TODO("Not yet implemented")
+        fun parseProcSyntaxSugarDefine(): Expression {
+            val name = lexer.nextToken()
+            if (name !is Identifier || isReservedWord(name.value)) {
+                throw ParseError(name)
+            }
+
+            val args = mutableListOf<String>()
+            var peek = lexer.peekToken()
+            while (!(peek is Parenthesis && !peek.isLeft())) {
+                val id = lexer.nextToken()
+                if (id !is Identifier || isReservedWord(id.value)) {
+                    throw ParseError(id)
+                }
+                args.add(id.value)
+                peek = lexer.peekToken()
+            }
+            val endOfArgs = lexer.nextToken()
+            if (!(endOfArgs is Parenthesis && !endOfArgs.isLeft())) {
+                throw ParseError(endOfArgs)
+            }
+            val body = mutableListOf<Expression>()
+            body.add(parseExpr())
+
+            peek = lexer.peekToken()
+            while (!(peek is Parenthesis && !peek.isLeft())) {
+                body.add(parseExpr())
+                peek = lexer.peekToken()
+            }
+            return Define(name.value, Procedure(args, body))
+        }
+
+        fun parseIdDefine(id: Identifier): Expression {
+            return Define(id.value, parseExpr())
+        }
+
+        val token = lexer.nextToken()
+        return when {
+            token is Parenthesis && token.isLeft() -> {
+                parseProcSyntaxSugarDefine()
+            }
+
+            token is Identifier && !isReservedWord(token.value) -> {
+                parseIdDefine(token)
+            }
+
+            else -> throw ParseError(token)
+        }
     }
 }
