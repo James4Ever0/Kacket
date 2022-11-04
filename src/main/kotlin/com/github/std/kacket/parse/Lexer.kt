@@ -3,11 +3,12 @@ package com.github.std.kacket.parse
 import org.apache.commons.lang3.CharUtils.isAsciiPrintable
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.io.Reader
 import java.lang.StringBuilder
 import java.util.Deque
 import java.util.LinkedList
 
-class Lexer(input: InputStreamReader) {
+class Lexer(input: Reader) {
     private val reader = BufferedReader(input)
     private val tokenBuffer = LinkedList<Token>()
     private var columnNum = 0

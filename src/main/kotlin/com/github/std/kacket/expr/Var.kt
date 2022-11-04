@@ -1,4 +1,5 @@
 package com.github.std.kacket.expr
 
-class Var(private val name: String) :Expression{
+class Var(val name: String) : Expression {
+    override fun toString(): String = name
 }

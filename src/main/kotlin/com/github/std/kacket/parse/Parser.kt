@@ -2,9 +2,10 @@ package com.github.std.kacket.parse
 
 import com.github.std.kacket.expr.*
 import java.io.InputStreamReader
+import java.io.Reader
 
 // TODO: Test
-class Parser(input: InputStreamReader) {
+class Parser(input: Reader) {
     private val lexer = Lexer(input)
     fun parseExpr(): Expression {
         val token = lexer.nextToken()
@@ -13,7 +14,7 @@ class Parser(input: InputStreamReader) {
                 Var(token.value)
             }
 
-            token is Bool || token is Num || token is Symbol || token is Text -> {
+            token is Character || token is Bool || token is Num || token is Symbol || token is Text -> {
                 Const(token)
             }
 
