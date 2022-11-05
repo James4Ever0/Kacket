@@ -4,7 +4,6 @@ import com.github.std.kacket.expr.*
 import java.io.InputStreamReader
 import java.io.Reader
 
-// TODO: Test
 class Parser(input: Reader) {
     private val lexer = Lexer(input)
     fun parseExpr(): Expression {

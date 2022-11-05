@@ -8,4 +8,4 @@ ProcedureExpr := ( lambda ( {Identifier}* ) {Expr}+ )
 LetExpr := ( let (  {(Identifier Expr)}+  ) {Expr}+ )
 CallExpr := ( SExpr {Expr}* ) | ( VarExpr {Expr}* )
 VarExpr := Identifier
-Const := String | Number | Symbol | Bool
+Const := String | Number | Symbol | Bool | Character

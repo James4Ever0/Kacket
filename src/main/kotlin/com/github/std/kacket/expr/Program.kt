@@ -1,8 +1,7 @@
 package com.github.std.kacket.expr
 
-class Program {
-    val exprs = mutableListOf<Expression>()
-    fun addExpr(expr: Expression) {
-        exprs.add(expr)
-    }
+interface Program {
+    fun addExpr(expr: Expression)
+
+    fun exprs(): List<Expression>
 }
