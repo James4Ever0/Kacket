@@ -1,5 +1,12 @@
 package com.github.std.kacket.expr
 
-class Var(val name: String) : Expression {
-    override fun toString(): String = name
+import com.github.std.kacket.parse.Identifier
+import com.github.std.kacket.parse.Token
+
+class Var(
+    private val id: Identifier
+) : Expression {
+    override fun lineNumber(): Int = id.lineNumber()
+    override fun columnNumber(): Int = id.columnNumber()
+    override fun toString(): String = id.value
 }

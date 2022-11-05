@@ -3,30 +3,32 @@ package com.github.std.kacket.expr
 import com.github.std.kacket.parse.*
 
 class Const(
-    val value: Token
+    val token: Token
 ) : Expression {
+    override fun lineNumber(): Int = token.lineNumber()
+    override fun columnNumber(): Int = token.columnNumber()
     override fun toString(): String = when {
-        value is Text -> {
-            value.value
+        token is Text -> {
+            token.value
         }
 
-        value is Num -> {
-            value.value
+        token is Num -> {
+            token.value
         }
 
-        value is Symbol -> {
-            value.value
+        token is Symbol -> {
+            token.value
         }
 
-        value is Character -> {
-            value.value.toString()
+        token is Character -> {
+            token.value.toString()
         }
 
-        value is Bool && value.value -> {
+        token is Bool && token.value -> {
             "#t"
         }
 
-        value is Bool && !value.value -> {
+        token is Bool && !token.value -> {
             "#f"
         }
 

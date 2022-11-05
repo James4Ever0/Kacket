@@ -1,7 +1,6 @@
 package com.github.std.kacket.parse
 
 import com.github.std.kacket.expr.*
-import java.io.InputStreamReader
 import java.io.Reader
 
 class Parser(input: Reader) {
@@ -10,7 +9,7 @@ class Parser(input: Reader) {
         val token = lexer.nextToken()
         return when {
             token is Identifier && !isReservedWord(token.value) -> {
-                Var(token.value)
+                Var(token)
             }
 
             token is Character || token is Bool || token is Num || token is Symbol || token is Text -> {
@@ -18,7 +17,7 @@ class Parser(input: Reader) {
             }
 
             token is Parenthesis && token.isLeft() -> {
-                parseSExpr()
+                parseSExpr(token.lineNumber(), token.columnNumber())
             }
 
             else -> {
@@ -34,15 +33,15 @@ class Parser(input: Reader) {
         }
     }
 
-    private fun parseSExpr(): Expression {
+    private fun parseSExpr(line: Int, column: Int): Expression {
         val token = lexer.nextToken()
         val result = when {
-            token is Identifier && token.value == "define" -> parseDefine()
-            token is Identifier && token.value == "if" -> parseIf()
-            token is Identifier && token.value == "let" -> parseLet()
-            token is Identifier && token.value == "lambda" -> parseProc()
-            token is Identifier -> parseCall(token)
-            token is Parenthesis && token.isLeft() -> parseCall(token)
+            token is Identifier && token.value == "define" -> parseDefine(line, column)
+            token is Identifier && token.value == "if" -> parseIf(line, column)
+            token is Identifier && token.value == "let" -> parseLet(line, column)
+            token is Identifier && token.value == "lambda" -> parseProc(line, column)
+            token is Identifier -> parseCall(token, line, column)
+            token is Parenthesis && token.isLeft() -> parseCall(token, line, column)
             else -> throw ParseError(token)
         }
         checkSExprTail()
@@ -52,8 +51,7 @@ class Parser(input: Reader) {
     private fun isReservedWord(id: String): Boolean =
         id == "define" || id == "if" || id == "let" || id == "lambda"
 
-    // (VarExpr args)
-    private fun parseCall(token: Token): Expression {
+    private fun parseCall(token: Token, line: Int, column: Int): Expression {
         fun parseArgs(): List<Expression> {
             val args = mutableListOf<Expression>()
             var peek = lexer.peekToken()
@@ -65,22 +63,22 @@ class Parser(input: Reader) {
         }
         return when {
             token is Parenthesis && token.isLeft() -> {
-                val proc = parseSExpr()
+                val proc = parseSExpr(token.lineNumber(), token.columnNumber())
                 val args = parseArgs()
-                Call(proc, args)
+                Call(proc, args, line, column)
             }
 
             token is Identifier && !isReservedWord(token.value) -> {
-                val proc = Var(token.value)
+                val proc = Var(token)
                 val args = parseArgs()
-                Call(proc, args)
+                Call(proc, args, line, column)
             }
 
             else -> throw ParseError(token)
         }
     }
 
-    private fun parseLet(): Expression {
+    private fun parseLet(line: Int, column: Int): Expression {
         fun parseLetPair(variables: MutableList<String>, values: MutableList<Expression>) {
             val start = lexer.nextToken()
             if (start !is Parenthesis || !start.isLeft()) {
@@ -126,10 +124,10 @@ class Parser(input: Reader) {
         while (peek !is Parenthesis || peek.isLeft()) {
             body.add(parseExpr())
         }
-        return Let(variables, values, body)
+        return Let(variables, values, body, line, column)
     }
 
-    private fun parseProc(): Expression {
+    private fun parseProc(line: Int, column: Int): Expression {
         val start = lexer.nextToken()
         if (start !is Parenthesis || !start.isLeft()) {
             throw ParseError(start)
@@ -157,17 +155,17 @@ class Parser(input: Reader) {
             body.add(parseExpr())
             peek = lexer.peekToken()
         }
-        return Procedure(args, body)
+        return Procedure(args, body, line, column)
     }
 
-    private fun parseIf(): Expression {
+    private fun parseIf(line: Int, column: Int): Expression {
         val pred = parseExpr()
         val conseq = parseExpr()
         val alter = parseExpr()
-        return If(pred, conseq, alter)
+        return If(pred, conseq, alter, line, column)
     }
 
-    private fun parseDefine(): Expression {
+    private fun parseDefine(line: Int, column: Int): Expression {
         fun parseProcSyntaxSugarDefine(): Expression {
             val name = lexer.nextToken()
             if (name !is Identifier || isReservedWord(name.value)) {
@@ -196,11 +194,11 @@ class Parser(input: Reader) {
                 body.add(parseExpr())
                 peek = lexer.peekToken()
             }
-            return Define(name.value, Procedure(args, body))
+            return Define(name.value, Procedure(args, body, line, column), line, column)
         }
 
         fun parseIdDefine(id: Identifier): Expression {
-            return Define(id.value, parseExpr())
+            return Define(id.value, parseExpr(), line, column)
         }
 
         val token = lexer.nextToken()

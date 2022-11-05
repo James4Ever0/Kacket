@@ -3,8 +3,12 @@ package com.github.std.kacket.expr
 class Let(
     val variables: List<String>,
     val values: List<Expression>,
-    val body: List<Expression>
+    val body: List<Expression>,
+    private val line: Int,
+    private val column: Int
 ) : Expression {
+    override fun lineNumber(): Int = line
+    override fun columnNumber(): Int = column
     override fun toString(): String {
         val builder = StringBuilder("(let (")
         for ((variable, value) in variables zip values) {

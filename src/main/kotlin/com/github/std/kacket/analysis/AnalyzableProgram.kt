@@ -4,7 +4,9 @@ import com.github.std.kacket.expr.Expression
 import com.github.std.kacket.expr.Program
 import com.github.std.kacket.parse.Parser
 
-class ProcCheckProgram(parser: Parser) : Program {
+class AnalyzableProgram(parser: Parser) : Program {
+    val globalEnv = ProcEnv()
+    val exprs = mutableListOf<Expression>()
     override fun addExpr(expr: Expression) {
         TODO("Not yet implemented")
     }

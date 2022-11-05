@@ -1,6 +1,5 @@
 package com.github.std.kacket.parse
 
-import com.github.std.kacket.expr.Let
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -14,7 +13,9 @@ internal class ParserTest {
         val code = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
         val expr = parser.parseExpr()
-        println(expr)
+
+        val expected = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
+        assertEquals(expected, expr.toString())
     }
 
     @Test
@@ -22,7 +23,9 @@ internal class ParserTest {
         val code = "(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
         val expr = parser.parseExpr()
-        println(expr)
+
+        val expected = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
+        assertEquals(expected, expr.toString())
     }
 
     @Test
@@ -30,7 +33,9 @@ internal class ParserTest {
         val code = "(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
         val expr = parser.parseExpr()
-        println(expr)
+
+        val expected = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
+        assertEquals(expected, expr.toString())
     }
 
     @Test
@@ -38,7 +43,9 @@ internal class ParserTest {
         val code = "(let ((fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))) (fib 10))"
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
         val expr = parser.parseExpr()
-        println(expr.toString())
+
+        val expected = "(let ([fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))]) (fib 10))"
+        assertEquals(expected, expr.toString())
     }
 
     @Test
@@ -46,6 +53,8 @@ internal class ParserTest {
         val code = "(let ((a 1) (b 'sym) (c \"hello\") (d #t) (e #f) (g #\\a)) a)"
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
         val expr = parser.parseExpr()
-        println(expr.toString())
+        
+        val expected = "(let ([a 1][b sym][c hello][d #t][e #f][g a]) a)"
+        assertEquals(expected, expr.toString())
     }
 }
