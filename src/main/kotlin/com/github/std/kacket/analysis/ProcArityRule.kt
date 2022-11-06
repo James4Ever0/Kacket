@@ -1,6 +1,10 @@
 package com.github.std.kacket.analysis
 
-sealed interface ProcArityRule {
-    fun apply(actual: Int): Boolean
-}
+fun arityAny(): (Int) -> Boolean = { _ -> true }
+
+fun arityEqual(expected: Int): (Int) -> Boolean =
+    { actual -> actual == expected }
+
+fun arityGreaterEqual(expected: Int): (Int) -> Boolean =
+    { actual -> actual >= expected }
 

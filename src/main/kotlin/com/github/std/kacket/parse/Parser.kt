@@ -5,6 +5,8 @@ import java.io.Reader
 
 class Parser(input: Reader) {
     private val lexer = Lexer(input)
+    fun isEnd(): Boolean = lexer.peekToken() is EOF
+
     fun parseExpr(): Expression {
         val token = lexer.nextToken()
         return when {

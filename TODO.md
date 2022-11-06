@@ -1,1 +1,2 @@
 * named let
+* case lambda
