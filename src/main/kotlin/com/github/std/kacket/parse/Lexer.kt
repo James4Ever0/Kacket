@@ -13,22 +13,26 @@ class Lexer(input: Reader) {
     private val tokenBuffer = LinkedList<Token>()
     private var columnNum = 0
     private var lineNum = 0
+    private var isFileEnd = false
+    private var read = reader.read()
 
     companion object {
-        const val BUFFER_SIZE = 50
+        const val BUFFER_SIZE = 49
+    }
+
+    private fun close() {
+        if (!isFileEnd) {
+            isFileEnd = true
+            tokenBuffer.add(EOF(lineNum, columnNum))
+            reader.close()
+        }
     }
 
     private fun lex() {
-
-        var tokenCount = 0
-        var read = reader.read()
-        if (read == -1) {
-            tokenBuffer.add(EOF(lineNum, columnNum))
-            return
-        }
-        while (read != -1) {
-            if (tokenCount > BUFFER_SIZE) {
-                break
+        for (tokenCount in 0..BUFFER_SIZE) {
+            if (read == -1) {
+                close()
+                return
             }
             val char = read.toChar()
             val (readNext, count) = when {
@@ -47,37 +51,30 @@ class Lexer(input: Reader) {
                 }
 
                 isParenthesis(char) -> {
-                    tokenCount++
                     lexParenthesis(char)
                 }
 
                 isIdentifierStart(char) -> {
-                    tokenCount++
                     lexIdentifier(char)
                 }
 
                 isCharStart(char) -> {
-                    tokenCount++
                     lexChar()
                 }
 
                 isBoolStart(char) -> {
-                    tokenCount++
                     lexBool()
                 }
 
                 isStringStart(char) -> {
-                    tokenCount++
                     lexString()
                 }
 
                 isNumberStart(char) -> {
-                    tokenCount++
                     lexNumber(char)
                 }
 
                 isSymbolStart(char) -> {
-                    tokenCount++
                     lexSymbol()
                 }
 
@@ -88,6 +85,7 @@ class Lexer(input: Reader) {
             read = readNext
             columnNum += count
         }
+
     }
 
     private fun lexComment(): Pair<Int, Int> {
@@ -239,10 +237,6 @@ class Lexer(input: Reader) {
         if (tokenBuffer.isEmpty()) {
             lex()
         }
-        if (tokenBuffer.peek() is EOF) {
-            reader.close()
-            return EOF(lineNum, columnNum)
-        }
         return tokenBuffer.removeFirst()
     }
 
@@ -252,4 +246,7 @@ class Lexer(input: Reader) {
         }
         return tokenBuffer.peek()
     }
+
+    fun isEnd() = isFileEnd
+    override fun toString(): String = peekToken().toString()
 }

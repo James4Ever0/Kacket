@@ -57,4 +57,17 @@ internal class ParserTest {
         val expected = "(let ([a 1][b sym][c hello][d #t][e #f][g a]) a)"
         assertEquals(expected, expr.toString())
     }
+
+    @Test
+    internal fun parseExpr6() {
+        val code =
+            """
+        (define (fib n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2)))))
+        (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))
+        """
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        var expr0 = parser.parseExpr()
+        var expr1 = parser.parseExpr()
+
+    }
 }
