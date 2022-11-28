@@ -15,6 +15,7 @@ class InitProcEnv : ProcEnv {
         map["="] = arityGreaterEqual(1)
         map[">"] = arityGreaterEqual(1)
         map[">="] = arityGreaterEqual(1)
+        map["<"] = arityGreaterEqual(1)
         map["<="] = arityGreaterEqual(1)
 
         map["null?"] = arityEqual(1)

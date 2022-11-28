@@ -1,8 +1,8 @@
 package com.github.std.kacket.analysis
 
-class RestProcEnv(val out: ProcEnv) : ProcEnv {
+class RestProcEnv(private val out: ProcEnv) : ProcEnv {
     private val map = HashMap<String, (Int) -> Boolean>()
-    fun add(vararg idsAndRules: Pair<String, (Int) -> Boolean>) {
+    fun addRules(vararg idsAndRules: Pair<String, (Int) -> Boolean>) {
         for ((id, rule) in idsAndRules) {
             addRule(id, rule)
         }

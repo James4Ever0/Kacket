@@ -4,7 +4,7 @@ import com.github.std.kacket.parse.Identifier
 import com.github.std.kacket.parse.Token
 
 class Var(
-    private val id: Identifier
+    val id: Identifier
 ) : Expression {
     override fun lineNumber(): Int = id.lineNumber()
     override fun columnNumber(): Int = id.columnNumber()
