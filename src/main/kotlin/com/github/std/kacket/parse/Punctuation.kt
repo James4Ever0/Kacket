@@ -1,7 +1,7 @@
 package com.github.std.kacket.parse
 
 class Punctuation(
-    private val char: Char,
+    val char: Char,
     private val lineNum: Int,
     private val columnNum: Int
 ) : Token {
@@ -12,5 +12,5 @@ class Punctuation(
     override fun columnNumber(): Int = columnNum
 
     override fun toString(): String =
-        char.toString()
+        "Punctuation#${char}@(${lineNumber()},${columnNumber()})"
 }

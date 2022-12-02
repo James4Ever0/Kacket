@@ -44,10 +44,6 @@ class Lexer(input: Reader) {
                     lexComment()
                 }
 
-                isParenthesis(char) -> {
-                    lexPunctuation(char)
-                }
-
                 isIdentifierStart(char) -> {
                     lexIdentifier(char)
                 }
@@ -70,6 +66,11 @@ class Lexer(input: Reader) {
 
                 isSymbolStart(char) -> {
                     lexSymbol()
+                }
+
+                // should be after isSymbolStart
+                isPunctuation(char) -> {
+                    lexPunctuation(char)
                 }
 
                 else -> {
@@ -111,10 +112,10 @@ class Lexer(input: Reader) {
         return false
     }
 
-    private fun lexSymbol(): Pair<Int, Int> {
-        fun isSymbolChar(char: Char): Boolean =
-            !isParenthesis(char) && !char.isWhitespace() && isAsciiPrintable(char)
+    private fun isSymbolChar(char: Char): Boolean =
+        !isPunctuation(char) && !char.isWhitespace() && isAsciiPrintable(char)
 
+    private fun lexSymbol(): Pair<Int, Int> {
         var read = reader.read()
         val builder = StringBuilder()
         var count = 0
@@ -130,7 +131,16 @@ class Lexer(input: Reader) {
         return read to count
     }
 
-    private fun isSymbolStart(char: Char): Boolean = char == '\''
+    private fun isSymbolStart(first: Char): Boolean {
+        reader.mark(1)
+        val next = reader.read().toChar()
+        reader.reset()
+
+        if (first == '\'' && isSymbolChar(next)) {
+            return true
+        }
+        return false
+    }
 
     // (read, count)
     private fun lexNumber(first: Char): Pair<Int, Int> {
@@ -155,6 +165,12 @@ class Lexer(input: Reader) {
         tokenBuffer.add(Num(lineNum, columnNum, builder.toString()))
         return read to count
     }
+
+    private fun isPunctuation(char: Char): Boolean =
+        char == '\'' ||
+                char == '#' ||
+                char == '"' ||
+                isParenthesis(char)
 
     private fun isNumberStart(char: Char): Boolean = char.isDigit()
     private fun isParenthesis(char: Char): Boolean =
@@ -203,7 +219,7 @@ class Lexer(input: Reader) {
 
     private fun lexIdentifier(first: Char): Pair<Int, Int> {
         fun isIdentifierChar(char: Char): Boolean =
-            !isParenthesis(char) && !char.isWhitespace() && isAsciiPrintable(char)
+            !isPunctuation(char) && !char.isWhitespace() && isAsciiPrintable(char)
 
         var read = first.code
         var count = 0
@@ -219,10 +235,7 @@ class Lexer(input: Reader) {
 
     // TODO: check standard
     private fun isIdentifierStart(char: Char): Boolean =
-        char != '\'' &&
-                char != '#' &&
-                char != '"' &&
-                !char.isWhitespace() &&
+        !isPunctuation(char) &&
                 !char.isDigit() &&
                 isAsciiPrintable(char)
 

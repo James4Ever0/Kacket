@@ -66,8 +66,13 @@ internal class ParserTest {
         (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))
         """
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
-        var expr0 = parser.parseExpr()
-        var expr1 = parser.parseExpr()
+        val expr0 = parser.parseExpr()
+        val expected0 = "(define fib (lambda (n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2))))))"
+        assertEquals(expected0, expr0.toString())
+
+        val expr1 = parser.parseExpr()
+        val expected1 = "(define fib-iter (lambda (i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd)))))"
+        assertEquals(expected1, expr1.toString())
 
     }
 
@@ -80,9 +85,45 @@ internal class ParserTest {
             (define x 10)
         """.trimIndent()
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+
         val expr0 = parser.parseExpr()
-        println(expr0)
+        val expected0 = "(let ([a 1][b 2]) (let ([c 3]) (+ a b c)))"
+        assertEquals(expected0, expr0.toString())
+
         val expr1 = parser.parseExpr()
-        println(expr1)
+        val expected1 = "(define x 10)"
+        assertEquals(expected1, expr1.toString())
+    }
+
+    @Test
+    fun parseExpr8() {
+        val code = """
+            '(a b c)
+            '(a (b c))
+            '(a 'b c)
+            '(#t 3 '(b c))
+            '()
+        """.trimIndent()
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+
+        val expr0 = parser.parseExpr()
+        val expected0 = "'(a b c)"
+        assertEquals(expected0, expr0.toString())
+
+        val expr1 = parser.parseExpr()
+        val expected1 = "'(a (b c))"
+        assertEquals(expected1, expr1.toString())
+
+        val expr2 = parser.parseExpr()
+        val expected2 = "'(a 'b c)"
+        assertEquals(expected2, expr2.toString())
+
+        val expr3 = parser.parseExpr()
+        val expected3 = "'(#t 3 '(b c))"
+        assertEquals(expected3, expr3.toString())
+
+        val expr4 = parser.parseExpr()
+        val expected4 = "'()"
+        assertEquals(expected4, expr4.toString())
     }
 }

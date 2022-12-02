@@ -1,5 +1,5 @@
 Program := {Expr}+
-Expr := SExpr | Const | VarExpr
+Expr := SExpr | Const | VarExpr | QuoteExpr
 SExpr := DefineExpr | IfExpr | ProcedureExpr | LetExpr  | CallExpr
 DefineExpr := ( define ( Identifier {Identifier}* ) {Expr}+ )
             | ( define Identifier Expr )
@@ -9,3 +9,5 @@ LetExpr := ( let (  {(Identifier Expr)}+  ) {Expr}+ )
 CallExpr := ( SExpr {Expr}* ) | ( VarExpr {Expr}* )
 VarExpr := Identifier
 Const := String | Number | Symbol | Bool | Character
+QuoteExpr := '( {QuoteElement}* )
+QuoteElement := Const | QuoteExpr | ( {QuoteElement}* )

@@ -18,8 +18,12 @@ class Parser(input: Reader) {
                 Const(token)
             }
 
-            token is Punctuation && token.isLeftParenthesis() -> {
+            isLeftParenthesis(token) -> {
                 parseSExpr(token.lineNumber(), token.columnNumber())
+            }
+
+            token is Punctuation && token.char == '\'' -> {
+                parseQuote(token.lineNumber(), token.columnNumber())
             }
 
             else -> {
@@ -28,10 +32,61 @@ class Parser(input: Reader) {
         }
     }
 
-    private fun checkSExprTail() {
-        val tail = lexer.nextToken()
-        if (tail !is Punctuation || !tail.isRightParenthesis()) {
-            throw throw ParseError(tail)
+    private fun isRightParenthesis(token: Token): Boolean =
+        token is Punctuation && token.isRightParenthesis()
+
+    private fun isLeftParenthesis(token: Token): Boolean =
+        token is Punctuation && token.isLeftParenthesis()
+
+    private fun shouldBeLeftParenthesis(token: Token) {
+        if (!(isLeftParenthesis(token))) {
+            throw ParseError(token)
+        }
+    }
+
+    private fun shouldBeRightParenthesis(token: Token) {
+        if (!(isRightParenthesis(token))) {
+            throw ParseError(token)
+        }
+    }
+
+    private fun parseQuote(lineNumber: Int, columnNumber: Int): Quote {
+        val start = lexer.nextToken()
+//        shouldBeLeftParenthesis(start)
+
+        val elements = mutableListOf<Quote.QuoteElement>()
+        var token = lexer.nextToken()
+        while (!(isRightParenthesis(token))) {
+            elements.add(parseQuoteElement(token))
+            token = lexer.nextToken()
+        }
+
+        shouldBeRightParenthesis(token)
+        return Quote(lineNumber, columnNumber, elements)
+    }
+
+    private fun parseQuoteElement(token: Token): Quote.QuoteElement {
+        return when {
+            token is Character || token is Bool || token is Num || token is Identifier || token is Symbol || token is Text -> {
+                Quote.ElementConst(token)
+            }
+
+            token is Punctuation && token.char == '\'' -> {
+                Quote.ElementQuote(parseQuote(token.lineNumber(), token.columnNumber()))
+            }
+
+            isLeftParenthesis(token) -> {
+                val elements = mutableListOf<Quote.QuoteElement>()
+                var next = lexer.nextToken()
+                while (!(isRightParenthesis(next))) {
+                    elements.add(parseQuoteElement(next))
+                    next = lexer.nextToken()
+                }
+                shouldBeRightParenthesis(next)
+                Quote.ElementQuotes(elements)
+            }
+
+            else -> throw ParseError(token)
         }
     }
 
@@ -43,10 +98,11 @@ class Parser(input: Reader) {
             token is Identifier && token.value == "let" -> parseLet(line, column)
             token is Identifier && token.value == "lambda" -> parseProc(line, column)
             token is Identifier -> parseCall(token, line, column)
-            token is Punctuation && token.isLeftParenthesis() -> parseCall(token, line, column)
+            isLeftParenthesis(token) -> parseCall(token, line, column)
             else -> throw ParseError(token)
         }
-        checkSExprTail()
+
+        shouldBeRightParenthesis(lexer.nextToken())
         return result
     }
 
@@ -57,14 +113,14 @@ class Parser(input: Reader) {
         fun parseArgs(): List<Expression> {
             val args = mutableListOf<Expression>()
             var peek = lexer.peekToken()
-            while (!(peek is Punctuation && peek.isRightParenthesis())) {
+            while (!(isRightParenthesis(peek))) {
                 args.add(parseExpr())
                 peek = lexer.peekToken()
             }
             return args
         }
         return when {
-            token is Punctuation && token.isLeftParenthesis() -> {
+            isLeftParenthesis(token) -> {
                 val proc = parseSExpr(token.lineNumber(), token.columnNumber())
                 val args = parseArgs()
                 Call(proc, args, line, column)
@@ -83,9 +139,7 @@ class Parser(input: Reader) {
     private fun parseLet(line: Int, column: Int): Expression {
         fun parseLetPair(variables: MutableList<String>, values: MutableList<Expression>) {
             val start = lexer.nextToken()
-            if (!(start is Punctuation && start.isLeftParenthesis())) {
-                throw ParseError(start)
-            }
+            shouldBeLeftParenthesis(start)
             val id = lexer.nextToken()
             if (id !is Identifier || isReservedWord(id.value)) {
                 throw ParseError(id)
@@ -94,50 +148,42 @@ class Parser(input: Reader) {
             val value = parseExpr()
             values.add(value)
             val end = lexer.nextToken()
-            if (!(end is Punctuation && end.isRightParenthesis())) {
-                throw ParseError(end)
-            }
+            shouldBeRightParenthesis(end)
         }
 
         val token = lexer.nextToken()
-        if (!(token is Punctuation && token.isLeftParenthesis())) {
-            throw ParseError(token)
-        }
+        shouldBeLeftParenthesis(token)
 
         val variables = mutableListOf<String>()
         val values = mutableListOf<Expression>()
         parseLetPair(variables, values)
 
         var peek = lexer.peekToken()
-        while (peek is Punctuation && peek.isLeftParenthesis()) {
+        while (isLeftParenthesis(peek)) {
             parseLetPair(variables, values)
             peek = lexer.peekToken()
         }
 
         val end = lexer.nextToken()
-        if (!(end is Punctuation && end.isRightParenthesis())) {
-            throw ParseError(end)
-        }
+        shouldBeRightParenthesis(end)
 
         val body = mutableListOf<Expression>()
         body.add(parseExpr())
 
         peek = lexer.peekToken()
-        while (!(peek is Punctuation && peek.isRightParenthesis())) {
+        while (!(isRightParenthesis(peek))) {
             body.add(parseExpr())
         }
-        // TODO: check tail?
         return Let(variables, values, body, line, column)
     }
 
     private fun parseProc(line: Int, column: Int): Expression {
         val start = lexer.nextToken()
-        if (!(start is Punctuation && start.isLeftParenthesis())) {
-            throw ParseError(start)
-        }
+        shouldBeLeftParenthesis(start)
+
         val args = mutableListOf<String>()
         var peek = lexer.peekToken()
-        while (!(peek is Punctuation && peek.isRightParenthesis())) {
+        while (!(isRightParenthesis(peek))) {
             val id = lexer.nextToken()
             if (id !is Identifier || isReservedWord(id.value)) {
                 throw ParseError(id)
@@ -147,14 +193,12 @@ class Parser(input: Reader) {
         }
 
         val endOfArgs = lexer.nextToken()
-        if (!(endOfArgs is Punctuation && endOfArgs.isRightParenthesis())) {
-            throw ParseError(endOfArgs)
-        }
+        shouldBeRightParenthesis(endOfArgs)
 
         val body = mutableListOf<Expression>()
         body.add(parseExpr())
         peek = lexer.peekToken()
-        while (!(peek is Punctuation && peek.isRightParenthesis())) {
+        while (!(isRightParenthesis(peek))) {
             body.add(parseExpr())
             peek = lexer.peekToken()
         }
@@ -177,7 +221,7 @@ class Parser(input: Reader) {
 
             val args = mutableListOf<String>()
             var peek = lexer.peekToken()
-            while (!(peek is Punctuation && peek.isRightParenthesis())) {
+            while (!(isRightParenthesis(peek))) {
                 val id = lexer.nextToken()
                 if (id !is Identifier || isReservedWord(id.value)) {
                     throw ParseError(id)
@@ -186,14 +230,13 @@ class Parser(input: Reader) {
                 peek = lexer.peekToken()
             }
             val endOfArgs = lexer.nextToken()
-            if (!(endOfArgs is Punctuation && endOfArgs.isRightParenthesis())) {
-                throw ParseError(endOfArgs)
-            }
+            shouldBeRightParenthesis(endOfArgs)
+
             val body = mutableListOf<Expression>()
             body.add(parseExpr())
 
             peek = lexer.peekToken()
-            while (!(peek is Punctuation && peek.isRightParenthesis())) {
+            while (!(isRightParenthesis(peek))) {
                 body.add(parseExpr())
                 peek = lexer.peekToken()
             }
@@ -206,7 +249,7 @@ class Parser(input: Reader) {
 
         val token = lexer.nextToken()
         return when {
-            token is Punctuation && token.isLeftParenthesis() -> {
+            isLeftParenthesis(token) -> {
                 parseProcSyntaxSugarDefine()
             }
 

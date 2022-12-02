@@ -44,6 +44,7 @@ class ArityMisMatchAnalyzer(input: Reader) {
             is Procedure -> analyzeProc(expr, env)
             is Var -> ignore()
             is Const -> ignore()
+            is Quote -> ignore()
         }
     }
 
