@@ -53,13 +53,13 @@ internal class ParserTest {
         val code = "(let ((a 1) (b 'sym) (c \"hello\") (d #t) (e #f) (g #\\a)) a)"
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
         val expr = parser.parseExpr()
-        
+
         val expected = "(let ([a 1][b sym][c hello][d #t][e #f][g a]) a)"
         assertEquals(expected, expr.toString())
     }
 
     @Test
-    internal fun parseExpr6() {
+    fun parseExpr6() {
         val code =
             """
         (define (fib n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2)))))
@@ -69,5 +69,20 @@ internal class ParserTest {
         var expr0 = parser.parseExpr()
         var expr1 = parser.parseExpr()
 
+    }
+
+    @Test
+    fun parseExpr7() {
+        val code = """
+            (let ((a 1) (b 2))
+              (let ((c 3))
+                (+ a b c)))
+            (define x 10)
+        """.trimIndent()
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val expr0 = parser.parseExpr()
+        println(expr0)
+        val expr1 = parser.parseExpr()
+        println(expr1)
     }
 }

@@ -2,30 +2,24 @@ package com.github.std.kacket.parse
 
 import org.apache.commons.lang3.CharUtils.isAsciiPrintable
 import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.io.Reader
 import java.lang.StringBuilder
-import java.util.Deque
 import java.util.LinkedList
+
+const val BUFFER_SIZE = 50
 
 class Lexer(input: Reader) {
     private val reader = BufferedReader(input)
     private val tokenBuffer = LinkedList<Token>()
-    private var columnNum = 0
-    private var lineNum = 0
-    private var isFileEnd = false
+    private var columnNum = 1
+    private var lineNum = 1
     private var read = reader.read()
 
-    companion object {
-        const val BUFFER_SIZE = 49
-    }
 
     private fun close() {
-        if (!isFileEnd) {
-            isFileEnd = true
-            tokenBuffer.add(EOF(lineNum, columnNum))
-            reader.close()
-        }
+        tokenBuffer.add(EOF(lineNum, columnNum))
+        reader.close()
+
     }
 
     private fun lex() {
@@ -37,7 +31,7 @@ class Lexer(input: Reader) {
             val char = read.toChar()
             val (readNext, count) = when {
                 char == '\n' -> {
-                    columnNum = 0
+                    columnNum = 1
                     lineNum++
                     reader.read() to 0
                 }
@@ -51,7 +45,7 @@ class Lexer(input: Reader) {
                 }
 
                 isParenthesis(char) -> {
-                    lexParenthesis(char)
+                    lexPunctuation(char)
                 }
 
                 isIdentifierStart(char) -> {
@@ -166,8 +160,8 @@ class Lexer(input: Reader) {
     private fun isParenthesis(char: Char): Boolean =
         char == '(' || char == ')' || char == '[' || char == ']'
 
-    private fun lexParenthesis(first: Char): Pair<Int, Int> {
-        tokenBuffer.add(Parenthesis(first, lineNum, columnNum))
+    private fun lexPunctuation(first: Char): Pair<Int, Int> {
+        tokenBuffer.add(Punctuation(first, lineNum, columnNum))
         return reader.read() to 1
     }
 
@@ -247,6 +241,4 @@ class Lexer(input: Reader) {
         return tokenBuffer.peek()
     }
 
-    fun isEnd() = isFileEnd
-    override fun toString(): String = peekToken().toString()
 }

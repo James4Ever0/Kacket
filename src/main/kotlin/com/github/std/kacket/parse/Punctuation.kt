@@ -1,16 +1,16 @@
 package com.github.std.kacket.parse
 
-class Parenthesis(
+class Punctuation(
     private val char: Char,
     private val lineNum: Int,
     private val columnNum: Int
 ) : Token {
-    fun isLeft(): Boolean = char == '(' || char == '['
+    fun isLeftParenthesis(): Boolean = char == '(' || char == '['
+    fun isRightParenthesis(): Boolean = char == ')' || char == ']'
+
     override fun lineNumber(): Int = lineNum
     override fun columnNumber(): Int = columnNum
 
     override fun toString(): String =
-        if (isLeft())
-            "Parenthesis#Left@(${lineNumber()},${columnNumber()})"
-        else "Parenthesis#Right@(${lineNumber()},${columnNumber()})"
+        char.toString()
 }
