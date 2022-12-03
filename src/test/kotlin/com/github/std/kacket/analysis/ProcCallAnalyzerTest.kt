@@ -7,7 +7,6 @@ import java.io.InputStreamReader
 
 internal class ProcCallAnalyzerTest {
     @Test
-    @Disabled
     fun analyze0() {
         val code =
             """
@@ -84,4 +83,18 @@ internal class ProcCallAnalyzerTest {
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
         val analyzer = ProcCallAnalyzer(input)
     }
+    @Test
+    fun analyze5() {
+        val code =
+            """
+        (letrec ([foo '(a b (c))]
+                 [bar (lambda (x) (bar x))]
+                 [error (lambda (x) (error x 114 514))])
+           (bar 114 514)
+           (error 114514))
+        """
+        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
+        val analyzer = ProcCallAnalyzer(input)
+    }
+
 }

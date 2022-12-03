@@ -97,6 +97,7 @@ class Parser(input: Reader) {
             token is Identifier && token.value == "if" -> parseIf(line, column)
             token is Identifier && token.value == "let" -> parseLet(line, column)
             token is Identifier && token.value == "lambda" -> parseProc(line, column)
+            token is Identifier && token.value == "letrec" -> parseLetrec(line, column)
             token is Identifier -> parseCall(token, line, column)
             isLeftParenthesis(token) -> parseCall(token, line, column)
             else -> throw ParseError(token)
@@ -141,26 +142,36 @@ class Parser(input: Reader) {
         }
     }
 
-    private fun parseLet(line: Int, column: Int): Expression {
-        fun parseLetPair(variables: MutableList<String>, values: MutableList<Expression>) {
-            val start = lexer.nextToken()
-            shouldBeLeftParenthesis(start)
-            val id = lexer.nextToken()
-            if (id !is Identifier || isReservedWord(id.value)) {
-                throw ParseError(id)
-            }
-            variables.add(id.value)
-            val value = parseExpr()
-            values.add(value)
-            val end = lexer.nextToken()
-            shouldBeRightParenthesis(end)
-        }
-
+    private fun parseLetrec(line: Int, column: Int): Expression {
         val token = lexer.nextToken()
         shouldBeLeftParenthesis(token)
 
         val variables = mutableListOf<String>()
         val values = mutableListOf<Expression>()
+        parseLetPairs(variables, values)
+
+        val body = mutableListOf<Expression>()
+        parseLetBody(body)
+
+        return Letrec(variables, values, body, line, column)
+    }
+
+    private fun parseLetPair(variables: MutableList<String>, values: MutableList<Expression>) {
+        shouldBeLeftParenthesis(lexer.nextToken())
+
+        val id = lexer.nextToken()
+        if (id !is Identifier || isReservedWord(id.value)) {
+            throw ParseError(id)
+        }
+        variables.add(id.value)
+
+        val value = parseExpr()
+        values.add(value)
+
+        shouldBeRightParenthesis(lexer.nextToken())
+    }
+
+    private fun parseLetPairs(variables: MutableList<String>, values: MutableList<Expression>) {
         parseLetPair(variables, values)
 
         var peek = lexer.peekToken()
@@ -169,18 +180,30 @@ class Parser(input: Reader) {
             peek = lexer.peekToken()
         }
 
-        val end = lexer.nextToken()
-        shouldBeRightParenthesis(end)
+        shouldBeRightParenthesis(lexer.nextToken())
+    }
 
-        val body = mutableListOf<Expression>()
+    private fun parseLetBody(body: MutableList<Expression>) {
         body.add(parseExpr())
 
-        peek = lexer.peekToken()
+        var peek = lexer.peekToken()
         while (!(isRightParenthesis(peek))) {
             body.add(parseExpr())
             peek = lexer.peekToken()
-
         }
+    }
+
+    private fun parseLet(line: Int, column: Int): Expression {
+        val token = lexer.nextToken()
+        shouldBeLeftParenthesis(token)
+
+        val variables = mutableListOf<String>()
+        val values = mutableListOf<Expression>()
+        parseLetPairs(variables, values)
+
+        val body = mutableListOf<Expression>()
+        parseLetBody(body)
+
         return Let(variables, values, body, line, column)
     }
 

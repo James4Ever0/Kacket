@@ -150,6 +150,6 @@ internal class ParserTest {
         val code = " ('(a b c) 114 514) "
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
 
-        val expr0 = parser.parseExpr()
+        parser.parseExpr()
     }
 }

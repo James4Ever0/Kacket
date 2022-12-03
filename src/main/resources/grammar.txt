@@ -1,11 +1,12 @@
 Program := {Expr}+
 Expr := SExpr | Const | VarExpr | QuoteExpr
-SExpr := DefineExpr | IfExpr | ProcedureExpr | LetExpr  | CallExpr
+SExpr := DefineExpr | IfExpr | ProcedureExpr | LetExpr | LetrecExpr | CallExpr
 DefineExpr := ( define ( Identifier {Identifier}* ) {Expr}+ )
             | ( define Identifier Expr )
 IfExpr := ( if Expr Expr Expr )
 ProcedureExpr := ( lambda ( {Identifier}* ) {Expr}+ )
 LetExpr := ( let (  {(Identifier Expr)}+  ) {Expr}+ )
+LetrecExpr := ( letrec (  {(Identifier Expr)}+  ) {Expr}+ )
 CallExpr := ( SExpr {Expr}* ) | ( VarExpr {Expr}* )
 VarExpr := Identifier
 Const := String | Number | Symbol | Bool | Character

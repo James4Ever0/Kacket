@@ -19,10 +19,14 @@ class ProcCallAnalyzer(input: Reader) {
             val expr = parser.parseExpr()
             body.add(expr)
             if (expr is Define && expr.expr is Procedure) {
-                // TODO: Other situations
-                initEnv.addRule(expr.name, arityEqual(expr.expr.args.size))
+                addProcRule(initEnv, expr.name, expr.expr)
             }
         }
+    }
+
+    private fun addProcRule(env: ProcEnv, id: String, proc: Procedure) {
+        // TODO: Other situations
+        env.addRule(id, arityEqual(proc.args.size))
     }
 
     private fun analyzeProgram() {
@@ -41,12 +45,14 @@ class ProcCallAnalyzer(input: Reader) {
             is Define -> analyzeDefine(expr, env)
             is If -> analyzeIf(expr, env)
             is Let -> analyzeLet(expr, env)
+            is Letrec -> analyzeLetrec(expr, env)
             is Procedure -> analyzeProc(expr, env)
             is Var -> ignore()
             is Const -> ignore()
             is Quote -> ignore()
         }
     }
+
 
     private fun ignore() = Unit
 
@@ -58,6 +64,37 @@ class ProcCallAnalyzer(input: Reader) {
         analyzeExprs(proc.body, extended)
     }
 
+    private fun analyzeLetrec(letrec: Letrec, env: ProcEnv) {
+        val extended = RestProcEnv(env)
+        for ((name, expr) in letrec.variables zip letrec.values) {
+            when (expr) {
+                is Procedure -> {
+                    addProcRule(extended, name, expr)
+                }
+
+                is Define -> {
+                    throw AnalysisError("Invalid Define at (${expr.lineNumber()}, ${expr.columnNumber()})")
+                }
+
+                is Const -> {
+                    extended.addRule(name, notProc())
+                }
+
+                is Quote -> {
+                    extended.addRule(name, notProc())
+                }
+
+                else -> {
+                    extended.addRule(name, arityAny())
+                }
+            }
+        }
+        for (expr in letrec.values) {
+            analyzeExpr(expr, extended)
+        }
+        analyzeExprs(letrec.body, extended)
+    }
+
     private fun analyzeLet(let: Let, env: ProcEnv) {
         val extended = RestProcEnv(env)
 
@@ -65,7 +102,7 @@ class ProcCallAnalyzer(input: Reader) {
             analyzeExpr(expr, env)
             when (expr) {
                 is Procedure -> {
-                    extended.addRule(name, arityEqual(expr.args.size))
+                    addProcRule(extended, name, expr)
                 }
 
                 is Define -> {
@@ -97,7 +134,7 @@ class ProcCallAnalyzer(input: Reader) {
     private fun analyzeDefine(define: Define, env: ProcEnv) {
         if (define.expr is Procedure) {
             val extended = RestProcEnv(env)
-            extended.addRule(define.name, arityEqual(define.expr.args.size))
+            addProcRule(extended, define.name, define.expr)
             analyzeExpr(define.expr, extended)
         } else {
             analyzeExpr(define.expr, env)

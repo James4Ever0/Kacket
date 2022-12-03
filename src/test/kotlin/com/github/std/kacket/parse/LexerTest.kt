@@ -38,7 +38,7 @@ class LexerTest {
     }
 
     @Test
-    internal fun nextToken3() {
+     fun nextToken3() {
         val code =
             """
         (define (fib n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2)))))
