@@ -97,4 +97,20 @@ internal class ProcCallAnalyzerTest {
         val analyzer = ProcCallAnalyzer(input)
     }
 
+    @Test
+    fun analyze6() {
+        val code = """
+                 (let loop ([lst '(a b c)]
+                       [cnt 0])
+                (if (null? lst)
+                    cnt
+                    (let ([fst (car lst)]
+                          [rest (cdr lst)])
+                      (if (eqv? fst 'a)
+                          (loop 114 rest (+ cnt 1))
+                          (loop 514 rest cnt)))))
+        """.trimIndent()
+        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
+        val analyzer = ProcCallAnalyzer(input)
+    }
 }

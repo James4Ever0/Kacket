@@ -5,7 +5,9 @@ DefineExpr := ( define ( Identifier {Identifier}* ) {Expr}+ )
             | ( define Identifier Expr )
 IfExpr := ( if Expr Expr Expr )
 ProcedureExpr := ( lambda ( {Identifier}* ) {Expr}+ )
-LetExpr := ( let (  {(Identifier Expr)}+  ) {Expr}+ )
+LetExpr := NormalLet | NamedLet
+NormalLet := ( let (  {(Identifier Expr)}+  ) {Expr}+ )
+NamedLet  := ( let Identifier (  {(Identifier Expr)}+  ) {Expr}+ )
 LetrecExpr := ( letrec (  {(Identifier Expr)}+  ) {Expr}+ )
 CallExpr := ( SExpr {Expr}* ) | ( VarExpr {Expr}* )
 VarExpr := Identifier

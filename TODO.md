@@ -1,5 +1,5 @@
-* named let
-* letrec
 * let*
 * case lambda
+* arbitrary argument procedure
 * define-datatype
+* cond

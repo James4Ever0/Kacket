@@ -32,11 +32,9 @@ class Parser(input: Reader) {
         }
     }
 
-    private fun isRightParenthesis(token: Token): Boolean =
-        token is Punctuation && token.isRightParenthesis()
+    private fun isRightParenthesis(token: Token): Boolean = token is Punctuation && token.isRightParenthesis()
 
-    private fun isLeftParenthesis(token: Token): Boolean =
-        token is Punctuation && token.isLeftParenthesis()
+    private fun isLeftParenthesis(token: Token): Boolean = token is Punctuation && token.isLeftParenthesis()
 
     private fun shouldBeLeftParenthesis(token: Token) {
         if (!(isLeftParenthesis(token))) {
@@ -107,8 +105,7 @@ class Parser(input: Reader) {
         return result
     }
 
-    private fun isReservedWord(id: String): Boolean =
-        id == "define" || id == "if" || id == "let" || id == "lambda"
+    private fun isReservedWord(id: String): Boolean = id == "define" || id == "if" || id == "let" || id == "lambda"
 
     private fun parseCall(token: Token, line: Int, column: Int): Expression {
         fun parseArgs(): List<Expression> {
@@ -193,9 +190,8 @@ class Parser(input: Reader) {
         }
     }
 
-    private fun parseLet(line: Int, column: Int): Expression {
-        val token = lexer.nextToken()
-        shouldBeLeftParenthesis(token)
+    private fun parseNormalLet(line: Int, column: Int): Expression {
+        shouldBeLeftParenthesis(lexer.nextToken())
 
         val variables = mutableListOf<String>()
         val values = mutableListOf<Expression>()
@@ -205,6 +201,45 @@ class Parser(input: Reader) {
         parseLetBody(body)
 
         return Let(variables, values, body, line, column)
+    }
+
+    private fun parseNamedLet(line: Int, column: Int): Expression {
+        val token = lexer.nextToken()
+        if (token !is Identifier || isReservedWord(token.value)) {
+            throw ParseError("Invalid Let near ($line, $column)")
+        }
+        shouldBeLeftParenthesis(lexer.nextToken())
+
+        val procArgs = mutableListOf<String>()
+        val values = mutableListOf<Expression>()
+        parseLetPairs(procArgs, values)
+
+        val procBody = mutableListOf<Expression>()
+        parseLetBody(procBody)
+
+        val proc = Procedure(procArgs, procBody, line, column)
+        val letrecBody: List<Expression> = listOf(Call(Var(token), values, line, column))
+
+        return Letrec(
+            listOf(token.value), listOf(proc), letrecBody, line, column
+        )
+    }
+
+    private fun parseLet(line: Int, column: Int): Expression {
+        val token = lexer.peekToken()
+        return when {
+            isLeftParenthesis(token) -> {
+                parseNormalLet(line, column)
+            }
+
+            token is Identifier && !isReservedWord(token.value) -> {
+                parseNamedLet(line, column)
+            }
+
+            else -> throw ParseError("Invalid Let near ($line, $column)")
+        }
+
+
     }
 
     private fun parseProc(line: Int, column: Int): Expression {

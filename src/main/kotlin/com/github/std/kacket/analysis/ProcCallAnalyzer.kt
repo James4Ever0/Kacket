@@ -54,7 +54,7 @@ class ProcCallAnalyzer(input: Reader) {
     }
 
 
-    private fun ignore() = Unit
+    private fun ignore() {}
 
     private fun analyzeProc(proc: Procedure, env: ProcEnv) {
         val extended = RestProcEnv(env)

@@ -152,4 +152,25 @@ internal class ParserTest {
 
         parser.parseExpr()
     }
+
+    @Test
+    fun parseExpr11() {
+        val code = """
+            (let loop ([lst '(a b c)]
+                       [cnt 0])
+                (if (null? lst)
+                    cnt
+                    (let ([fst (car lst)]
+                          [rest (cdr lst)])
+                      (if (eqv? fst 'a)
+                          (loop 114 rest (+ cnt 1))
+                          (loop 514 rest cnt)))))
+        """.trimIndent()
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+
+        val expr0 = parser.parseExpr()
+        val expected0 = "(letrec ([loop (lambda (lst cnt) (if (null? lst) cnt (let ([fst (car lst)][rest (cdr lst)]) (if (eqv? fst a) (loop rest (+ cnt 1)) (loop rest cnt)))))]) (loop '(a b c) 0))"
+        assertEquals(expected0, expr0.toString())
+
+    }
 }

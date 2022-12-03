@@ -24,4 +24,13 @@
    (bar 114 514)
    (error 114514))
 
+ (let loop ([lst '(a b c)]
+             [cnt 0])
+   (if (null? lst)
+     cnt
+     (let ([fst (car lst)]
+            [rest (cdr lst)])
+       (if (eqv? fst 'a)
+         (loop 114 rest (+ cnt 1))
+         (loop 514 rest cnt)))))
 
