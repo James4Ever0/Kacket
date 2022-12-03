@@ -4,7 +4,7 @@ import com.github.std.kacket.expr.*
 import com.github.std.kacket.parse.Parser
 import java.io.Reader
 
-class ArityMisMatchAnalyzer(input: Reader) {
+class ProcCallAnalyzer(input: Reader) {
     private val parser = Parser(input)
     private val initEnv = InitProcEnv()
     private val body = mutableListOf<Expression>()
@@ -72,6 +72,14 @@ class ArityMisMatchAnalyzer(input: Reader) {
                     throw AnalysisError("Invalid Define at (${expr.lineNumber()}, ${expr.columnNumber()})")
                 }
 
+                is Const -> {
+                    extended.addRule(name, notProc())
+                }
+
+                is Quote -> {
+                    extended.addRule(name, notProc())
+                }
+
                 else -> {
                     extended.addRule(name, arityAny())
                 }
@@ -96,33 +104,36 @@ class ArityMisMatchAnalyzer(input: Reader) {
         }
     }
 
-    private fun arityMisMatch(msg: String, line: Int, col: Int) {
-        println("arity mismatch at ($line, $col): $msg")
-    }
 
     private fun analyzeCall(call: Call, env: ProcEnv) {
         val proc = call.proc
         val args = call.args
         when (proc) {
             is Var -> {
-                if (!env.checkRule(proc.id.value, args.size)) {
-                    arityMisMatch(proc.id.value, proc.lineNumber(), proc.columnNumber())
+                try {
+                    env.applyRule(proc.id.value, args.size)
+                } catch (ex: AnalysisError) {
+                    println("${ex.message}, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure:${proc.id.value}")
                 }
             }
 
             is Procedure -> {
                 if (proc.args.size != args.size) {
-                    arityMisMatch("<procedure>", proc.lineNumber(), proc.columnNumber())
+                    println("Arity Mismatch, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure:<procedure>")
                 }
                 analyzeProc(proc, env)
             }
 
             is Const -> {
-                throw AnalysisError("Invalid Const at (${proc.lineNumber()}, ${proc.columnNumber()})")
+                throw AnalysisError("Invalid Const, at (${proc.lineNumber()}, ${proc.columnNumber()})")
             }
 
             is Define -> {
-                throw AnalysisError("Invalid Define at (${proc.lineNumber()}, ${proc.columnNumber()})")
+                throw AnalysisError("Invalid Define, at (${proc.lineNumber()}, ${proc.columnNumber()})")
+            }
+
+            is Quote -> {
+                throw AnalysisError("Invalid Quote at (${proc.lineNumber()}, ${proc.columnNumber()})")
             }
 
             else -> {

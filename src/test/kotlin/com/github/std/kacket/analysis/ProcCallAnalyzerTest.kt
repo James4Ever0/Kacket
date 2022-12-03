@@ -1,12 +1,11 @@
 package com.github.std.kacket.analysis
 
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 
-internal class ArityMisMatchAnalyzerTest {
+internal class ProcCallAnalyzerTest {
     @Test
     @Disabled
     fun analyze0() {
@@ -32,7 +31,7 @@ internal class ArityMisMatchAnalyzerTest {
         (length (list 1 2 3 4 7 5))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ArityMisMatchAnalyzer(input)
+        val analyzer = ProcCallAnalyzer(input)
     }
 
     @Test
@@ -43,7 +42,7 @@ internal class ArityMisMatchAnalyzerTest {
         (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ArityMisMatchAnalyzer(input)
+        val analyzer = ProcCallAnalyzer(input)
     }
     @Test
     fun analyze2() {
@@ -56,7 +55,7 @@ internal class ArityMisMatchAnalyzerTest {
                  (fib 114514 (- n 2)))))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ArityMisMatchAnalyzer(input)
+        val analyzer = ProcCallAnalyzer(input)
     }
     @Test
     fun analyze3() {
@@ -67,7 +66,22 @@ internal class ArityMisMatchAnalyzerTest {
              (foo 114 514))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ArityMisMatchAnalyzer(input)
+        val analyzer = ProcCallAnalyzer(input)
     }
 
+    @Test
+    fun analyze4() {
+        val code =
+            """
+        (let ((foo '(a b c))
+              (bar #t))
+              (bar 12)
+             (foo 114 514))
+        
+        ((lambda (x) x) 114 514)
+        
+        """
+        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
+        val analyzer = ProcCallAnalyzer(input)
+    }
 }

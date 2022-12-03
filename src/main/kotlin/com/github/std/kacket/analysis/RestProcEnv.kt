@@ -1,22 +1,18 @@
 package com.github.std.kacket.analysis
 
 class RestProcEnv(private val out: ProcEnv) : ProcEnv {
-    private val map = HashMap<String, (Int) -> Boolean>()
-    fun addRules(vararg idsAndRules: Pair<String, (Int) -> Boolean>) {
-        for ((id, rule) in idsAndRules) {
-            addRule(id, rule)
-        }
-    }
+    private val map = HashMap<String, (Int) -> Unit>()
 
-    override fun addRule(id: String, rule: (Int) -> Boolean) {
+    override fun addRule(id: String, rule: (Int) -> Unit) {
         map[id] = rule
     }
 
-    override fun checkRule(procId: String, actual: Int): Boolean {
+    override fun applyRule(procId: String, actual: Int) {
         val rule = map[procId]
-        if (rule != null) {
-            return rule.invoke(actual)
+        if (rule == null) {
+            out.applyRule(procId, actual)
+            return
         }
-        return out.checkRule(procId, actual)
+        rule.invoke(actual)
     }
 }

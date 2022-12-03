@@ -1,7 +1,7 @@
 package com.github.std.kacket.analysis
 
 class InitProcEnv : ProcEnv {
-    private val map = HashMap<String, (Int) -> Boolean>()
+    private val map = HashMap<String, (Int) -> Unit>()
 
     init {
         addPrimitiveProcsRules()
@@ -35,16 +35,13 @@ class InitProcEnv : ProcEnv {
 
     }
 
-    override fun addRule(id: String, rule: (Int) -> Boolean) {
+    override fun addRule(id: String, rule: (Int) -> Unit) {
         map[id] = rule
     }
 
-    override fun checkRule(procId: String, actual: Int): Boolean {
-        val rule = map[procId]
-        if (rule != null) {
-            return rule.invoke(actual)
-        }
-        throw AnalysisError("Can't find procedure $procId")
+    override fun applyRule(procId: String, actual: Int) {
+        val rule = map[procId] ?: throw AnalysisError("Can't find procedure $procId")
+        rule.invoke(actual)
     }
 
 }

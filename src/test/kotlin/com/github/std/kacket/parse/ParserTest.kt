@@ -3,6 +3,7 @@ package com.github.std.kacket.parse
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Disabled
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 
@@ -125,5 +126,30 @@ internal class ParserTest {
         val expr4 = parser.parseExpr()
         val expected4 = "'()"
         assertEquals(expected4, expr4.toString())
+    }
+
+    @Test
+    fun parseExpr9() {
+        val code =
+            """
+        (let ((foo '(a b c))
+              (bar #t))
+             (bar 12)
+             (foo 114 514))
+        """
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+
+        val expr0 = parser.parseExpr()
+        val expected0 = "(let ([foo '(a b c)][bar #t]) (bar 12)(foo 114 514))"
+        assertEquals(expected0, expr0.toString())
+    }
+
+    @Test
+    @Disabled
+    fun parseExpr10() {
+        val code = " ('(a b c) 114 514) "
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+
+        val expr0 = parser.parseExpr()
     }
 }

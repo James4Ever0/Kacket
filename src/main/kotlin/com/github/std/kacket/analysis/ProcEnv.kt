@@ -1,7 +1,7 @@
 package com.github.std.kacket.analysis
 
 sealed interface ProcEnv {
-    fun addRule(id: String, rule: (Int) -> Boolean)
+    fun addRule(id: String, rule: (Int) -> Unit)
 
-    fun checkRule(procId: String, actual: Int): Boolean
+    fun applyRule(procId: String, actual: Int)
 }

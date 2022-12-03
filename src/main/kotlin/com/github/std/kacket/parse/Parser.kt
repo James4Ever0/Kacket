@@ -132,7 +132,12 @@ class Parser(input: Reader) {
                 Call(proc, args, line, column)
             }
 
-            else -> throw ParseError(token)
+
+            else -> {
+                val msg =
+                    "Syntax Error at(${token.lineNumber()}, ${token.columnNumber()}), expect an Identifier or S-Expression"
+                throw ParseError(msg)
+            }
         }
     }
 
@@ -173,6 +178,8 @@ class Parser(input: Reader) {
         peek = lexer.peekToken()
         while (!(isRightParenthesis(peek))) {
             body.add(parseExpr())
+            peek = lexer.peekToken()
+
         }
         return Let(variables, values, body, line, column)
     }

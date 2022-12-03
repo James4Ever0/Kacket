@@ -1,24 +1,13 @@
-import com.github.std.kacket.analysis.ArityMisMatchAnalyzer
-import com.github.std.kacket.parse.EOF
-import com.github.std.kacket.parse.Lexer
-import java.io.ByteArrayInputStream
-import java.io.FileInputStream
+import com.github.std.kacket.analysis.ProcCallAnalyzer
 import java.io.FileReader
-import java.io.InputStreamReader
-import java.nio.file.Paths
-import java.util.Arrays
 
 private fun help() {
     val usage = """
         Usage: kacket <options> <source files>
         where possible options include:
-        --amc           arity mismatch check
+        --pcc          procedure call check
     """.trimIndent()
     println(usage)
-}
-
-private fun arityMismatchCheck(source: String) {
-    ArityMisMatchAnalyzer(FileReader(source))
 }
 
 fun main(args: Array<String>) {
@@ -28,8 +17,8 @@ fun main(args: Array<String>) {
     }
     val cmd = CMD(args)
     when {
-        cmd.amc() -> {
-            arityMismatchCheck(cmd.source)
+        cmd.pcc() -> {
+            ProcCallAnalyzer(FileReader(cmd.source))
         }
     }
 }
