@@ -1,14 +1,15 @@
 Program := {Expr}+
 Expr := SExpr | Const | VarExpr | QuoteExpr
-SExpr := DefineExpr | IfExpr | ProcedureExpr | LetExpr | LetrecExpr | CallExpr
+SExpr := DefineExpr | IfExpr | ProcedureExpr | LetExpr | LetrecExpr | LetstarExpr | CallExpr
 DefineExpr := ( define ( Identifier {Identifier}* ) {Expr}+ )
             | ( define Identifier Expr )
 IfExpr := ( if Expr Expr Expr )
 ProcedureExpr := ( lambda ( {Identifier}* ) {Expr}+ )
 LetExpr := NormalLet | NamedLet
-NormalLet := ( let (  {(Identifier Expr)}+  ) {Expr}+ )
-NamedLet  := ( let Identifier (  {(Identifier Expr)}+  ) {Expr}+ )
-LetrecExpr := ( letrec (  {(Identifier Expr)}+  ) {Expr}+ )
+NormalLet := ( let (  {(Identifier Expr)}*  ) {Expr}+ )
+NamedLet  := ( let Identifier (  {(Identifier Expr)}*  ) {Expr}+ )
+LetrecExpr := ( letrec (  {(Identifier Expr)}* ) {Expr}+ )
+LetstarExpr := ( let* (  {(Identifier Expr)}*  ) {Expr}+ )
 CallExpr := ( SExpr {Expr}* ) | ( VarExpr {Expr}* )
 VarExpr := Identifier
 Const := String | Number | Symbol | Bool | Character

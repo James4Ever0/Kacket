@@ -96,6 +96,7 @@ class Parser(input: Reader) {
             token is Identifier && token.value == "let" -> parseLet(line, column)
             token is Identifier && token.value == "lambda" -> parseProc(line, column)
             token is Identifier && token.value == "letrec" -> parseLetrec(line, column)
+            token is Identifier && token.value == "let*" -> parseLetstar(line, column)
             token is Identifier -> parseCall(token, line, column)
             isLeftParenthesis(token) -> parseCall(token, line, column)
             else -> throw ParseError(token)
@@ -140,8 +141,6 @@ class Parser(input: Reader) {
     }
 
     private fun parseLetrec(line: Int, column: Int): Expression {
-        val token = lexer.nextToken()
-        shouldBeLeftParenthesis(token)
 
         val variables = mutableListOf<String>()
         val values = mutableListOf<Expression>()
@@ -169,7 +168,9 @@ class Parser(input: Reader) {
     }
 
     private fun parseLetPairs(variables: MutableList<String>, values: MutableList<Expression>) {
-        parseLetPair(variables, values)
+        shouldBeLeftParenthesis(lexer.nextToken())
+
+//        parseLetPair(variables, values)
 
         var peek = lexer.peekToken()
         while (isLeftParenthesis(peek)) {
@@ -191,7 +192,6 @@ class Parser(input: Reader) {
     }
 
     private fun parseNormalLet(line: Int, column: Int): Expression {
-        shouldBeLeftParenthesis(lexer.nextToken())
 
         val variables = mutableListOf<String>()
         val values = mutableListOf<Expression>()
@@ -208,7 +208,6 @@ class Parser(input: Reader) {
         if (token !is Identifier || isReservedWord(token.value)) {
             throw ParseError("Invalid Let near ($line, $column)")
         }
-        shouldBeLeftParenthesis(lexer.nextToken())
 
         val procArgs = mutableListOf<String>()
         val values = mutableListOf<Expression>()
@@ -223,6 +222,31 @@ class Parser(input: Reader) {
         return Letrec(
             listOf(token.value), listOf(proc), letrecBody, line, column
         )
+    }
+
+    private fun parseLetstar(line: Int, column: Int): Expression {
+        val variables = mutableListOf<String>()
+        val values = mutableListOf<Expression>()
+        parseLetPairs(variables, values)
+
+        val body = mutableListOf<Expression>()
+        parseLetBody(body)
+
+        if (variables.isEmpty() && values.isEmpty()) {
+            return Let(variables, values, body, line, column)
+        }
+
+        var index = variables.size - 1
+        var let = Let(
+            listOf(variables[index]), listOf(values[index]), body, line, column
+        )
+        while (index > 0) {
+            index--
+            let = Let(
+                listOf(variables[index]), listOf(values[index]), listOf(let), line, column
+            )
+        }
+        return let
     }
 
     private fun parseLet(line: Int, column: Int): Expression {

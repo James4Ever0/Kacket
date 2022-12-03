@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
+import kotlin.math.exp
 
 internal class ParserTest {
 
@@ -169,8 +170,31 @@ internal class ParserTest {
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
 
         val expr0 = parser.parseExpr()
-        val expected0 = "(letrec ([loop (lambda (lst cnt) (if (null? lst) cnt (let ([fst (car lst)][rest (cdr lst)]) (if (eqv? fst a) (loop rest (+ cnt 1)) (loop rest cnt)))))]) (loop '(a b c) 0))"
+        val expected0 =
+            "(letrec ([loop (lambda (lst cnt) (if (null? lst) cnt (let ([fst (car lst)][rest (cdr lst)]) (if (eqv? fst a) (loop 114 rest (+ cnt 1)) (loop 514 rest cnt)))))]) (loop '(a b c) 0))"
         assertEquals(expected0, expr0.toString())
 
+    }
+
+    @Test
+    fun parseExpr12() {
+        val code = """
+            (let* ([foo '(a b c)]
+                   [f1 (lambda (x) x)]
+                   [f2 (f1 foo)])
+               (f2 114 514))
+               
+            (let* () 114514)
+        """.trimIndent()
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+
+        val expr0 = parser.parseExpr()
+        val expected0 = "(let ([foo '(a b c)]) (let ([f1 (lambda (x) x)]) (let ([f2 (f1 foo)]) (f2 114 514))))"
+        assertEquals(expected0, expr0.toString())
+
+
+        val expr1 = parser.parseExpr()
+        val expected1 = "(let () 114514)"
+        assertEquals(expected1, expr1.toString())
     }
 }

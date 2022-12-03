@@ -7,6 +7,7 @@
  (let ((foo (lambda (bar)
                          (bar bar))))
               (foo 114 514))
+
  (let ((foo '(a b c))
        (bar #t))
     (bar 12)
