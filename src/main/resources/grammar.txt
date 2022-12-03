@@ -1,9 +1,10 @@
 Program := {Expr}+
 Expr := SExpr | Const | VarExpr | QuoteExpr
-SExpr := DefineExpr | IfExpr | ProcedureExpr | LetExpr | LetrecExpr | LetstarExpr | CallExpr
+SExpr := DefineExpr | IfExpr | CondExpr | ProcedureExpr | LetExpr | LetrecExpr | LetstarExpr | CallExpr
 DefineExpr := ( define ( Identifier {Identifier}* ) {Expr}+ )
             | ( define Identifier Expr )
 IfExpr := ( if Expr Expr Expr )
+CondExpr := (cond {[Expr Expr]}* [else Expr])
 ProcedureExpr := ( lambda ( {Identifier}* ) {Expr}+ )
 LetExpr := NormalLet | NamedLet
 NormalLet := ( let (  {(Identifier Expr)}*  ) {Expr}+ )

@@ -2,11 +2,16 @@ package com.github.std.kacket.expr
 
 import com.github.std.kacket.parse.*
 
+
 class Quote(
     private val line: Int,
     private val column: Int,
     private val elements: List<QuoteElement>
 ) : Expression {
+    companion object {
+        val NIL = Quote(-1, -1, listOf())
+    }
+
     interface QuoteElement
     class ElementConst(private val token: Token) : QuoteElement {
         override fun toString(): String = when {

@@ -97,6 +97,8 @@ class Parser(input: Reader) {
             token is Identifier && token.value == "lambda" -> parseProc(line, column)
             token is Identifier && token.value == "letrec" -> parseLetrec(line, column)
             token is Identifier && token.value == "let*" -> parseLetstar(line, column)
+            token is Identifier && token.value == "cond" -> parseCond(line, column)
+
             token is Identifier -> parseCall(token, line, column)
             isLeftParenthesis(token) -> parseCall(token, line, column)
             else -> throw ParseError(token)
@@ -106,7 +108,8 @@ class Parser(input: Reader) {
         return result
     }
 
-    private fun isReservedWord(id: String): Boolean = id == "define" || id == "if" || id == "let" || id == "lambda"
+    private fun isReservedWord(id: String): Boolean =
+        id == "define" || id == "if" || id == "else" || id == "let" || id == "letrec" || id == "let*" || id == "cond" || id == "lambda"
 
     private fun parseCall(token: Token, line: Int, column: Int): Expression {
         fun parseArgs(): List<Expression> {
@@ -292,6 +295,50 @@ class Parser(input: Reader) {
             peek = lexer.peekToken()
         }
         return Procedure(args, body, line, column)
+    }
+
+    private fun parseCond(line: Int, column: Int): Expression {
+        fun buildIf(preds: MutableList<Expression>, values: MutableList<Expression>, default: Expression): Expression {
+            if (preds.isEmpty() && values.isEmpty()) {
+                return default
+            }
+            var index = preds.size - 1
+            var innerIf = If(preds[index], values[index], default, line, column)
+            while (index > 0) {
+                index--
+                innerIf = If(preds[index], values[index], innerIf, line, column)
+            }
+            return innerIf
+        }
+
+        fun buildIf(preds: MutableList<Expression>, values: MutableList<Expression>): Expression {
+            // TODO: what is the ALTER of last IF?
+            if (preds.isEmpty() && values.isEmpty()) {
+                return Quote.NIL
+            }
+            return buildIf(preds, values, Quote.NIL)
+        }
+
+        val preds = mutableListOf<Expression>()
+        val values = mutableListOf<Expression>()
+
+        var peek = lexer.peekToken()
+        while (!isRightParenthesis(peek)) {
+            shouldBeLeftParenthesis(lexer.nextToken())
+            val next = lexer.peekToken()
+            if (next is Identifier && next.value == "else") {
+                lexer.nextToken()
+                val default = parseExpr()
+                shouldBeRightParenthesis(lexer.nextToken())
+                return buildIf(preds, values, default)
+            } else {
+                preds.add(parseExpr())
+                values.add(parseExpr())
+                shouldBeRightParenthesis(lexer.nextToken())
+            }
+            peek = lexer.peekToken()
+        }
+        return buildIf(preds, values)
     }
 
     private fun parseIf(line: Int, column: Int): Expression {
