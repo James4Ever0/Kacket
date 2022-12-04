@@ -98,7 +98,7 @@ class Parser(input: Reader) {
             token is Identifier && token.value == "letrec" -> parseLetrec(line, column)
             token is Identifier && token.value == "let*" -> parseLetstar(line, column)
             token is Identifier && token.value == "cond" -> parseCond(line, column)
-
+            token is Identifier && token.value == "begin" -> parseBegin(line, column)
             token is Identifier -> parseCall(token, line, column)
             isLeftParenthesis(token) -> parseCall(token, line, column)
             else -> throw ParseError(token)
@@ -106,6 +106,16 @@ class Parser(input: Reader) {
 
         shouldBeRightParenthesis(lexer.nextToken())
         return result
+    }
+
+    private fun parseBegin(line: Int, column: Int): Begin {
+        var peek = lexer.peekToken()
+        val body = mutableListOf<Expression>()
+        while (!(isRightParenthesis(peek))) {
+            body.add(parseExpr())
+            peek = lexer.peekToken()
+        }
+        return Begin(body, line, column)
     }
 
     private fun isReservedWord(id: String): Boolean =

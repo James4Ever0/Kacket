@@ -18,7 +18,8 @@ fun main(args: Array<String>) {
     val cmd = CMD(args)
     when {
         cmd.pcc() -> {
-            ProcCallAnalyzer(FileReader(cmd.source))
+            val analyzer = ProcCallAnalyzer(FileReader(cmd.source))
+            analyzer.analyzeProgram()
         }
     }
 }

@@ -11,7 +11,6 @@ class ProcCallAnalyzer(input: Reader) {
 
     init {
         init()
-        analyzeProgram()
     }
 
     private fun init() {
@@ -24,12 +23,17 @@ class ProcCallAnalyzer(input: Reader) {
         }
     }
 
+    fun addProcRule(procId: String, rule: (Int) -> Unit): ProcCallAnalyzer {
+        initEnv.addRule(procId, rule)
+        return this
+    }
+
     private fun addProcRule(env: ProcEnv, id: String, proc: Procedure) {
         // TODO: Other situations
         env.addRule(id, arityEqual(proc.args.size))
     }
 
-    private fun analyzeProgram() {
+    fun analyzeProgram() {
         analyzeExprs(body, initEnv)
     }
 
@@ -47,10 +51,15 @@ class ProcCallAnalyzer(input: Reader) {
             is Let -> analyzeLet(expr, env)
             is Letrec -> analyzeLetrec(expr, env)
             is Procedure -> analyzeProc(expr, env)
+            is Begin -> analyzeBegin(expr, env)
             is Var -> ignore()
             is Const -> ignore()
             is Quote -> ignore()
         }
+    }
+
+    private fun analyzeBegin(expr: Begin, env: ProcEnv) {
+        analyzeExprs(expr.body, env)
     }
 
 
@@ -150,7 +159,7 @@ class ProcCallAnalyzer(input: Reader) {
                 try {
                     env.applyRule(proc.id.value, args.size)
                 } catch (ex: AnalysisError) {
-                    println("${ex.message}, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure:${proc.id.value}")
+                    println("${ex.message}, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure call:${proc.id.value}")
                 }
             }
 

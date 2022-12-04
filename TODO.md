@@ -1,4 +1,4 @@
+* define-datatype
 * case lambda
 * arbitrary argument procedure
-* define-datatype
-* begin
+

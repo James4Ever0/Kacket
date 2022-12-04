@@ -31,6 +31,7 @@ internal class ProcCallAnalyzerTest {
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
         val analyzer = ProcCallAnalyzer(input)
+        analyzer.analyzeProgram()
     }
 
     @Test
@@ -42,6 +43,7 @@ internal class ProcCallAnalyzerTest {
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
         val analyzer = ProcCallAnalyzer(input)
+        analyzer.analyzeProgram()
     }
     @Test
     fun analyze2() {
@@ -55,6 +57,7 @@ internal class ProcCallAnalyzerTest {
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
         val analyzer = ProcCallAnalyzer(input)
+        analyzer.analyzeProgram()
     }
     @Test
     fun analyze3() {
@@ -66,6 +69,7 @@ internal class ProcCallAnalyzerTest {
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
         val analyzer = ProcCallAnalyzer(input)
+        analyzer.analyzeProgram()
     }
 
     @Test
@@ -82,6 +86,7 @@ internal class ProcCallAnalyzerTest {
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
         val analyzer = ProcCallAnalyzer(input)
+        analyzer.analyzeProgram()
     }
     @Test
     fun analyze5() {
@@ -95,6 +100,7 @@ internal class ProcCallAnalyzerTest {
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
         val analyzer = ProcCallAnalyzer(input)
+        analyzer.analyzeProgram()
     }
 
     @Test
@@ -112,5 +118,19 @@ internal class ProcCallAnalyzerTest {
         """.trimIndent()
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
         val analyzer = ProcCallAnalyzer(input)
+        analyzer.analyzeProgram()
+    }
+    @Test
+    fun analyze7() {
+        val code = """
+            (let ([foo '(a b 9 (c d))]
+                  [bar (lambda (x) x)])
+              (begin 
+                 (bar)
+                 (foo)))
+        """.trimIndent()
+        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
+        val analyzer = ProcCallAnalyzer(input)
+        analyzer.analyzeProgram()
     }
 }

@@ -223,6 +223,22 @@ internal class ParserTest {
         val expr3 = parser.parseExpr()
         val expected3 = "2"
         assertEquals(expected3, expr3.toString())
+    }
 
+    @Test
+    fun parseExpr14() {
+        val code = """
+            (let ([foo '(a b 9 (c d))]
+                  [bar (lambda (x) x)])
+              (begin 
+                 (bar)
+                 (foo)))
+        """.trimIndent()
+
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+
+        val expr0 = parser.parseExpr()
+        val expected0 = "(let ([foo '(a b 9 (c d))][bar (lambda (x) x)]) (begin (bar)(foo)))"
+        assertEquals(expected0, expr0.toString())
     }
 }
