@@ -1,27 +1,33 @@
 package com.github.std.kacket.expr.exten
 
-import com.github.std.kacket.analysis.ProcEnv
 import com.github.std.kacket.expr.Expression
 
-class DefineDatatype(
+class Cases(
     val typeName: String,
-    val predName: String,
+    val case: Expression,
     val variants: List<Variant>,
+    val default: Expression,
     private val line: Int,
     private val col: Int
 ) : ExtExpr {
     class Variant(
         val name: String,
-        val fields: Map<String, Expression>
+        val fields: List<String>,
+        val conseq: Expression,
+        val line: Int,
+        val col: Int
     ) {
         override fun toString(): String {
-            val builder = StringBuilder("[$name")
-            for ((fieldName, expr) in fields) {
-                builder.append("($fieldName ")
-                builder.append(expr.toString())
-                builder.append(")")
+            val builder = StringBuilder("[ $name (")
+            for (field in fields) {
+                builder.append(field)
+                builder.append(" ")
             }
-            builder.append("]")
+            if (fields.isNotEmpty()) {
+                builder.setLength(builder.length - 1)
+            }
+            builder.append(")")
+            builder.append(conseq.toString())
             return builder.toString()
         }
     }
@@ -30,11 +36,11 @@ class DefineDatatype(
 
     override fun columnNumber(): Int = col
     override fun toString(): String {
-        val builder = StringBuilder("(define-datatype $typeName $predName ")
+        val builder = StringBuilder("(cases $typeName $case ")
         for (variant in variants) {
             builder.append(variant.toString())
         }
-        builder.append(")")
+        builder.append("[else $default])")
         return builder.toString()
     }
 }

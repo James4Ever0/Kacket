@@ -9,7 +9,7 @@ class Const(
     override fun columnNumber(): Int = token.columnNumber()
     override fun toString(): String = when {
         token is Text -> {
-            token.value
+            "\"${token.value}\""
         }
 
         token is Num -> {
@@ -17,7 +17,7 @@ class Const(
         }
 
         token is Symbol -> {
-            token.value
+            "'${token.value}"
         }
 
         token is Character -> {

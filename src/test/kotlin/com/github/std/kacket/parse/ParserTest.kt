@@ -1,5 +1,6 @@
 package com.github.std.kacket.parse
 
+import com.github.std.kacket.parse.exten.CasesParser
 import com.github.std.kacket.parse.exten.DefineDatatypeParser
 import org.junit.jupiter.api.Test
 
@@ -57,7 +58,7 @@ internal class ParserTest {
         val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
         val expr = parser.parseExpr()
 
-        val expected = "(let ([a 1][b sym][c hello][d #t][e #f][g a]) a)"
+        val expected = "(let ([a 1][b 'sym][c \"hello\"][d #t][e #f][g a]) a)"
         assertEquals(expected, expr.toString())
     }
 
@@ -172,7 +173,7 @@ internal class ParserTest {
 
         val expr0 = parser.parseExpr()
         val expected0 =
-            "(letrec ([loop (lambda (lst cnt) (if (null? lst) cnt (let ([fst (car lst)][rest (cdr lst)]) (if (eqv? fst a) (loop 114 rest (+ cnt 1)) (loop 514 rest cnt)))))]) (loop '(a b c) 0))"
+            "(letrec ([loop (lambda (lst cnt) (if (null? lst) cnt (let ([fst (car lst)][rest (cdr lst)]) (if (eqv? fst 'a) (loop 114 rest (+ cnt 1)) (loop 514 rest cnt)))))]) (loop '(a b c) 0))"
         assertEquals(expected0, expr0.toString())
 
     }
@@ -281,8 +282,57 @@ internal class ParserTest {
         parser.addSExprExt(DefineDatatypeParser)
 
         val expected0 =
-            "(define-datatype expression expression? [const-exp (num number?)][if-exp (exp1 expression?)(exp2 expression?)(exp3 expression?)][zero?-exp (exp1 expression?)][var-exp (var identifier?)][diff-exp (exp1 expression?)(exp2 expression?)][let-exp (var identifier?)(exp expression?)(body expression?)][letrec-exp (p-name identifier?)(b-var identifier?)(p-body expression?)(letrec-body expression?)][proc-exp (var identifier?)(body expression?)][call-exp (rator expression?)(rand expression?)])"
+            "(define-datatype expression expression? [const-exp(num number?)][if-exp(exp1 expression?)(exp2 expression?)(exp3 expression?)][zero?-exp(exp1 expression?)][var-exp(var identifier?)][diff-exp(exp1 expression?)(exp2 expression?)][let-exp(var identifier?)(exp expression?)(body expression?)][letrec-exp(p-name identifier?)(b-var identifier?)(p-body expression?)(letrec-body expression?)][proc-exp(var identifier?)(body expression?)][call-exp(rator expression?)(rand expression?)])"
         val expr0 = parser.parseExpr()
         assertEquals(expected0, expr0.toString())
+    }
+
+    @Test
+    fun parseExpr16() {
+        val code = """
+            (define value-of
+               (lambda (exp env)
+                (cases expression exp
+                  (const-exp (num) (num-val num))
+                  (var-exp (var) (apply-env env var))
+                  (diff-exp (exp1 exp2)
+                            (let ((val1 (value-of exp1 env))
+                                  (val2 (value-of exp2 env)))
+                              (let ((num1 (expval->num val1))
+                                    (num2 (expval->num val2)))
+                                (num-val
+                                 (- num1 num2)))))
+                  (if-exp (exp1 exp2 exp3)
+                          (let ((val1 (value-of exp1 env)))
+                            (if (expval->bool val1)
+                                (value-of exp2 env)
+                                (value-of exp3 env))))
+                  (zero?-exp (exp1)
+                             (let ((val1 (value-of exp1 env)))
+                               (let ((num1 (expval->num val1)))
+                                 (if (zero? num1)
+                                     (bool-val #t)
+                                     (bool-val #f)))))
+                  (let-exp (var exp body)
+                           (value-of body
+                                     (extend-env var (value-of exp env) env)))
+                  (letrec-exp (proc-name bound-var proc-body letrec-body)
+                              (value-of letrec-body (extend-env-rec proc-name bound-var proc-body env)))
+                  (proc-exp (var body)
+                            (proc-val (procedure var body env)))
+                  (call-exp (rator rand)
+                            ; (write env)
+                            ; (newline)
+                            (let ((proc (expval->proc (value-of rator env)))
+                                  (arg (value-of rand env)))
+                              (apply-procedure proc arg)))
+                  (else "error ~s")
+                  )))
+        """.trimIndent()
+
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        parser.addSExprExt(CasesParser)
+        val expr0 = parser.parseExpr()
+        println(expr0)
     }
 }

@@ -1,7 +1,9 @@
 package com.github.std.kacket.analysis
 
+import com.github.std.kacket.analysis.exten.CasesAnalyzer
 import com.github.std.kacket.analysis.exten.DefineDatatypeAnalyzer
 import com.github.std.kacket.parse.Parser
+import com.github.std.kacket.parse.exten.CasesParser
 import com.github.std.kacket.parse.exten.DefineDatatypeParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -196,6 +198,39 @@ internal class ProcCallAnalyzerTest {
 
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.addExtAnalyzer(DefineDatatypeAnalyzer)
+
+        analyzer.analyzeProgram()
+    }
+    @Test
+    fun analyze9() {
+        val code = """
+            (define-datatype Tree tree?
+              (BinTree (val number?)
+                       (left tree?)
+                       (right tree?))
+              (Empty))
+              
+            (define t0 (BinTree 11 (BinTree 4 (Empty) (Empty))
+                                   514
+                                   (BinTree 514 (Empty) (Empty))))
+            
+            (define sum 
+               (lambda (tree)
+                 (cases Tree tree
+                   (Empty (foo bar) 0)
+                   (BinTree (val left right)
+                     (+ val (sum left) (sum right))))))
+        """.trimIndent()
+
+        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
+        val parser = Parser(input)
+
+        parser.addSExprExt(DefineDatatypeParser)
+        parser.addSExprExt(CasesParser)
+
+        val analyzer = ProcCallAnalyzer(parser)
+        analyzer.addExtAnalyzer(DefineDatatypeAnalyzer)
+        analyzer.addExtAnalyzer(CasesAnalyzer)
 
         analyzer.analyzeProgram()
     }

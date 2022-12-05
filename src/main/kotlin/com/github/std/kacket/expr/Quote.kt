@@ -16,7 +16,7 @@ class Quote(
     class ElementConst(private val token: Token) : QuoteElement {
         override fun toString(): String = when {
             token is Text -> {
-                token.value
+                "\"${token.value}\""
             }
 
             token is Num -> {
