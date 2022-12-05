@@ -22,7 +22,6 @@ class InitProcEnv : ProcEnv {
         map["eq?"] = arityEqual(2)
         map["eqv?"] = arityEqual(2)
         map["equal?"] = arityEqual(2)
-        map["list?"] = arityEqual(1)
 
         map["car"] = arityEqual(1)
         map["cdr"] = arityEqual(1)
@@ -32,6 +31,14 @@ class InitProcEnv : ProcEnv {
         map["cdddr"] = arityEqual(1)
 
         map["map"] = arityGreaterEqual(2)
+
+        map["and"] = arityAny()
+        map["or"] = arityAny()
+        map["not"] = arityEqual(1)
+
+        map["number?"] = arityEqual(1)
+        map["symbol?"] = arityEqual(1)
+        map["list?"] = arityEqual(1)
 
     }
 

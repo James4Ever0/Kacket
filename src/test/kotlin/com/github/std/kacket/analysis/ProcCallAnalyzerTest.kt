@@ -1,6 +1,9 @@
 package com.github.std.kacket.analysis
 
-import org.junit.jupiter.api.Disabled
+import com.github.std.kacket.analysis.exten.DefineDatatypeAnalyzer
+import com.github.std.kacket.parse.Parser
+import com.github.std.kacket.parse.exten.DefineDatatypeParser
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
@@ -30,7 +33,8 @@ internal class ProcCallAnalyzerTest {
         (length (list 1 2 3 4 7 5))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ProcCallAnalyzer(input)
+        val parser = Parser(input)
+        val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
 
@@ -42,9 +46,11 @@ internal class ProcCallAnalyzerTest {
         (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ProcCallAnalyzer(input)
+        val parser = Parser(input)
+        val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
+
     @Test
     fun analyze2() {
         val code =
@@ -56,9 +62,11 @@ internal class ProcCallAnalyzerTest {
                  (fib 114514 (- n 2)))))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ProcCallAnalyzer(input)
+        val parser = Parser(input)
+        val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
+
     @Test
     fun analyze3() {
         val code =
@@ -68,7 +76,8 @@ internal class ProcCallAnalyzerTest {
              (foo 114 514))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ProcCallAnalyzer(input)
+        val parser = Parser(input)
+        val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
 
@@ -85,9 +94,11 @@ internal class ProcCallAnalyzerTest {
         
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ProcCallAnalyzer(input)
+        val parser = Parser(input)
+        val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
+
     @Test
     fun analyze5() {
         val code =
@@ -99,7 +110,8 @@ internal class ProcCallAnalyzerTest {
            (error 114514))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ProcCallAnalyzer(input)
+        val parser = Parser(input)
+        val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
 
@@ -117,9 +129,11 @@ internal class ProcCallAnalyzerTest {
                           (loop 514 rest cnt)))))
         """.trimIndent()
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ProcCallAnalyzer(input)
+        val parser = Parser(input)
+        val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
+
     @Test
     fun analyze7() {
         val code = """
@@ -130,7 +144,59 @@ internal class ProcCallAnalyzerTest {
                  (foo)))
         """.trimIndent()
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val analyzer = ProcCallAnalyzer(input)
+        val parser = Parser(input)
+        val analyzer = ProcCallAnalyzer(parser)
+        analyzer.analyzeProgram()
+    }
+
+    @Test
+    fun analyze8() {
+        val code = """
+            (define-datatype expression expression?
+               (const-exp
+                (num number?))
+               (if-exp
+                (exp1 expression?)
+                (exp2 expression?)
+                (exp3 expression?))
+               (zero?-exp
+                (exp1 expression?))
+               (var-exp
+                (var identifier?))
+               (diff-exp
+                (exp1 expression?)
+                (exp2 expression?))
+               (let-exp
+                (var  identifier?)
+                (exp  expression?)
+                (body expression?))
+               (letrec-exp
+                (p-name identifier?)
+                (b-var identifier?)
+                (p-body expression?)
+                (letrec-body expression?))
+               (proc-exp
+                (var identifier?)
+                (body (lambda(x y) (expression? x))))
+               (call-exp
+                (rator expression?)
+                (rand expression?))
+               )
+          (define identifier?
+             (lambda (exp)
+               (and (symbol? exp)
+                    (not (eqv? exp 'lambda)))))
+          
+          (call-exp 114 514 114514)
+        """.trimIndent()
+
+        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
+        val parser = Parser(input)
+        parser.addSExprExt(DefineDatatypeParser)
+
+        val analyzer = ProcCallAnalyzer(parser)
+        analyzer.addExtAnalyzer(DefineDatatypeAnalyzer)
+
         analyzer.analyzeProgram()
     }
 }

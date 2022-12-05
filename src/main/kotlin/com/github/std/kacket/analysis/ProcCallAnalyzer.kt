@@ -1,24 +1,28 @@
 package com.github.std.kacket.analysis
 
+import com.github.std.kacket.analysis.exten.ExtAnalyzer
 import com.github.std.kacket.expr.*
+import com.github.std.kacket.expr.exten.ExtExpr
 import com.github.std.kacket.parse.Parser
 import java.io.Reader
 
-class ProcCallAnalyzer(input: Reader) {
-    private val parser = Parser(input)
+class ProcCallAnalyzer(private val parser: Parser) {
     private val initEnv = InitProcEnv()
     private val body = mutableListOf<Expression>()
-
-    init {
-        init()
-    }
+    private val extAnalyzers = mutableListOf<ExtAnalyzer>()
 
     private fun init() {
         while (!parser.isEnd()) {
             val expr = parser.parseExpr()
             body.add(expr)
+            // TODO: Other situations
             if (expr is Define && expr.expr is Procedure) {
                 addProcRule(initEnv, expr.name, expr.expr)
+            }
+            for (analyzer in extAnalyzers) {
+                if (expr is ExtExpr && analyzer.support(expr)) {
+                    analyzer.modifyEnv(initEnv, expr)
+                }
             }
         }
     }
@@ -28,22 +32,28 @@ class ProcCallAnalyzer(input: Reader) {
         return this
     }
 
+    fun addExtAnalyzer(analyzer: ExtAnalyzer): ProcCallAnalyzer {
+        extAnalyzers.add(analyzer)
+        return this
+    }
+
     private fun addProcRule(env: ProcEnv, id: String, proc: Procedure) {
         // TODO: Other situations
         env.addRule(id, arityEqual(proc.args.size))
     }
 
     fun analyzeProgram() {
+        init()
         analyzeExprs(body, initEnv)
     }
 
-    private fun analyzeExprs(exprs: List<Expression>, env: ProcEnv) {
+    fun analyzeExprs(exprs: List<Expression>, env: ProcEnv) {
         for (expr in exprs) {
             analyzeExpr(expr, env)
         }
     }
 
-    private fun analyzeExpr(expr: Expression, env: ProcEnv) {
+    fun analyzeExpr(expr: Expression, env: ProcEnv) {
         when (expr) {
             is Call -> analyzeCall(expr, env)
             is Define -> analyzeDefine(expr, env)
@@ -55,6 +65,14 @@ class ProcCallAnalyzer(input: Reader) {
             is Var -> ignore()
             is Const -> ignore()
             is Quote -> ignore()
+            is ExtExpr -> {
+                val analyzer = extAnalyzers.find { it.support(expr) }
+                analyzer?.analyze(expr, env, this)
+            }
+
+            else -> {
+                throw AnalysisError("Unknown Expression: $expr")
+            }
         }
     }
 

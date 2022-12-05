@@ -1,5 +1,6 @@
 package com.github.std.kacket.parse
 
+import com.github.std.kacket.parse.exten.DefineDatatypeParser
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -200,7 +201,7 @@ internal class ParserTest {
 
     @Test
     fun parseExpr13() {
-        val code ="""
+        val code = """
              (cond [(foo1) bar1] [foo2 bar2] [else bar3])
              (cond [(foo1) bar1] [foo2 bar2])
              (cond) 
@@ -239,6 +240,49 @@ internal class ParserTest {
 
         val expr0 = parser.parseExpr()
         val expected0 = "(let ([foo '(a b 9 (c d))][bar (lambda (x) x)]) (begin (bar)(foo)))"
+        assertEquals(expected0, expr0.toString())
+    }
+
+    @Test
+    fun parseExpr15() {
+        val code = """
+            (define-datatype expression expression?
+               (const-exp
+                (num number?))
+               (if-exp
+                (exp1 expression?)
+                (exp2 expression?)
+                (exp3 expression?))
+               (zero?-exp
+                (exp1 expression?))
+               (var-exp
+                (var identifier?))
+               (diff-exp
+                (exp1 expression?)
+                (exp2 expression?))
+               (let-exp
+                (var  identifier?)
+                (exp  expression?)
+                (body expression?))
+               (letrec-exp
+                (p-name identifier?)
+                (b-var identifier?)
+                (p-body expression?)
+                (letrec-body expression?))
+               (proc-exp
+                (var identifier?)
+                (body expression?))
+               (call-exp
+                (rator expression?)
+                (rand expression?))
+               )
+        """.trimIndent()
+        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        parser.addSExprExt(DefineDatatypeParser)
+
+        val expected0 =
+            "(define-datatype expression expression? [const-exp (num number?)][if-exp (exp1 expression?)(exp2 expression?)(exp3 expression?)][zero?-exp (exp1 expression?)][var-exp (var identifier?)][diff-exp (exp1 expression?)(exp2 expression?)][let-exp (var identifier?)(exp expression?)(body expression?)][letrec-exp (p-name identifier?)(b-var identifier?)(p-body expression?)(letrec-body expression?)][proc-exp (var identifier?)(body expression?)][call-exp (rator expression?)(rand expression?)])"
+        val expr0 = parser.parseExpr()
         assertEquals(expected0, expr0.toString())
     }
 }

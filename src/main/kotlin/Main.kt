@@ -1,5 +1,8 @@
 import com.github.std.kacket.analysis.ProcCallAnalyzer
+import com.github.std.kacket.parse.Parser
+import java.io.ByteArrayInputStream
 import java.io.FileReader
+import java.io.InputStreamReader
 
 private fun help() {
     val usage = """
@@ -18,7 +21,9 @@ fun main(args: Array<String>) {
     val cmd = CMD(args)
     when {
         cmd.pcc() -> {
-            val analyzer = ProcCallAnalyzer(FileReader(cmd.source))
+            val input = FileReader(cmd.source)
+            val parser = Parser(input)
+            val analyzer = ProcCallAnalyzer(parser)
             analyzer.analyzeProgram()
         }
     }

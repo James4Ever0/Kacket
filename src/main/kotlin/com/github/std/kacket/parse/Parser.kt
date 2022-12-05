@@ -1,11 +1,42 @@
 package com.github.std.kacket.parse
 
 import com.github.std.kacket.expr.*
+import com.github.std.kacket.parse.exten.SExprExtParser
 import java.io.Reader
 
 class Parser(input: Reader) {
     private val lexer = Lexer(input)
+    private val sExprExts = mutableListOf<SExprExtParser>()
+    private val reservedWords = mutableListOf("define", "if", "else", "let", "letrec", "let*", "cond", "lambda")
     fun isEnd(): Boolean = lexer.peekToken() is EOF
+
+    fun addSExprExt(ext: SExprExtParser): Parser {
+        reservedWords.add(ext.start())
+        sExprExts.add(ext)
+        return this
+    }
+
+    fun isRightParenthesis(token: Token): Boolean = token is Punctuation && token.isRightParenthesis()
+
+    fun isLeftParenthesis(token: Token): Boolean = token is Punctuation && token.isLeftParenthesis()
+
+    fun shouldBeLeftParenthesis(token: Token) {
+        if (!(isLeftParenthesis(token))) {
+            throw ParseError(token)
+        }
+    }
+
+    fun shouldBeRightParenthesis(token: Token) {
+        if (!(isRightParenthesis(token))) {
+            throw ParseError(token)
+        }
+    }
+
+    fun shouldBeNameToken(token: Token) {
+        if (token !is Identifier || reservedWords.contains(token.value)) {
+            throw ParseError(token)
+        }
+    }
 
     fun parseExpr(): Expression {
         val token = lexer.nextToken()
@@ -29,22 +60,6 @@ class Parser(input: Reader) {
             else -> {
                 throw ParseError(token)
             }
-        }
-    }
-
-    private fun isRightParenthesis(token: Token): Boolean = token is Punctuation && token.isRightParenthesis()
-
-    private fun isLeftParenthesis(token: Token): Boolean = token is Punctuation && token.isLeftParenthesis()
-
-    private fun shouldBeLeftParenthesis(token: Token) {
-        if (!(isLeftParenthesis(token))) {
-            throw ParseError(token)
-        }
-    }
-
-    private fun shouldBeRightParenthesis(token: Token) {
-        if (!(isRightParenthesis(token))) {
-            throw ParseError(token)
         }
     }
 
@@ -99,7 +114,11 @@ class Parser(input: Reader) {
             token is Identifier && token.value == "let*" -> parseLetstar(line, column)
             token is Identifier && token.value == "cond" -> parseCond(line, column)
             token is Identifier && token.value == "begin" -> parseBegin(line, column)
-            token is Identifier -> parseCall(token, line, column)
+            token is Identifier -> {
+                val ext = sExprExts.find { it.start() == token.value }
+                ext?.parse(lexer, line, column, this) ?: parseCall(token, line, column)
+            }
+
             isLeftParenthesis(token) -> parseCall(token, line, column)
             else -> throw ParseError(token)
         }
@@ -119,7 +138,8 @@ class Parser(input: Reader) {
     }
 
     private fun isReservedWord(id: String): Boolean =
-        id == "define" || id == "if" || id == "else" || id == "let" || id == "letrec" || id == "let*" || id == "cond" || id == "lambda"
+        reservedWords.contains(id)
+
 
     private fun parseCall(token: Token, line: Int, column: Int): Expression {
         fun parseArgs(): List<Expression> {
@@ -143,7 +163,6 @@ class Parser(input: Reader) {
                 val args = parseArgs()
                 Call(proc, args, line, column)
             }
-
 
             else -> {
                 val msg =
