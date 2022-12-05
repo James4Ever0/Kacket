@@ -8,22 +8,25 @@ import java.util.LinkedList
 
 const val BUFFER_SIZE = 50
 
-class Lexer(input: Reader) {
+class Lexer(
+    input: Reader,
+    private var lineNum: Int = 1,
+    private var columnNum: Int = 1
+) {
     private val reader = BufferedReader(input)
     private val tokenBuffer = LinkedList<Token>()
-    private var columnNum = 1
-    private var lineNum = 1
+
     private var read = reader.read()
 
 
     private fun close() {
         tokenBuffer.add(EOF(lineNum, columnNum))
         reader.close()
-
     }
 
     private fun lex() {
-        for (tokenCount in 0..BUFFER_SIZE) {
+        var tokenCount = 0
+        while (tokenCount <= BUFFER_SIZE) {
             if (read == -1) {
                 close()
                 return
@@ -45,31 +48,38 @@ class Lexer(input: Reader) {
                 }
 
                 isIdentifierStart(char) -> {
+                    tokenCount++
                     lexIdentifier(char)
                 }
 
                 isCharStart(char) -> {
+                    tokenCount++
                     lexChar()
                 }
 
                 isBoolStart(char) -> {
+                    tokenCount++
                     lexBool()
                 }
 
                 isStringStart(char) -> {
+                    tokenCount++
                     lexString()
                 }
 
                 isNumberStart(char) -> {
+                    tokenCount++
                     lexNumber(char)
                 }
 
                 isSymbolStart(char) -> {
+                    tokenCount++
                     lexSymbol()
                 }
 
                 // should be after isSymbolStart
                 isPunctuation(char) -> {
+                    tokenCount++
                     lexPunctuation(char)
                 }
 
@@ -80,7 +90,6 @@ class Lexer(input: Reader) {
             read = readNext
             columnNum += count
         }
-
     }
 
     private fun lexComment(): Pair<Int, Int> {

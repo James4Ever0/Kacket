@@ -29,8 +29,22 @@ class InitProcEnv : ProcEnv {
         map["cddr"] = arityEqual(1)
         map["caddr"] = arityEqual(1)
         map["cdddr"] = arityEqual(1)
-
+        map["cadddr"] = arityEqual(1)
+        map["cons"] = arityEqual(2)
+        map["append"] = arityAny()
+        map["list"] = arityAny()
+        map["length"] = arityGreaterEqual(1)
+        map["list-ref"] = arityEqual(2)
+        map["reverse"] = arityEqual(1)
         map["map"] = arityGreaterEqual(2)
+
+        map["make-vector"] = arityGreaterEqual(1)
+        map["vector-set!"] = arityEqual(3)
+        map["vector-ref"] = arityEqual(2)
+        map["vector"] = arityAny()
+        map["vector-length"] = arityEqual(1)
+
+        map["set!"] = arityEqual(2)
 
         map["and"] = arityAny()
         map["or"] = arityAny()
@@ -39,6 +53,13 @@ class InitProcEnv : ProcEnv {
         map["number?"] = arityEqual(1)
         map["symbol?"] = arityEqual(1)
         map["list?"] = arityEqual(1)
+        map["boolean?"] = arityEqual(1)
+        map["integer?"] = arityEqual(1)
+        map["zero?"] = arityEqual(1)
+        map["vector?"] = arityEqual(1)
+        map["pair?"]  = arityEqual(1)
+        map["write"] = arityGreaterEqual(1) // TODO: <=2 && >=1
+        map["newline"] = arityAny() // TODO: <=1 && >=0
 
     }
 

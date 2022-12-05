@@ -16,8 +16,19 @@ class ProcCallAnalyzer(private val parser: Parser) {
             val expr = parser.parseExpr()
             body.add(expr)
             // TODO: Other situations
-            if (expr is Define && expr.expr is Procedure) {
-                addProcRule(initEnv, expr.name, expr.expr)
+            if (expr is Define) {
+                when (expr.expr) {
+                    is Procedure -> {
+                        addProcRule(initEnv, expr.name, expr.expr)
+                    }
+
+                    is Begin, is Call, is If, is Let, is Letrec, is Var -> {
+                        initEnv.addRule(expr.name, arityAny())
+                    }
+
+                    else -> ignore()
+                }
+
             }
             for (analyzer in extAnalyzers) {
                 if (expr is ExtExpr && analyzer.support(expr)) {
@@ -177,13 +188,13 @@ class ProcCallAnalyzer(private val parser: Parser) {
                 try {
                     env.applyRule(proc.id.value, args.size)
                 } catch (ex: AnalysisError) {
-                    println("${ex.message}, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure call:${proc.id.value}")
+                    println("${ex.message}, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure:${proc.id.value}")
                 }
             }
 
             is Procedure -> {
                 if (proc.args.size != args.size) {
-                    println("Arity Mismatch, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure:<procedure>")
+                    println("Arity Mismatch: expected:${proc.args.size}, actual:${args.size}, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure:<procedure>")
                 }
                 analyzeProc(proc, env)
             }
