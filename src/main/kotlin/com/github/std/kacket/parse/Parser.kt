@@ -2,14 +2,10 @@ package com.github.std.kacket.parse
 
 import com.github.std.kacket.expr.*
 import com.github.std.kacket.parse.exten.SExprExtParser
-import java.io.Reader
 
 class Parser(
-    input: Reader,
-    line: Int = 1,
-    column: Int = 1
+    private val lexer: Lexer
 ) {
-    private val lexer = Lexer(input, line, column)
     private val sExprExts = mutableListOf<SExprExtParser>()
     private val reservedWords = mutableListOf("define", "if", "else", "let", "letrec", "let*", "cond", "lambda")
     fun isEnd(): Boolean = lexer.peekToken() is EOF

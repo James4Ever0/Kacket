@@ -2,10 +2,10 @@ package com.github.std.kacket.analysis
 
 import com.github.std.kacket.analysis.exten.CasesAnalyzer
 import com.github.std.kacket.analysis.exten.DefineDatatypeAnalyzer
+import com.github.std.kacket.parse.Lexer
 import com.github.std.kacket.parse.Parser
 import com.github.std.kacket.parse.exten.CasesParser
 import com.github.std.kacket.parse.exten.DefineDatatypeParser
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
@@ -35,7 +35,8 @@ internal class ProcCallAnalyzerTest {
         (length (list 1 2 3 4 7 5))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
@@ -48,7 +49,8 @@ internal class ProcCallAnalyzerTest {
         (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
@@ -64,7 +66,8 @@ internal class ProcCallAnalyzerTest {
                  (fib 114514 (- n 2)))))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
@@ -78,7 +81,8 @@ internal class ProcCallAnalyzerTest {
              (foo 114 514))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
@@ -96,7 +100,8 @@ internal class ProcCallAnalyzerTest {
         
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
@@ -112,7 +117,8 @@ internal class ProcCallAnalyzerTest {
            (error 114514))
         """
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
@@ -131,7 +137,8 @@ internal class ProcCallAnalyzerTest {
                           (loop 514 rest cnt)))))
         """.trimIndent()
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
@@ -146,7 +153,8 @@ internal class ProcCallAnalyzerTest {
                  (foo)))
         """.trimIndent()
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         val analyzer = ProcCallAnalyzer(parser)
         analyzer.analyzeProgram()
     }
@@ -193,7 +201,8 @@ internal class ProcCallAnalyzerTest {
         """.trimIndent()
 
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
         parser.addSExprExt(DefineDatatypeParser)
 
         val analyzer = ProcCallAnalyzer(parser)
@@ -201,6 +210,7 @@ internal class ProcCallAnalyzerTest {
 
         analyzer.analyzeProgram()
     }
+
     @Test
     fun analyze9() {
         val code = """
@@ -223,7 +233,8 @@ internal class ProcCallAnalyzerTest {
         """.trimIndent()
 
         val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))
-        val parser = Parser(input)
+        val lexer = Lexer(input)
+        val parser = Parser(lexer)
 
         parser.addSExprExt(DefineDatatypeParser)
         parser.addSExprExt(CasesParser)

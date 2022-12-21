@@ -2,20 +2,19 @@ package com.github.std.kacket.parse
 
 import com.github.std.kacket.parse.exten.CasesParser
 import com.github.std.kacket.parse.exten.DefineDatatypeParser
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
-import kotlin.math.exp
 
 internal class ParserTest {
 
     @Test
     fun parseExpr0() {
         val code = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
         val expr = parser.parseExpr()
 
         val expected = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
@@ -25,9 +24,9 @@ internal class ParserTest {
     @Test
     fun parseExpr1() {
         val code = "(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
         val expr = parser.parseExpr()
-
         val expected = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
         assertEquals(expected, expr.toString())
     }
@@ -35,9 +34,9 @@ internal class ParserTest {
     @Test
     fun parseExpr2() {
         val code = "(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
         val expr = parser.parseExpr()
-
         val expected = "(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))"
         assertEquals(expected, expr.toString())
     }
@@ -45,7 +44,8 @@ internal class ParserTest {
     @Test
     fun parseExpr3() {
         val code = "(let ((fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))) (fib 10))"
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
         val expr = parser.parseExpr()
 
         val expected = "(let ([fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))]) (fib 10))"
@@ -55,7 +55,8 @@ internal class ParserTest {
     @Test
     fun parseExpr5() {
         val code = "(let ((a 1) (b 'sym) (c \"hello\") (d #t) (e #f) (g #\\a)) a)"
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
         val expr = parser.parseExpr()
 
         val expected = "(let ([a 1][b 'sym][c \"hello\"][d #t][e #f][g a]) a)"
@@ -69,7 +70,9 @@ internal class ParserTest {
         (define (fib n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2)))))
         (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))
         """
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
+
         val expr0 = parser.parseExpr()
         val expected0 = "(define fib (lambda (n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2))))))"
         assertEquals(expected0, expr0.toString())
@@ -88,7 +91,8 @@ internal class ParserTest {
                 (+ a b c)))
             (define x 10)
         """.trimIndent()
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
 
         val expr0 = parser.parseExpr()
         val expected0 = "(let ([a 1][b 2]) (let ([c 3]) (+ a b c)))"
@@ -108,7 +112,8 @@ internal class ParserTest {
             '(#t 3 '(b c))
             '()
         """.trimIndent()
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
 
         val expr0 = parser.parseExpr()
         val expected0 = "'(a b c)"
@@ -140,7 +145,8 @@ internal class ParserTest {
              (bar 12)
              (foo 114 514))
         """
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
 
         val expr0 = parser.parseExpr()
         val expected0 = "(let ([foo '(a b c)][bar #t]) (bar 12)(foo 114 514))"
@@ -151,7 +157,8 @@ internal class ParserTest {
     @Disabled
     fun parseExpr10() {
         val code = " ('(a b c) 114 514) "
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
 
         parser.parseExpr()
     }
@@ -169,7 +176,8 @@ internal class ParserTest {
                           (loop 114 rest (+ cnt 1))
                           (loop 514 rest cnt)))))
         """.trimIndent()
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
 
         val expr0 = parser.parseExpr()
         val expected0 =
@@ -188,7 +196,8 @@ internal class ParserTest {
                
             (let* () 114514)
         """.trimIndent()
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
 
         val expr0 = parser.parseExpr()
         val expected0 = "(let ([foo '(a b c)]) (let ([f1 (lambda (x) x)]) (let ([f2 (f1 foo)]) (f2 114 514))))"
@@ -208,7 +217,8 @@ internal class ParserTest {
              (cond) 
              (cond [else 2])
         """.trimIndent()
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
 
         val expr0 = parser.parseExpr()
         val expected0 = "(if (foo1) bar1 (if foo2 bar2 bar3))"
@@ -237,7 +247,8 @@ internal class ParserTest {
                  (foo)))
         """.trimIndent()
 
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
 
         val expr0 = parser.parseExpr()
         val expected0 = "(let ([foo '(a b 9 (c d))][bar (lambda (x) x)]) (begin (bar)(foo)))"
@@ -278,7 +289,8 @@ internal class ParserTest {
                 (rand expression?))
                )
         """.trimIndent()
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
         parser.addSExprExt(DefineDatatypeParser)
 
         val expected0 =
@@ -329,8 +341,8 @@ internal class ParserTest {
                   (else "error ~s")
                   )))
         """.trimIndent()
-
-        val parser = Parser(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))
+        val parser = Parser(lexer)
         parser.addSExprExt(CasesParser)
         val expr0 = parser.parseExpr()
         println(expr0)

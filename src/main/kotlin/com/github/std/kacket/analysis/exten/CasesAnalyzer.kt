@@ -1,9 +1,6 @@
 package com.github.std.kacket.analysis.exten
 
-import com.github.std.kacket.analysis.AnalysisError
-import com.github.std.kacket.analysis.InitProcEnv
-import com.github.std.kacket.analysis.ProcCallAnalyzer
-import com.github.std.kacket.analysis.ProcEnv
+import com.github.std.kacket.analysis.*
 import com.github.std.kacket.expr.exten.Cases
 import com.github.std.kacket.expr.exten.ExtExpr
 
@@ -24,7 +21,11 @@ object CasesAnalyzer : ExtAnalyzer {
                 } catch (ex: AnalysisError) {
                     println("Cases: Wrong fields count, at (${it.line},${it.col}), name:${it.name}")
                 }
-                root.analyzeExpr(it.conseq, env)
+                val extended = RestProcEnv(env)
+                for (field in it.fields) {
+                    extended.addRule(field, arityAny())
+                }
+                root.analyzeExpr(it.conseq, extended)
             }
             root.analyzeExpr(default, env)
         }

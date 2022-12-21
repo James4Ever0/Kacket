@@ -3,12 +3,11 @@ import com.github.std.kacket.analysis.arityEqual
 import com.github.std.kacket.analysis.arityGreaterEqual
 import com.github.std.kacket.analysis.exten.CasesAnalyzer
 import com.github.std.kacket.analysis.exten.DefineDatatypeAnalyzer
+import com.github.std.kacket.parse.Lexer
 import com.github.std.kacket.parse.Parser
 import com.github.std.kacket.parse.exten.CasesParser
 import com.github.std.kacket.parse.exten.DefineDatatypeParser
-import java.io.ByteArrayInputStream
 import java.io.FileReader
-import java.io.InputStreamReader
 
 private fun help() {
     val usage = """
@@ -22,7 +21,8 @@ private fun help() {
 
 private fun procedureCallCheck(source: String) {
     val input = FileReader(source)
-    val parser = Parser(input)
+    val lexer = Lexer(input)
+    val parser = Parser(lexer)
     val analyzer = ProcCallAnalyzer(parser)
     analyzer.analyzeProgram()
 }
@@ -33,7 +33,8 @@ private fun eoplCheck(source: String) {
     while (read.toChar() != '\n') {
         read = input.read()
     }
-    val parser = Parser(input, 2, 1)
+    val lexer = Lexer(input, 2, 1)
+    val parser = Parser(lexer)
         .addSExprExt(DefineDatatypeParser)
         .addSExprExt(CasesParser)
 
@@ -42,6 +43,7 @@ private fun eoplCheck(source: String) {
         .addExtAnalyzer(CasesAnalyzer)
         .addProcRule("list-of", arityEqual(1))
         .addProcRule("eopl:error", arityGreaterEqual(1))
+        .addProcRule("eopl:printf", arityGreaterEqual(1))
         .addProcRule("sllgen:make-define-datatypes", arityEqual(2))
         .addProcRule("sllgen:list-define-datatypes", arityEqual(2))
         .addProcRule("sllgen:make-string-scanner", arityEqual(2))
