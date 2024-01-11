@@ -1,0 +1,15 @@
+{
+    "summary": "Analyzes Cases expressions in Kacket programming language, modifies environment as needed. Code block creates default expression and calls analyzeExpr function with expression and environment.",
+    "details": [
+        {
+            "comment": "Analyzes cases expressions in the Kacket programming language and modifies the environment accordingly. Supports only Cases expressions and performs analysis on each variant's consequences and environment modifications.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/analysis/exten/CasesAnalyzer.kt\":0-27",
+            "content": "package com.github.std.kacket.analysis.exten\nimport com.github.std.kacket.analysis.*\nimport com.github.std.kacket.expr.exten.Cases\nimport com.github.std.kacket.expr.exten.ExtExpr\nobject CasesAnalyzer : ExtAnalyzer {\n    override fun modifyEnv(env: InitProcEnv, expr: ExtExpr) {\n        return\n    }\n    override fun support(expr: ExtExpr): Boolean = expr is Cases\n    override fun analyze(expr: ExtExpr, env: ProcEnv, root: ProcCallAnalyzer) {\n        val case = expr as Cases\n        with(case) {\n            root.analyzeExpr(case.case, env)\n            variants.forEach {\n                try {\n                    env.applyRule(it.name, it.fields.size)\n                } catch (ex: AnalysisError) {\n                    println(\"Cases: Wrong fields count, at (${it.line},${it.col}), name:${it.name}\")\n                }\n                val extended = RestProcEnv(env)\n                for (field in it.fields) {\n                    extended.addRule(field, arityAny())\n                }\n                root.analyzeExpr(it.conseq, extended)"
+        },
+        {
+            "comment": "Code block creates a default expression based on provided cases, and then calls the analyzeExpr function with the default expression and the environment.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/analysis/exten/CasesAnalyzer.kt\":28-32",
+            "content": "            }\n            root.analyzeExpr(default, env)\n        }\n    }\n}"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the EOF class, representing an end of file token with a line number and column number. It implements Token interface, providing lineNumber(), columnNumber(), and toString() methods to retrieve line number, column number, and string representation respectively.",
+    "details": [
+        {
+            "comment": "This code defines the EOF class, representing an end of file token with a line number and column number. It implements Token interface, providing lineNumber(), columnNumber(), and toString() methods to retrieve line number, column number, and string representation respectively.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/EOF.kt\":0-11",
+            "content": "package com.github.std.kacket.parse\nclass EOF(\n    private val lineNum: Int,\n    private val columnNum: Int\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"EOF@(${lineNumber()},${columnNumber()})\"\n}"
+        }
+    ]
+}

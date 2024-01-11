@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a custom exception class called ParseError, which extends the built-in RuntimeException. It has two constructors - one for creating an instance with a Token object and another for creating an instance with a custom error message. The token's line number and column number are used to indicate the location of the syntax error in the input text.",
+    "details": [
+        {
+            "comment": "This code defines a custom exception class called ParseError, which extends the built-in RuntimeException. It has two constructors - one for creating an instance with a Token object and another for creating an instance with a custom error message. The token's line number and column number are used to indicate the location of the syntax error in the input text.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/ParseError.kt\":0-7",
+            "content": "package com.github.std.kacket.parse\nimport java.lang.RuntimeException\nclass ParseError : RuntimeException {\n    constructor(token: Token) : super(\"Syntax Error near (${token.lineNumber()}, ${token.columnNumber()}): $token\")\n    constructor(msg:String) : super(msg)\n}"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This class represents a variable expression in the Kacket language. It contains an identifier and implements Expression interface, providing lineNumber and columnNumber methods. The toString method returns the value of the identifier.",
+    "details": [
+        {
+            "comment": "This class represents a variable expression in the Kacket language. It contains an identifier and implements Expression interface, providing lineNumber and columnNumber methods. The toString method returns the value of the identifier.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/Var.kt\":0-11",
+            "content": "package com.github.std.kacket.expr\nimport com.github.std.kacket.parse.Identifier\nimport com.github.std.kacket.parse.Token\nclass Var(\n    val id: Identifier\n) : Expression {\n    override fun lineNumber(): Int = id.lineNumber()\n    override fun columnNumber(): Int = id.columnNumber()\n    override fun toString(): String = id.value\n}"
+        }
+    ]
+}

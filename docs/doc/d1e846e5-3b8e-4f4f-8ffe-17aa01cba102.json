@@ -1,0 +1,15 @@
+{
+    "summary": "DefineDatatype class in Kacket language, containing typeName, predName and variants. Variant class with name and fields map. ExtExpr for lineNumber/columnNumber functions, ToString method generates define-datatype string representation.",
+    "details": [
+        {
+            "comment": "DefineDatatype class represents a define-datatype expression in Kacket language. It contains typeName, predName, and variants list. Variant class represents each variant of the datatype with name and fields map. ExtExpr is implemented for lineNumber and columnNumber functions. ToString method generates the define-datatype string representation.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/exten/DefineDatatype.kt\":0-34",
+            "content": "package com.github.std.kacket.expr.exten\nimport com.github.std.kacket.analysis.ProcEnv\nimport com.github.std.kacket.expr.Expression\nclass DefineDatatype(\n    val typeName: String,\n    val predName: String,\n    val variants: List<Variant>,\n    private val line: Int,\n    private val col: Int\n) : ExtExpr {\n    class Variant(\n        val name: String,\n        val fields: Map<String, Expression>\n    ) {\n        override fun toString(): String {\n            val builder = StringBuilder(\"[$name\")\n            for ((fieldName, expr) in fields) {\n                builder.append(\"($fieldName \")\n                builder.append(expr.toString())\n                builder.append(\")\")\n            }\n            builder.append(\"]\")\n            return builder.toString()\n        }\n    }\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = col\n    override fun toString(): String {\n        val builder = StringBuilder(\"(define-datatype $typeName $predName \")\n        for (variant in variants) {\n            builder.append(variant.toString())"
+        },
+        {
+            "comment": "This code snippet defines a method that returns a string representation of an argument with parentheses around it. It first checks if the argument is not null or empty, then appends an opening parenthesis to a StringBuilder object named 'builder', followed by the argument itself, and finally closes the parentheses before returning the concatenated string.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/exten/DefineDatatype.kt\":35-39",
+            "content": "        }\n        builder.append(\")\")\n        return builder.toString()\n    }\n}"
+        }
+    ]
+}

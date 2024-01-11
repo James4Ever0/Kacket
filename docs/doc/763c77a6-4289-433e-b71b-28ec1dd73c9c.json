@@ -1,0 +1,15 @@
+{
+    "summary": "The Cases class represents a case statement in Kacket, extending ExtExpr and having the Variant inner class for variants. The function generates an extension method to build a case statement using variants.",
+    "details": [
+        {
+            "comment": "The Cases class represents a cases statement in Kacket, taking a type name, case expression, list of variants, and default expression. It extends the ExtExpr interface, providing line number and column number functions. The Variant inner class represents each variant within a case statement, consisting of a name, fields, and consequence expression. Each Variant has a toString function that formats the variant into a string representation.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/exten/Cases.kt\":0-38",
+            "content": "package com.github.std.kacket.expr.exten\nimport com.github.std.kacket.expr.Expression\nclass Cases(\n    val typeName: String,\n    val case: Expression,\n    val variants: List<Variant>,\n    val default: Expression,\n    private val line: Int,\n    private val col: Int\n) : ExtExpr {\n    class Variant(\n        val name: String,\n        val fields: List<String>,\n        val conseq: Expression,\n        val line: Int,\n        val col: Int\n    ) {\n        override fun toString(): String {\n            val builder = StringBuilder(\"[ $name (\")\n            for (field in fields) {\n                builder.append(field)\n                builder.append(\" \")\n            }\n            if (fields.isNotEmpty()) {\n                builder.setLength(builder.length - 1)\n            }\n            builder.append(\")\")\n            builder.append(conseq.toString())\n            return builder.toString()\n        }\n    }\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = col\n    override fun toString(): String {\n        val builder = StringBuilder(\"(cases $typeName $case \")"
+        },
+        {
+            "comment": "This code snippet defines a function that generates an extension method for a class or interface. The 'variants' variable holds multiple variants, which are then iterated over to be appended to the builder object. Finally, the '[else $default]' is added before returning the builder content as a string.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/exten/Cases.kt\":39-45",
+            "content": "        for (variant in variants) {\n            builder.append(variant.toString())\n        }\n        builder.append(\"[else $default])\")\n        return builder.toString()\n    }\n}"
+        }
+    ]
+}

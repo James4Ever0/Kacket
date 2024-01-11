@@ -1,0 +1,10 @@
+{
+    "summary": "This code snippet is a brief description of the \"Kacket\" project, which is a Racket/Scheme code analyzer written in Kotlin. It provides basic information about its purpose and the programming languages it supports for analysis.",
+    "details": [
+        {
+            "comment": "This code snippet is a brief description of the \"Kacket\" project, which is a Racket/Scheme code analyzer written in Kotlin. It provides basic information about its purpose and the programming languages it supports for analysis.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/README.md\":0-1",
+            "content": "# Kacket\nA toy Racket/Scheme code analyzer written in Kotlin."
+        }
+    ]
+}

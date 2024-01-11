@@ -1,0 +1,10 @@
+{
+    "summary": "Interface ExtExpr extends the Expression interface and imports necessary classes, defining a set of functions to be implemented by its subclasses.",
+    "details": [
+        {
+            "comment": "Interface ExtExpr extends the Expression interface and imports necessary classes, defining a set of functions to be implemented by its subclasses.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/exten/ExtExpr.kt\":0-5",
+            "content": "package com.github.std.kacket.expr.exten\nimport com.github.std.kacket.analysis.ProcEnv\nimport com.github.std.kacket.expr.Expression\ninterface ExtExpr : Expression"
+        }
+    ]
+}

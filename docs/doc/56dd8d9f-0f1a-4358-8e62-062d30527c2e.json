@@ -1,0 +1,10 @@
+{
+    "summary": "The `Begin` class represents a begin expression in the codebase. It contains a list of expressions within its body, along with line and column details for tracking purposes. The class extends the Expression interface and overrides its lineNumber() and columnNumber() methods to provide location information. The toString() method constructs a string representation of the begin expression using a StringBuilder.",
+    "details": [
+        {
+            "comment": "The `Begin` class represents a begin expression in the codebase. It contains a list of expressions within its body, along with line and column details for tracking purposes. The class extends the Expression interface and overrides its lineNumber() and columnNumber() methods to provide location information. The toString() method constructs a string representation of the begin expression using a StringBuilder.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/Begin.kt\":0-19",
+            "content": "package com.github.std.kacket.expr\nclass Begin(\n    val body: List<Expression>,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(begin \")\n        for (expr in body){\n            builder.append(expr.toString())\n        }\n        builder.append(\")\")\n        return builder.toString()\n    }\n}"
+        }
+    ]
+}

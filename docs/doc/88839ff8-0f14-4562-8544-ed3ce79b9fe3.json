@@ -1,0 +1,10 @@
+{
+    "summary": "This code snippet contains various functions written in the Racket programming language. It defines a fibonacci function, lambda expressions, recursive loops, and a data type for trees. The code also includes an example tree instance t0 and a sum function to calculate the sum of values in a tree.",
+    "details": [
+        {
+            "comment": "This code snippet contains various functions written in the Racket programming language. It defines a fibonacci function, lambda expressions, recursive loops, and a data type for trees. The code also includes an example tree instance t0 and a sum function to calculate the sum of values in a tree.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/resources/test.rkt\":0-50",
+            "content": "#lang eopl\n(define (fib n)\n  (if (< n 2)\n      n\n      (+ fib (- n 1)\n         (fib 114514 (- n 2)))))\n(let ((foo (lambda (bar)\n             (bar bar))))\n  (foo 114 514))\n(let ((foo '(a b c))\n      (bar #t))\n  (bar 12)\n  (foo 114 514))\n((lambda (x) x) 114 514)\n(letrec ([foo '(a b (c))]\n         [bar (lambda (x) (bar x))]\n         [error (lambda (x) (error x 114 514))])\n  (bar 114 514)\n  (error 114514))\n(let loop ([lst '(a b c)]\n           [cnt 0])\n  (if (null? lst)\n      cnt\n      (let ([fst (car lst)]\n            [rest (cdr lst)])\n        (if (eqv? fst 'a)\n            (loop 114 rest (+ cnt 1))\n            (loop 514 rest cnt)))))\n(define-datatype Tree tree?\n  (BinTree (val number?)\n           (left tree?)\n           (right tree?))\n  (Empty))\n(define t0 (BinTree 114\n                    514\n                    (BinTree 4 (Empty) (Empty))\n                    (BinTree 514 (Empty) (Empty))))\n(define sum\n  (lambda (tree)\n    (cases Tree tree\n      (Empty () 0)\n      (BinTree (val left right)\n               (+ val (sum left) (sum right))))))"
+        }
+    ]
+}

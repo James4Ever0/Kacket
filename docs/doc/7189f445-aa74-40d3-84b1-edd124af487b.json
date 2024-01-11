@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a custom exception class, \"ExprError\", which extends the built-in \"RuntimeException\" in Kotlin. It provides a mechanism to handle and throw exceptions related to expressions within the Kacket library.",
+    "details": [
+        {
+            "comment": "This code defines a custom exception class, \"ExprError\", which extends the built-in \"RuntimeException\" in Kotlin. It provides a mechanism to handle and throw exceptions related to expressions within the Kacket library.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/ExprError.kt\":0-4",
+            "content": "package com.github.std.kacket.expr\nimport java.lang.RuntimeException\nclass ExprError :RuntimeException()"
+        }
+    ]
+}

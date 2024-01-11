@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a custom exception class \"AnalysisError\" that extends the built-in Java RuntimeException, allowing for more specific error handling in the Kacket analysis module.",
+    "details": [
+        {
+            "comment": "This code defines a custom exception class \"AnalysisError\" that extends the built-in Java RuntimeException, allowing for more specific error handling in the Kacket analysis module.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/analysis/AnalysisError.kt\":0-5",
+            "content": "package com.github.std.kacket.analysis\nimport java.lang.RuntimeException\nclass AnalysisError(msg: String) : RuntimeException(msg) {\n}"
+        }
+    ]
+}

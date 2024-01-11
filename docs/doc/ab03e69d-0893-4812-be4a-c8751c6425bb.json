@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a grammar for a programming language, using an Extended Backus-Naur Form (EBNF) syntax. It consists of various expression types including define, if, conditional, procedure, let, letrec, namedlet, letstar, call, and variable expressions. Constants include strings, numbers, symbols, booleans, and characters. The code allows for nested expressions and supports quoting for more complex structures.",
+    "details": [
+        {
+            "comment": "This code defines a grammar for a programming language, using an Extended Backus-Naur Form (EBNF) syntax. It consists of various expression types including define, if, conditional, procedure, let, letrec, namedlet, letstar, call, and variable expressions. Constants include strings, numbers, symbols, booleans, and characters. The code allows for nested expressions and supports quoting for more complex structures.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/resources/grammar.txt\":0-18",
+            "content": "Program := {Expr}+\nExpr := SExpr | Const | VarExpr | QuoteExpr\nSExpr := DefineExpr | IfExpr | CondExpr | ProcedureExpr | LetExpr | LetrecExpr | LetstarExpr | CallExpr | BeginExpr\nBeginExpr := ( begin {Expr}* )\nDefineExpr := ( define ( Identifier {Identifier}* ) {Expr}+ )\n            | ( define Identifier Expr )\nIfExpr := ( if Expr Expr Expr )\nCondExpr := (cond {[Expr Expr]}* [else Expr])\nProcedureExpr := ( lambda ( {Identifier}* ) {Expr}+ )\nLetExpr := NormalLet | NamedLet\nNormalLet := ( let (  {(Identifier Expr)}*  ) {Expr}+ )\nNamedLet  := ( let Identifier (  {(Identifier Expr)}*  ) {Expr}+ )\nLetrecExpr := ( letrec (  {(Identifier Expr)}* ) {Expr}+ )\nLetstarExpr := ( let* (  {(Identifier Expr)}*  ) {Expr}+ )\nCallExpr := ( SExpr {Expr}* ) | ( VarExpr {Expr}* )\nVarExpr := Identifier\nConst := String | Number | Symbol | Bool | Character\nQuoteExpr := '( {QuoteElement}* )\nQuoteElement := Const | QuoteExpr | ( {QuoteElement}* )"
+        }
+    ]
+}

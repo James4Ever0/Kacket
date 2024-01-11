@@ -1,0 +1,15 @@
+{
+    "summary": "This code tests the Lexer class by parsing Scheme code examples, using JUnit Jupiter and ByteArrayInputStream. It defines a lexer for the Fibonacci function and its iterative version, ignoring '+' prefixed identifiers.",
+    "details": [
+        {
+            "comment": "This code tests the Lexer class by parsing different code examples and printing each token. It uses JUnit Jupiter to execute the tests, and ByteArrayInputStream to provide input for the Lexer. The tests include simple expressions, variable definitions, comments, and various data types.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/test/kotlin/com/github/std/kacket/parse/LexerTest.kt\":0-40",
+            "content": "package com.github.std.kacket.parse\nimport org.junit.jupiter.api.Test\nimport java.io.ByteArrayInputStream\nimport java.io.InputStreamReader\nimport java.util.*\nclass LexerTest {\n    @Test\n    fun nextToken1() {\n        val code = \"(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        var token = lexer.nextToken()\n        while (token !is EOF) {\n            println(token)\n            token = lexer.nextToken()\n        }\n    }\n    @Test\n    fun nextToken2() {\n        val code = \"\"\"(define bool #f)\n            (define char #\\a)\n            (define text \"hello\") ; comment\n            ;;; comment\n            (define symbol 'sym)\n            (define number 114.514)\n        \"\"\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        var token = lexer.nextToken()\n        while (token !is EOF) {\n            println(token)\n            token = lexer.nextToken()\n        }\n    }\n    @Test\n     fun nextToken3() {"
+        },
+        {
+            "comment": "This code defines a lexer for parsing Scheme code, specifically the Fibonacci function and an iterative version. It reads the code, tokenizes it, and stores tokens in a buffer while ignoring identifiers starting with '+'.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/test/kotlin/com/github/std/kacket/parse/LexerTest.kt\":41-59",
+            "content": "        val code =\n            \"\"\"\n        (define (fib n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2)))))\n        (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))\n        \"\"\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        var token = lexer.nextToken()\n         val tokenBuffer = LinkedList<Token>()\n        while (token !is EOF) {\n            token = lexer.nextToken()\n            if (token.toString()==\"Identifier#+@(2,66)\"){\n                println(\"here\")\n            }\n            println(token)\n            tokenBuffer.add(token)\n        }\n    }\n}"
+        }
+    ]
+}

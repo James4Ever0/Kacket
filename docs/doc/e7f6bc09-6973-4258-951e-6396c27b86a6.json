@@ -1,0 +1,10 @@
+{
+    "summary": "This class represents a character token with line number, column number, and value. It extends the Token class and overrides its methods to provide line and column numbers. The toString method returns a string representation of the Character object.",
+    "details": [
+        {
+            "comment": "This class represents a character token with line number, column number, and value. It extends the Token class and overrides its methods to provide line and column numbers. The toString method returns a string representation of the Character object.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/Character.kt\":0-11",
+            "content": "package com.github.std.kacket.parse\nclass Character(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: Char\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Character#$value@(${lineNumber()},${columnNumber()})\"\n}"
+        }
+    ]
+}

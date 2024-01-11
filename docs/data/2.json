@@ -1,0 +1,539 @@
+{
+    "200": {
+        "file_id": 36,
+        "content": "            token is Identifier -> {\n                val ext = sExprExts.find { it.start() == token.value }\n                ext?.parse(lexer, line, column, this) ?: parseCall(token, line, column)\n            }\n            isLeftParenthesis(token) -> parseCall(token, line, column)\n            else -> throw ParseError(token)\n        }\n        shouldBeRightParenthesis(lexer.nextToken())\n        return result\n    }\n    private fun parseBegin(line: Int, column: Int): Begin {\n        var peek = lexer.peekToken()\n        val body = mutableListOf<Expression>()\n        while (!(isRightParenthesis(peek))) {\n            body.add(parseExpr())\n            peek = lexer.peekToken()\n        }\n        return Begin(body, line, column)\n    }\n    private fun isReservedWord(id: String): Boolean =\n        reservedWords.contains(id)\n    private fun parseCall(token: Token, line: Int, column: Int): Expression {\n        fun parseArgs(): List<Expression> {\n            val args = mutableListOf<Expression>()\n            var peek = lexer.peekToken()",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:117-147"
+    },
+    "201": {
+        "file_id": 36,
+        "content": "This code snippet defines a parser for Kacket language. It parses different types of tokens and handles function calls, parentheses, and begin statements. The parseBegin() method recursively adds expressions within the parentheses until it encounters the right parenthesis. The reserved words are checked in the isReservedWord() method.",
+        "type": "comment"
+    },
+    "202": {
+        "file_id": 36,
+        "content": "            while (!(isRightParenthesis(peek))) {\n                args.add(parseExpr())\n                peek = lexer.peekToken()\n            }\n            return args\n        }\n        return when {\n            isLeftParenthesis(token) -> {\n                val proc = parseSExpr(token.lineNumber(), token.columnNumber())\n                val args = parseArgs()\n                Call(proc, args, line, column)\n            }\n            token is Identifier && !isReservedWord(token.value) -> {\n                val proc = Var(token)\n                val args = parseArgs()\n                Call(proc, args, line, column)\n            }\n            else -> {\n                val msg =\n                    \"Syntax Error at(${token.lineNumber()}, ${token.columnNumber()}), expect an Identifier or S-Expression\"\n                throw ParseError(msg)\n            }\n        }\n    }\n    private fun parseLetrec(line: Int, column: Int): Expression {\n        val variables = mutableListOf<String>()\n        val values = mutableListOf<Expression>()",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:148-178"
+    },
+    "203": {
+        "file_id": 36,
+        "content": "The code above is parsing a language that supports function calls and letrec declarations. It checks for parentheses, identifiers, or S-expressions and handles them accordingly. If a syntax error occurs, it throws a ParseError. The parseLetrec method creates lists of variables and values for the letrec declaration.",
+        "type": "comment"
+    },
+    "204": {
+        "file_id": 36,
+        "content": "        parseLetPairs(variables, values)\n        val body = mutableListOf<Expression>()\n        parseLetBody(body)\n        return Letrec(variables, values, body, line, column)\n    }\n    private fun parseLetPair(variables: MutableList<String>, values: MutableList<Expression>) {\n        shouldBeLeftParenthesis(lexer.nextToken())\n        val id = lexer.nextToken()\n        if (id !is Identifier || isReservedWord(id.value)) {\n            throw ParseError(id)\n        }\n        variables.add(id.value)\n        val value = parseExpr()\n        values.add(value)\n        shouldBeRightParenthesis(lexer.nextToken())\n    }\n    private fun parseLetPairs(variables: MutableList<String>, values: MutableList<Expression>) {\n        shouldBeLeftParenthesis(lexer.nextToken())\n//        parseLetPair(variables, values)\n        var peek = lexer.peekToken()\n        while (isLeftParenthesis(peek)) {\n            parseLetPair(variables, values)\n            peek = lexer.peekToken()\n        }\n        shouldBeRightParenthesis(lexer.nextToken())",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:179-213"
+    },
+    "205": {
+        "file_id": 36,
+        "content": "This code parses let expressions with recursive binding in Kacket programming language. It defines a function for parsing a single let pair, and another for parsing multiple let pairs within parentheses. The parseLetPairs function is called first to handle cases with multiple let pairs.",
+        "type": "comment"
+    },
+    "206": {
+        "file_id": 36,
+        "content": "    }\n    private fun parseLetBody(body: MutableList<Expression>) {\n        body.add(parseExpr())\n        var peek = lexer.peekToken()\n        while (!(isRightParenthesis(peek))) {\n            body.add(parseExpr())\n            peek = lexer.peekToken()\n        }\n    }\n    private fun parseNormalLet(line: Int, column: Int): Expression {\n        val variables = mutableListOf<String>()\n        val values = mutableListOf<Expression>()\n        parseLetPairs(variables, values)\n        val body = mutableListOf<Expression>()\n        parseLetBody(body)\n        return Let(variables, values, body, line, column)\n    }\n    private fun parseNamedLet(line: Int, column: Int): Expression {\n        val token = lexer.nextToken()\n        if (token !is Identifier || isReservedWord(token.value)) {\n            throw ParseError(\"Invalid Let near ($line, $column)\")\n        }\n        val procArgs = mutableListOf<String>()\n        val values = mutableListOf<Expression>()\n        parseLetPairs(procArgs, values)\n        val procBody = mutableListOf<Expression>()",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:214-248"
+    },
+    "207": {
+        "file_id": 36,
+        "content": "This code defines functions for parsing Let statements in the Kacket programming language. The parseLetBody function adds expressions to a list until a right parenthesis is encountered. The parseNormalLet and parseNamedLet functions parse normal and named Lets, respectively, by creating lists of variable names and values, then adding a body using the parseLetBody function before returning a Let expression object with the provided line and column information.",
+        "type": "comment"
+    },
+    "208": {
+        "file_id": 36,
+        "content": "        parseLetBody(procBody)\n        val proc = Procedure(procArgs, procBody, line, column)\n        val letrecBody: List<Expression> = listOf(Call(Var(token), values, line, column))\n        return Letrec(\n            listOf(token.value), listOf(proc), letrecBody, line, column\n        )\n    }\n    private fun parseLetstar(line: Int, column: Int): Expression {\n        val variables = mutableListOf<String>()\n        val values = mutableListOf<Expression>()\n        parseLetPairs(variables, values)\n        val body = mutableListOf<Expression>()\n        parseLetBody(body)\n        if (variables.isEmpty() && values.isEmpty()) {\n            return Let(variables, values, body, line, column)\n        }\n        var index = variables.size - 1\n        var let = Let(\n            listOf(variables[index]), listOf(values[index]), body, line, column\n        )\n        while (index > 0) {\n            index--\n            let = Let(\n                listOf(variables[index]), listOf(values[index]), listOf(let), line, column\n            )",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:249-279"
+    },
+    "209": {
+        "file_id": 36,
+        "content": "The code defines a function for parsing let-expressions and letrec-expressions. It creates a list of variables and values, then uses these to create either a Let or Letrec expression, depending on whether there are any variables or values present. If there are no variables or values, it returns a Let expression; otherwise, it constructs a Letrec expression by adding the previous let as a value for each variable in reverse order.",
+        "type": "comment"
+    },
+    "210": {
+        "file_id": 36,
+        "content": "        }\n        return let\n    }\n    private fun parseLet(line: Int, column: Int): Expression {\n        val token = lexer.peekToken()\n        return when {\n            isLeftParenthesis(token) -> {\n                parseNormalLet(line, column)\n            }\n            token is Identifier && !isReservedWord(token.value) -> {\n                parseNamedLet(line, column)\n            }\n            else -> throw ParseError(\"Invalid Let near ($line, $column)\")\n        }\n    }\n    private fun parseProc(line: Int, column: Int): Expression {\n        val start = lexer.nextToken()\n        shouldBeLeftParenthesis(start)\n        val args = mutableListOf<String>()\n        var peek = lexer.peekToken()\n        while (!(isRightParenthesis(peek))) {\n            val id = lexer.nextToken()\n            if (id !is Identifier || isReservedWord(id.value)) {\n                throw ParseError(id)\n            }\n            args.add(id.value)\n            peek = lexer.peekToken()\n        }\n        val endOfArgs = lexer.nextToken()\n        shouldBeRightParenthesis(endOfArgs)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:280-317"
+    },
+    "211": {
+        "file_id": 36,
+        "content": "The code defines two private functions: parseLet and parseProc. parseLet determines whether the line contains a named or normal Let statement and returns an Expression accordingly. If it is a named Let, the function calls parseNamedLet; if it's a normal Let, it calls parseNormalLet. The parseProc function parses proc statements, ensuring that the correct parentheses are used and storing arguments in a list before returning an Expression.",
+        "type": "comment"
+    },
+    "212": {
+        "file_id": 36,
+        "content": "        val body = mutableListOf<Expression>()\n        body.add(parseExpr())\n        peek = lexer.peekToken()\n        while (!(isRightParenthesis(peek))) {\n            body.add(parseExpr())\n            peek = lexer.peekToken()\n        }\n        return Procedure(args, body, line, column)\n    }\n    private fun parseCond(line: Int, column: Int): Expression {\n        fun buildIf(preds: MutableList<Expression>, values: MutableList<Expression>, default: Expression): Expression {\n            if (preds.isEmpty() && values.isEmpty()) {\n                return default\n            }\n            var index = preds.size - 1\n            var innerIf = If(preds[index], values[index], default, line, column)\n            while (index > 0) {\n                index--\n                innerIf = If(preds[index], values[index], innerIf, line, column)\n            }\n            return innerIf\n        }\n        fun buildIf(preds: MutableList<Expression>, values: MutableList<Expression>): Expression {\n            // TODO: what is the ALTER of last IF?",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:319-344"
+    },
+    "213": {
+        "file_id": 36,
+        "content": "This code snippet defines a function that parses a conditional expression and returns an If expression. The parseCond function utilizes the buildIf helper function to construct the If expression using a list of conditions (preds) and their corresponding values (values), with an optional default expression if no condition matches.",
+        "type": "comment"
+    },
+    "214": {
+        "file_id": 36,
+        "content": "            if (preds.isEmpty() && values.isEmpty()) {\n                return Quote.NIL\n            }\n            return buildIf(preds, values, Quote.NIL)\n        }\n        val preds = mutableListOf<Expression>()\n        val values = mutableListOf<Expression>()\n        var peek = lexer.peekToken()\n        while (!isRightParenthesis(peek)) {\n            shouldBeLeftParenthesis(lexer.nextToken())\n            val next = lexer.peekToken()\n            if (next is Identifier && next.value == \"else\") {\n                lexer.nextToken()\n                val default = parseExpr()\n                shouldBeRightParenthesis(lexer.nextToken())\n                return buildIf(preds, values, default)\n            } else {\n                preds.add(parseExpr())\n                values.add(parseExpr())\n                shouldBeRightParenthesis(lexer.nextToken())\n            }\n            peek = lexer.peekToken()\n        }\n        return buildIf(preds, values)\n    }\n    private fun parseIf(line: Int, column: Int): Expression {\n        val pred = parseExpr()",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:345-374"
+    },
+    "215": {
+        "file_id": 36,
+        "content": "This code defines a function \"parseIf\" that parses an if expression in the source code. It checks for empty conditions and values, then constructs an if statement by iteratively parsing conditions and corresponding values until it reaches a right parenthesis. If an \"else\" is encountered, the else clause along with its expression is parsed separately. Finally, it returns the parsed if statement or expression as per the code structure.",
+        "type": "comment"
+    },
+    "216": {
+        "file_id": 36,
+        "content": "        val conseq = parseExpr()\n        val alter = parseExpr()\n        return If(pred, conseq, alter, line, column)\n    }\n    private fun parseDefine(line: Int, column: Int): Expression {\n        fun parseProcSyntaxSugarDefine(): Expression {\n            val name = lexer.nextToken()\n            if (name !is Identifier || isReservedWord(name.value)) {\n                throw ParseError(name)\n            }\n            val args = mutableListOf<String>()\n            var peek = lexer.peekToken()\n            while (!(isRightParenthesis(peek))) {\n                val id = lexer.nextToken()\n                if (id !is Identifier || isReservedWord(id.value)) {\n                    throw ParseError(id)\n                }\n                args.add(id.value)\n                peek = lexer.peekToken()\n            }\n            val endOfArgs = lexer.nextToken()\n            shouldBeRightParenthesis(endOfArgs)\n            val body = mutableListOf<Expression>()\n            body.add(parseExpr())\n            peek = lexer.peekToken()\n            while (!(isRightParenthesis(peek))) {",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:375-404"
+    },
+    "217": {
+        "file_id": 36,
+        "content": "This code defines a function to parse the \"define\" syntax sugar in a programming language. It expects an expression as input and returns another expression as output, which represents the definition. The code checks if the name is valid, collects arguments, confirms the closing parenthesis, and parses the body of the define statement.",
+        "type": "comment"
+    },
+    "218": {
+        "file_id": 36,
+        "content": "                body.add(parseExpr())\n                peek = lexer.peekToken()\n            }\n            return Define(name.value, Procedure(args, body, line, column), line, column)\n        }\n        fun parseIdDefine(id: Identifier): Expression {\n            return Define(id.value, parseExpr(), line, column)\n        }\n        val token = lexer.nextToken()\n        return when {\n            isLeftParenthesis(token) -> {\n                parseProcSyntaxSugarDefine()\n            }\n            token is Identifier && !isReservedWord(token.value) -> {\n                parseIdDefine(token)\n            }\n            else -> throw ParseError(token)\n        }\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:405-428"
+    },
+    "219": {
+        "file_id": 36,
+        "content": "This code parses a define statement in a programming language and returns the result. It first checks if the token is a left parenthesis, identifier not reserved word, or anything else (throws an error). If it's an identifier not a reserved word, it calls parseIdDefine(). If it's a left parenthesis, it calls parseProcSyntaxSugarDefine(). It adds the result to body and returns Define.",
+        "type": "comment"
+    },
+    "220": {
+        "file_id": 37,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Punctuation.kt",
+        "type": "filepath"
+    },
+    "221": {
+        "file_id": 37,
+        "content": "This class represents a punctuation token, containing its character, line number, and column number. It provides methods to check if the character is a left or right parenthesis and implements Token interface for line and column number access.",
+        "type": "summary"
+    },
+    "222": {
+        "file_id": 37,
+        "content": "package com.github.std.kacket.parse\nclass Punctuation(\n    val char: Char,\n    private val lineNum: Int,\n    private val columnNum: Int\n) : Token {\n    fun isLeftParenthesis(): Boolean = char == '(' || char == '['\n    fun isRightParenthesis(): Boolean = char == ')' || char == ']'\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String =\n        \"Punctuation#${char}@(${lineNumber()},${columnNumber()})\"\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Punctuation.kt:1-16"
+    },
+    "223": {
+        "file_id": 37,
+        "content": "This class represents a punctuation token, containing its character, line number, and column number. It provides methods to check if the character is a left or right parenthesis and implements Token interface for line and column number access.",
+        "type": "comment"
+    },
+    "224": {
+        "file_id": 38,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Symbol.kt",
+        "type": "filepath"
+    },
+    "225": {
+        "file_id": 38,
+        "content": "This code defines a Symbol class that represents a symbol token in the Kacket parser. It has properties for line number, column number, and value, as well as overrides for lineNumber() and columnNumber() methods from Token interface. The toString() method returns a formatted string representing the Symbol object.",
+        "type": "summary"
+    },
+    "226": {
+        "file_id": 38,
+        "content": "package com.github.std.kacket.parse\nclass Symbol(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: String\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Symbol#'$value@(${lineNumber()},${columnNumber()})\"\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Symbol.kt:1-13"
+    },
+    "227": {
+        "file_id": 38,
+        "content": "This code defines a Symbol class that represents a symbol token in the Kacket parser. It has properties for line number, column number, and value, as well as overrides for lineNumber() and columnNumber() methods from Token interface. The toString() method returns a formatted string representing the Symbol object.",
+        "type": "comment"
+    },
+    "228": {
+        "file_id": 39,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Text.kt",
+        "type": "filepath"
+    },
+    "229": {
+        "file_id": 39,
+        "content": "The code defines a Text class representing a text token with line number, column number, and value. It implements Token interface with functions for retrieving line and column numbers, and has a custom toString method.",
+        "type": "summary"
+    },
+    "230": {
+        "file_id": 39,
+        "content": "package com.github.std.kacket.parse\nclass Text(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: String\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Text#$value@(${lineNumber()},${columnNumber()})\"\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Text.kt:1-13"
+    },
+    "231": {
+        "file_id": 39,
+        "content": "The code defines a Text class representing a text token with line number, column number, and value. It implements Token interface with functions for retrieving line and column numbers, and has a custom toString method.",
+        "type": "comment"
+    },
+    "232": {
+        "file_id": 40,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Token.kt",
+        "type": "filepath"
+    },
+    "233": {
+        "file_id": 40,
+        "content": "The code defines a sealed interface named \"Token\" with two abstract functions: \"lineNumber()\" and \"columnNumber()\". The functions return the line number and column number of the associated token.",
+        "type": "summary"
+    },
+    "234": {
+        "file_id": 40,
+        "content": "package com.github.std.kacket.parse\nsealed interface Token {\n    fun lineNumber(): Int\n    fun columnNumber(): Int\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Token.kt:1-6"
+    },
+    "235": {
+        "file_id": 40,
+        "content": "The code defines a sealed interface named \"Token\" with two abstract functions: \"lineNumber()\" and \"columnNumber()\". The functions return the line number and column number of the associated token.",
+        "type": "comment"
+    },
+    "236": {
+        "file_id": 41,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/exten/CasesParser.kt",
+        "type": "filepath"
+    },
+    "237": {
+        "file_id": 41,
+        "content": "The given code defines a CasesParser to parse cases expressions, identify type name and variants, and returns an instance of Cases for error reporting. It is part of a switch statement for handling scenarios based on specific conditions.",
+        "type": "summary"
+    },
+    "238": {
+        "file_id": 41,
+        "content": "package com.github.std.kacket.parse.exten\nimport com.github.std.kacket.expr.Quote\nimport com.github.std.kacket.expr.exten.Cases\nimport com.github.std.kacket.expr.exten.DefineDatatype\nimport com.github.std.kacket.expr.exten.ExtExpr\nimport com.github.std.kacket.parse.Identifier\nimport com.github.std.kacket.parse.Lexer\nimport com.github.std.kacket.parse.Parser\nobject CasesParser : SExprExtParser {\n    override fun start(): String = \"cases\"\n    override fun parse(lexer: Lexer, line: Int, col: Int, root: Parser): ExtExpr {\n        val typeNameToken = lexer.nextToken()\n        root.shouldBeNameToken(typeNameToken)\n        val typeName = (typeNameToken as Identifier).value\n        val case = root.parseExpr()\n        val variants = mutableListOf<Cases.Variant>()\n        while (!(root.isRightParenthesis(lexer.peekToken()))) {\n            root.shouldBeLeftParenthesis(lexer.nextToken())\n            val next = lexer.nextToken()\n            if (next is Identifier && next.value == \"else\") {\n                val default = root.parseExpr()",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/exten/CasesParser.kt:1-27"
+    },
+    "239": {
+        "file_id": 41,
+        "content": "This code defines a CasesParser object that extends SExprExtParser and overrides the start() function. It parses cases expressions by identifying the type name, case expression, and variants. The parse function is responsible for parsing the type name token, ensuring it's a valid name token, parsing the case expression, and creating a list of Cases.Variant objects representing each variant.",
+        "type": "comment"
+    },
+    "240": {
+        "file_id": 41,
+        "content": "                root.shouldBeRightParenthesis(lexer.nextToken())\n                return Cases(typeName, case, variants, default, line, col)\n            } else {\n                root.shouldBeNameToken(next)\n                val variName = (next as Identifier).value\n                val fields = mutableListOf<String>()\n                root.shouldBeLeftParenthesis(lexer.nextToken())\n                while (!root.isRightParenthesis(lexer.peekToken())) {\n                    val nameToken = lexer.nextToken()\n                    root.shouldBeNameToken(nameToken)\n                    val fieldName = (nameToken as Identifier).value\n                    fields.add(fieldName)\n                }\n                root.shouldBeRightParenthesis(lexer.nextToken())\n                val conseq = root.parseExpr()\n                root.shouldBeRightParenthesis(lexer.nextToken())\n                variants.add(Cases.Variant(variName, fields, conseq, next.lineNumber(), next.columnNumber()))\n            }\n        }\n        return Cases(typeName, case, variants, Quote.NIL, line, col)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/exten/CasesParser.kt:28-52"
+    },
+    "241": {
+        "file_id": 41,
+        "content": "This code parses a cases statement in a programming language, creating variants and their associated fields, conditions, and line information. It handles both regular cases and case when statements based on the presence of parentheses and names. The function returns an instance of Cases containing typeName, case, variants, default value (NIL), and line/column information for error reporting if necessary.",
+        "type": "comment"
+    },
+    "242": {
+        "file_id": 41,
+        "content": "    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/exten/CasesParser.kt:53-54"
+    },
+    "243": {
+        "file_id": 41,
+        "content": "This code appears to be part of a switch statement, where the cases are being parsed. It is likely used for handling different scenarios or inputs based on specific conditions. The specific function or purpose of this particular code snippet may require more context from surrounding lines.",
+        "type": "comment"
+    },
+    "244": {
+        "file_id": 42,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt",
+        "type": "filepath"
+    },
+    "245": {
+        "file_id": 42,
+        "content": "The DefineDatatypeParser in Kacket parses define-datatype statements, extracting type name, predicate name, and variants. The code iterates over each field to retrieve names and expressions, adding them to a map until encountering a closing parenthesis. It defines a function that parses the \"Define\" directive in an extension file and returns associated fields, including variable name, datatype, arguments, and documentation.",
+        "type": "summary"
+    },
+    "246": {
+        "file_id": 42,
+        "content": "package com.github.std.kacket.parse.exten\nimport com.github.std.kacket.expr.Expression\nimport com.github.std.kacket.expr.exten.DefineDatatype\nimport com.github.std.kacket.expr.exten.ExtExpr\nimport com.github.std.kacket.parse.*\nobject DefineDatatypeParser : SExprExtParser {\n    override fun start(): String = \"define-datatype\"\n    override fun parse(lexer: Lexer, line: Int, col: Int, root: Parser): DefineDatatype {\n        val typeNameToken = lexer.nextToken()\n        root.shouldBeNameToken(typeNameToken)\n        val typeName = (typeNameToken as Identifier).value\n        val predNameToken = lexer.nextToken()\n        root.shouldBeNameToken(predNameToken)\n        val predName = (predNameToken as Identifier).value\n        val variants = parseVariants(lexer, root)\n        return DefineDatatype(typeName, predName, variants, line, col)\n    }\n    private fun parseVariants(lexer: Lexer, root: Parser): List<DefineDatatype.Variant> {\n        val variants = mutableListOf<DefineDatatype.Variant>()\n        while (!(root.isRightParenthesis(lexer.peekToken()))) {",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt:1-26"
+    },
+    "247": {
+        "file_id": 42,
+        "content": "The DefineDatatypeParser is responsible for parsing define-datatype statements in Kacket. It expects the type name, predicate name, and a list of variants. The parseVariants function recursively parses the variants until reaching the right parenthesis.",
+        "type": "comment"
+    },
+    "248": {
+        "file_id": 42,
+        "content": "            root.shouldBeLeftParenthesis(lexer.nextToken())\n            val variNameToken = lexer.nextToken()\n            root.shouldBeNameToken(variNameToken)\n            val variName = (variNameToken as Identifier).value\n            val fields = parseVariantFields(lexer, root)\n            variants.add(DefineDatatype.Variant(variName, fields))\n            root.shouldBeRightParenthesis(lexer.nextToken())\n        }\n        return variants\n    }\n    private fun parseVariantFields(lexer: Lexer, root: Parser): Map<String, Expression> {\n        val fields = mutableMapOf<String, Expression>()\n        while (!root.isRightParenthesis(lexer.peekToken())) {\n            root.shouldBeLeftParenthesis(lexer.nextToken())\n            val fieldNameToken = lexer.nextToken()\n            root.shouldBeNameToken(fieldNameToken)\n            val fieldName = (fieldNameToken as Identifier).value\n            val pred = root.parseExpr()\n            fields[fieldName] = pred\n            root.shouldBeRightParenthesis(lexer.nextToken())",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt:27-55"
+    },
+    "249": {
+        "file_id": 42,
+        "content": "This code parses a define datatype block, extracting the variant name and fields from its AST. It iterates over each field in the block, retrieves the field name and expression, and adds them to a map before moving on to the next field until it encounters a closing parenthesis.",
+        "type": "comment"
+    },
+    "250": {
+        "file_id": 42,
+        "content": "        }\n        return fields\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt:56-59"
+    },
+    "251": {
+        "file_id": 42,
+        "content": "This code defines a function that parses the \"Define\" directive in an extension file and returns the associated fields. The parsed fields include the variable name, datatype, arguments, and documentation.",
+        "type": "comment"
+    },
+    "252": {
+        "file_id": 43,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/exten/SExprExtParser.kt",
+        "type": "filepath"
+    },
+    "253": {
+        "file_id": 43,
+        "content": "This code defines an interface called SExprExtParser, which has two methods: start() and parse(). The start() method returns a string, while the parse() method takes in a Lexer object, line number, column number, and a Parser object as parameters, and returns an ExtExpr object. This indicates that this code is responsible for parsing extended regular expressions in a specific context using the provided parser and lexer.",
+        "type": "summary"
+    },
+    "254": {
+        "file_id": 43,
+        "content": "package com.github.std.kacket.parse.exten\nimport com.github.std.kacket.expr.Expression\nimport com.github.std.kacket.expr.exten.ExtExpr\nimport com.github.std.kacket.parse.Lexer\nimport com.github.std.kacket.parse.Parser\ninterface SExprExtParser {\n    fun start(): String\n    fun parse(lexer: Lexer, line: Int, col: Int,root: Parser): ExtExpr\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/exten/SExprExtParser.kt:1-11"
+    },
+    "255": {
+        "file_id": 43,
+        "content": "This code defines an interface called SExprExtParser, which has two methods: start() and parse(). The start() method returns a string, while the parse() method takes in a Lexer object, line number, column number, and a Parser object as parameters, and returns an ExtExpr object. This indicates that this code is responsible for parsing extended regular expressions in a specific context using the provided parser and lexer.",
+        "type": "comment"
+    },
+    "256": {
+        "file_id": 44,
+        "content": "/src/main/kotlin/com/github/std/kacket/transpiler/scheme-js.js",
+        "type": "filepath"
+    },
+    "257": {
+        "file_id": 44,
+        "content": "This code is a transpiler for the Scheme programming language to JavaScript. It converts Scheme code into equivalent JavaScript functions. The provided code demonstrates nested function definitions and lambda expressions, as well as conversion of looping constructs like 'letrec' and recursive functions like 'fact'.",
+        "type": "summary"
+    },
+    "258": {
+        "file_id": 44,
+        "content": "// (let ((x 5) (y 4))\n//   (+ x y))\n((x, y) => x + y)(5, 4)\n// (letrec ((fact\n//          (lambda (n)\n//             (if (= n 0)\n//                 1\n//                 (* n (fact (- n 1)))))))\n//     (fact 10))\n// ((fact) => fact(10))((n) => {\n//     if (n === 0) \n//     return 1\n//     else return fact(n - 1) * n\n// })\n((fact) => fact(10, fact))((n, fact) => {\n    if (n === 0) \n    return 1\n    else return fact(n - 1, fact) * n\n})\n// (let ((fact\n//          (lambda (n fact)\n//             (if (= n 0)\n//                 1\n//                 (* n (fact (- n 1) fact))))))\n//     (fact 10 fact))",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/transpiler/scheme-js.js:1-30"
+    },
+    "259": {
+        "file_id": 44,
+        "content": "This code is a transpiler for the Scheme programming language to JavaScript. It converts Scheme code into equivalent JavaScript functions. The provided code demonstrates nested function definitions and lambda expressions, as well as conversion of looping constructs like 'letrec' and recursive functions like 'fact'.",
+        "type": "comment"
+    },
+    "260": {
+        "file_id": 45,
+        "content": "/src/main/resources/grammar.txt",
+        "type": "filepath"
+    },
+    "261": {
+        "file_id": 45,
+        "content": "This code defines a grammar for a programming language, using an Extended Backus-Naur Form (EBNF) syntax. It consists of various expression types including define, if, conditional, procedure, let, letrec, namedlet, letstar, call, and variable expressions. Constants include strings, numbers, symbols, booleans, and characters. The code allows for nested expressions and supports quoting for more complex structures.",
+        "type": "summary"
+    },
+    "262": {
+        "file_id": 45,
+        "content": "Program := {Expr}+\nExpr := SExpr | Const | VarExpr | QuoteExpr\nSExpr := DefineExpr | IfExpr | CondExpr | ProcedureExpr | LetExpr | LetrecExpr | LetstarExpr | CallExpr | BeginExpr\nBeginExpr := ( begin {Expr}* )\nDefineExpr := ( define ( Identifier {Identifier}* ) {Expr}+ )\n            | ( define Identifier Expr )\nIfExpr := ( if Expr Expr Expr )\nCondExpr := (cond {[Expr Expr]}* [else Expr])\nProcedureExpr := ( lambda ( {Identifier}* ) {Expr}+ )\nLetExpr := NormalLet | NamedLet\nNormalLet := ( let (  {(Identifier Expr)}*  ) {Expr}+ )\nNamedLet  := ( let Identifier (  {(Identifier Expr)}*  ) {Expr}+ )\nLetrecExpr := ( letrec (  {(Identifier Expr)}* ) {Expr}+ )\nLetstarExpr := ( let* (  {(Identifier Expr)}*  ) {Expr}+ )\nCallExpr := ( SExpr {Expr}* ) | ( VarExpr {Expr}* )\nVarExpr := Identifier\nConst := String | Number | Symbol | Bool | Character\nQuoteExpr := '( {QuoteElement}* )\nQuoteElement := Const | QuoteExpr | ( {QuoteElement}* )",
+        "type": "code",
+        "location": "/src/main/resources/grammar.txt:1-19"
+    },
+    "263": {
+        "file_id": 45,
+        "content": "This code defines a grammar for a programming language, using an Extended Backus-Naur Form (EBNF) syntax. It consists of various expression types including define, if, conditional, procedure, let, letrec, namedlet, letstar, call, and variable expressions. Constants include strings, numbers, symbols, booleans, and characters. The code allows for nested expressions and supports quoting for more complex structures.",
+        "type": "comment"
+    },
+    "264": {
+        "file_id": 46,
+        "content": "/src/main/resources/test.rkt",
+        "type": "filepath"
+    },
+    "265": {
+        "file_id": 46,
+        "content": "This code snippet contains various functions written in the Racket programming language. It defines a fibonacci function, lambda expressions, recursive loops, and a data type for trees. The code also includes an example tree instance t0 and a sum function to calculate the sum of values in a tree.",
+        "type": "summary"
+    },
+    "266": {
+        "file_id": 46,
+        "content": "#lang eopl\n(define (fib n)\n  (if (< n 2)\n      n\n      (+ fib (- n 1)\n         (fib 114514 (- n 2)))))\n(let ((foo (lambda (bar)\n             (bar bar))))\n  (foo 114 514))\n(let ((foo '(a b c))\n      (bar #t))\n  (bar 12)\n  (foo 114 514))\n((lambda (x) x) 114 514)\n(letrec ([foo '(a b (c))]\n         [bar (lambda (x) (bar x))]\n         [error (lambda (x) (error x 114 514))])\n  (bar 114 514)\n  (error 114514))\n(let loop ([lst '(a b c)]\n           [cnt 0])\n  (if (null? lst)\n      cnt\n      (let ([fst (car lst)]\n            [rest (cdr lst)])\n        (if (eqv? fst 'a)\n            (loop 114 rest (+ cnt 1))\n            (loop 514 rest cnt)))))\n(define-datatype Tree tree?\n  (BinTree (val number?)\n           (left tree?)\n           (right tree?))\n  (Empty))\n(define t0 (BinTree 114\n                    514\n                    (BinTree 4 (Empty) (Empty))\n                    (BinTree 514 (Empty) (Empty))))\n(define sum\n  (lambda (tree)\n    (cases Tree tree\n      (Empty () 0)\n      (BinTree (val left right)\n               (+ val (sum left) (sum right))))))",
+        "type": "code",
+        "location": "/src/main/resources/test.rkt:1-51"
+    },
+    "267": {
+        "file_id": 46,
+        "content": "This code snippet contains various functions written in the Racket programming language. It defines a fibonacci function, lambda expressions, recursive loops, and a data type for trees. The code also includes an example tree instance t0 and a sum function to calculate the sum of values in a tree.",
+        "type": "comment"
+    },
+    "268": {
+        "file_id": 47,
+        "content": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt",
+        "type": "filepath"
+    },
+    "269": {
+        "file_id": 47,
+        "content": "This code creates test functions to evaluate procedural calls in Kacket scripts, using ProcCallAnalyzer for Lisp-like features like letrec and lambda expressions. It involves parsing expression language, defining types of expressions, analyzing identifiers, and performing analysis with the analyzer.",
+        "type": "summary"
+    },
+    "270": {
+        "file_id": 47,
+        "content": "package com.github.std.kacket.analysis\nimport com.github.std.kacket.analysis.exten.CasesAnalyzer\nimport com.github.std.kacket.analysis.exten.DefineDatatypeAnalyzer\nimport com.github.std.kacket.parse.Lexer\nimport com.github.std.kacket.parse.Parser\nimport com.github.std.kacket.parse.exten.CasesParser\nimport com.github.std.kacket.parse.exten.DefineDatatypeParser\nimport org.junit.jupiter.api.Test\nimport java.io.ByteArrayInputStream\nimport java.io.InputStreamReader\ninternal class ProcCallAnalyzerTest {\n    @Test\n    fun analyze0() {\n        val code =\n            \"\"\"\n       (define (accumulate op initial sequence)\n               (if (null? sequence)\n                   initial\n                   (op (car sequence)\n                       (accumulate op\n                                   initial\n                                   (cdr sequence)))))\n        (define (map p sequence)\n            (accumulate (lambda (x y) (cons (p x) y))\n                nil sequence))\n        (define (append seq1 seq2)\n            (accumulate cons seq2 seq1))",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt:1-31"
+    },
+    "271": {
+        "file_id": 47,
+        "content": "This code defines test functions for analyzing procedural calls in a Kacket script. The code includes define statements for the accumulate, map, and append procedures. It also uses lambda expressions and recursion to perform computations on sequences.",
+        "type": "comment"
+    },
+    "272": {
+        "file_id": 47,
+        "content": "        (define (length sequence)\n            (accumulate (lambda (x y) (+ y 1)) 0 sequence))\n        (length (list 1 2 3 4 7 5))\n        \"\"\"\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        val analyzer = ProcCallAnalyzer(parser)\n        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze1() {\n        val code =\n            \"\"\"\n        (define (fib n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2)))))\n        (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))\n        \"\"\"\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        val analyzer = ProcCallAnalyzer(parser)\n        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze2() {\n        val code =\n            \"\"\"\n        (define (fib n) \n          (if (< n 2) \n              n \n              (+ fib (- n 1) \n                 (fib 114514 (- n 2)))))",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt:33-66"
+    },
+    "273": {
+        "file_id": 47,
+        "content": "The code defines two procedures, \"length\" and \"fib\", and includes test functions to analyze the code. The \"length\" procedure takes a sequence as input and uses an accumulator function to count the number of elements in the sequence. The \"fib\" procedure calculates Fibonacci numbers recursively using an iterative approach. Test functions are used to validate the analyzer's ability to understand these procedures.",
+        "type": "comment"
+    },
+    "274": {
+        "file_id": 47,
+        "content": "        \"\"\"\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        val analyzer = ProcCallAnalyzer(parser)\n        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze3() {\n        val code =\n            \"\"\"\n        (let ((foo (lambda (bar) \n                        (bar bar))))\n             (foo 114 514))\n        \"\"\"\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        val analyzer = ProcCallAnalyzer(parser)\n        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze4() {\n        val code =\n            \"\"\"\n        (let ((foo '(a b c))\n              (bar #t))\n              (bar 12)\n             (foo 114 514))\n        ((lambda (x) x) 114 514)\n        \"\"\"\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        val analyzer = ProcCallAnalyzer(parser)",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt:67-105"
+    },
+    "275": {
+        "file_id": 47,
+        "content": "The code sets up a test suite for analyzing Lisp-like code using a ProcCallAnalyzer. Each test function defines a piece of Lisp code and initializes the necessary inputs, lexer, parser, and analyzer to analyze that code. The analyzer's job is to parse the input code and identify procedure calls within it.",
+        "type": "comment"
+    },
+    "276": {
+        "file_id": 47,
+        "content": "        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze5() {\n        val code =\n            \"\"\"\n        (letrec ([foo '(a b (c))]\n                 [bar (lambda (x) (bar x))]\n                 [error (lambda (x) (error x 114 514))])\n           (bar 114 514)\n           (error 114514))\n        \"\"\"\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        val analyzer = ProcCallAnalyzer(parser)\n        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze6() {\n        val code = \"\"\"\n                 (let loop ([lst '(a b c)]\n                       [cnt 0])\n                (if (null? lst)\n                    cnt\n                    (let ([fst (car lst)]\n                          [rest (cdr lst)])\n                      (if (eqv? fst 'a)\n                          (loop 114 rest (+ cnt 1))\n                          (loop 514 rest cnt)))))\n        \"\"\".trimIndent()\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt:106-139"
+    },
+    "277": {
+        "file_id": 47,
+        "content": "This code contains tests for analyzing Scheme programs with ProcCallAnalyzer. The first test case, \"analyze5\", checks the behavior of letrec, lambda, and error procedures. It creates a Scheme program text and passes it to the Lexer, Parser, and ProcCallAnalyzer for analysis. The second test case, \"analyze6\", tests looping using let recursion with conditional branching based on the first element of the list. Both test cases execute the analyzed programs and check their expected outcomes.",
+        "type": "comment"
+    },
+    "278": {
+        "file_id": 47,
+        "content": "        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        val analyzer = ProcCallAnalyzer(parser)\n        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze7() {\n        val code = \"\"\"\n            (let ([foo '(a b 9 (c d))]\n                  [bar (lambda (x) x)])\n              (begin \n                 (bar)\n                 (foo)))\n        \"\"\".trimIndent()\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        val analyzer = ProcCallAnalyzer(parser)\n        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze8() {\n        val code = \"\"\"\n            (define-datatype expression expression?\n               (const-exp\n                (num number?))\n               (if-exp\n                (exp1 expression?)\n                (exp2 expression?)\n                (exp3 expression?))\n               (zero?-exp\n                (exp1 expression?))\n               (var-exp\n                (var identifier?))\n               (diff-exp",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt:140-176"
+    },
+    "279": {
+        "file_id": 47,
+        "content": "The code defines a series of test functions to analyze different scenarios using the ProcCallAnalyzer. It creates an input stream, initializes lexer and parser objects, and then instantiates the analyzer with the parser. Finally, it calls the analyzeProgram method on the analyzer object.",
+        "type": "comment"
+    },
+    "280": {
+        "file_id": 47,
+        "content": "                (exp1 expression?)\n                (exp2 expression?))\n               (let-exp\n                (var  identifier?)\n                (exp  expression?)\n                (body expression?))\n               (letrec-exp\n                (p-name identifier?)\n                (b-var identifier?)\n                (p-body expression?)\n                (letrec-body expression?))\n               (proc-exp\n                (var identifier?)\n                (body (lambda(x y) (expression? x))))\n               (call-exp\n                (rator expression?)\n                (rand expression?))\n               )\n          (define identifier?\n             (lambda (exp)\n               (and (symbol? exp)\n                    (not (eqv? exp 'lambda)))))\n          (call-exp 114 514 114514)\n        \"\"\".trimIndent()\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        parser.addSExprExt(DefineDatatypeParser)\n        val analyzer = ProcCallAnalyzer(parser)",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt:177-208"
+    },
+    "281": {
+        "file_id": 47,
+        "content": "The code is defining a parser for an expression language, using lexer and parser classes to analyze the input. The code defines various types of expressions such as proc-exp, call-exp, let-exp, and letrec-exp. It also includes a function to identify identifiers in the code. Finally, it creates an instance of ProcCallAnalyzer class with the parser and performs some analysis.",
+        "type": "comment"
+    },
+    "282": {
+        "file_id": 47,
+        "content": "        analyzer.addExtAnalyzer(DefineDatatypeAnalyzer)\n        analyzer.analyzeProgram()\n    }\n    @Test\n    fun analyze9() {\n        val code = \"\"\"\n            (define-datatype Tree tree?\n              (BinTree (val number?)\n                       (left tree?)\n                       (right tree?))\n              (Empty))\n            (define t0 (BinTree 11 (BinTree 4 (Empty) (Empty))\n                                   514\n                                   (BinTree 514 (Empty) (Empty))))\n            (define sum \n               (lambda (tree)\n                 (cases Tree tree\n                   (Empty (foo bar) 0)\n                   (BinTree (val left right)\n                     (+ val (sum left) (sum right))))))\n        \"\"\".trimIndent()\n        val input = InputStreamReader(ByteArrayInputStream(code.toByteArray()))\n        val lexer = Lexer(input)\n        val parser = Parser(lexer)\n        parser.addSExprExt(DefineDatatypeParser)\n        parser.addSExprExt(CasesParser)\n        val analyzer = ProcCallAnalyzer(parser)",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt:209-242"
+    },
+    "283": {
+        "file_id": 47,
+        "content": "This code sets up a ProcCallAnalyzer for analyzing Lisp-like programs and adds necessary extensions to the lexer and parser. It also defines an input code snippet containing define-datatype, define, lambda, and cases expressions. The analyzer then proceeds to analyze the program using these extensions and the defined input.",
+        "type": "comment"
+    },
+    "284": {
+        "file_id": 47,
+        "content": "        analyzer.addExtAnalyzer(DefineDatatypeAnalyzer)\n        analyzer.addExtAnalyzer(CasesAnalyzer)\n        analyzer.analyzeProgram()\n    }\n}",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt:243-248"
+    },
+    "285": {
+        "file_id": 47,
+        "content": "This code is creating an instance of the ProcCallAnalyzer and adding two external analyzers, DefineDatatypeAnalyzer and CasesAnalyzer. Then it calls the analyzeProgram() method on the analyzer object to perform program analysis.",
+        "type": "comment"
+    },
+    "286": {
+        "file_id": 48,
+        "content": "/src/test/kotlin/com/github/std/kacket/parse/LexerTest.kt",
+        "type": "filepath"
+    },
+    "287": {
+        "file_id": 48,
+        "content": "This code tests the Lexer class by parsing Scheme code examples, using JUnit Jupiter and ByteArrayInputStream. It defines a lexer for the Fibonacci function and its iterative version, ignoring '+' prefixed identifiers.",
+        "type": "summary"
+    },
+    "288": {
+        "file_id": 48,
+        "content": "package com.github.std.kacket.parse\nimport org.junit.jupiter.api.Test\nimport java.io.ByteArrayInputStream\nimport java.io.InputStreamReader\nimport java.util.*\nclass LexerTest {\n    @Test\n    fun nextToken1() {\n        val code = \"(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        var token = lexer.nextToken()\n        while (token !is EOF) {\n            println(token)\n            token = lexer.nextToken()\n        }\n    }\n    @Test\n    fun nextToken2() {\n        val code = \"\"\"(define bool #f)\n            (define char #\\a)\n            (define text \"hello\") ; comment\n            ;;; comment\n            (define symbol 'sym)\n            (define number 114.514)\n        \"\"\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        var token = lexer.nextToken()\n        while (token !is EOF) {\n            println(token)\n            token = lexer.nextToken()\n        }\n    }\n    @Test\n     fun nextToken3() {",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/LexerTest.kt:1-41"
+    },
+    "289": {
+        "file_id": 48,
+        "content": "This code tests the Lexer class by parsing different code examples and printing each token. It uses JUnit Jupiter to execute the tests, and ByteArrayInputStream to provide input for the Lexer. The tests include simple expressions, variable definitions, comments, and various data types.",
+        "type": "comment"
+    },
+    "290": {
+        "file_id": 48,
+        "content": "        val code =\n            \"\"\"\n        (define (fib n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2)))))\n        (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))\n        \"\"\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        var token = lexer.nextToken()\n         val tokenBuffer = LinkedList<Token>()\n        while (token !is EOF) {\n            token = lexer.nextToken()\n            if (token.toString()==\"Identifier#+@(2,66)\"){\n                println(\"here\")\n            }\n            println(token)\n            tokenBuffer.add(token)\n        }\n    }\n}",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/LexerTest.kt:42-60"
+    },
+    "291": {
+        "file_id": 48,
+        "content": "This code defines a lexer for parsing Scheme code, specifically the Fibonacci function and an iterative version. It reads the code, tokenizes it, and stores tokens in a buffer while ignoring identifiers starting with '+'.",
+        "type": "comment"
+    },
+    "292": {
+        "file_id": 49,
+        "content": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt",
+        "type": "filepath"
+    },
+    "293": {
+        "file_id": 49,
+        "content": "The code tests Kacket language's Parser class, covering expressions and nested let statements. It is a unit test for `parseExpr15` function, testing various expression types in the context of parsing a simple programming language using lexer and custom parsers.",
+        "type": "summary"
+    },
+    "294": {
+        "file_id": 49,
+        "content": "package com.github.std.kacket.parse\nimport com.github.std.kacket.parse.exten.CasesParser\nimport com.github.std.kacket.parse.exten.DefineDatatypeParser\nimport org.junit.jupiter.api.Assertions.assertEquals\nimport org.junit.jupiter.api.Disabled\nimport org.junit.jupiter.api.Test\nimport java.io.ByteArrayInputStream\nimport java.io.InputStreamReader\ninternal class ParserTest {\n    @Test\n    fun parseExpr0() {\n        val code = \"(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr = parser.parseExpr()\n        val expected = \"(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))\"\n        assertEquals(expected, expr.toString())\n    }\n    @Test\n    fun parseExpr1() {\n        val code = \"(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:1-28"
+    },
+    "295": {
+        "file_id": 49,
+        "content": "The code is testing the parser functionality by defining test cases for parsing expressions. It creates a Lexer object and a Parser object using an InputStreamReader and a ByteArrayInputStream, respectively. The parseExpr0 function tests if the expression \"(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))\" can be parsed correctly, while the parseExpr1 function tests if a similar expression without parentheses around the function name is also parsed correctly. The assertEquals method checks if the parsed expression matches the expected output string.",
+        "type": "comment"
+    },
+    "296": {
+        "file_id": 49,
+        "content": "        val expr = parser.parseExpr()\n        val expected = \"(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))\"\n        assertEquals(expected, expr.toString())\n    }\n    @Test\n    fun parseExpr2() {\n        val code = \"(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr = parser.parseExpr()\n        val expected = \"(define fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))\"\n        assertEquals(expected, expr.toString())\n    }\n    @Test\n    fun parseExpr3() {\n        val code = \"(let ((fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))) (fib 10))\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr = parser.parseExpr()\n        val expected = \"(let ([fib (lambda (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))]) (fib 10))\"",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:29-51"
+    },
+    "297": {
+        "file_id": 49,
+        "content": "These test functions test the parsing of expressions in the Kacket language. They parse different code blocks and compare the parsed expression strings to expected output strings using the assertEquals method.",
+        "type": "comment"
+    },
+    "298": {
+        "file_id": 49,
+        "content": "        assertEquals(expected, expr.toString())\n    }\n    @Test\n    fun parseExpr5() {\n        val code = \"(let ((a 1) (b 'sym) (c \\\"hello\\\") (d #t) (e #f) (g #\\\\a)) a)\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr = parser.parseExpr()\n        val expected = \"(let ([a 1][b 'sym][c \\\"hello\\\"][d #t][e #f][g a]) a)\"\n        assertEquals(expected, expr.toString())\n    }\n    @Test\n    fun parseExpr6() {\n        val code =\n            \"\"\"\n        (define (fib n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2)))))\n        (define (fib-iter i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd))))\n        \"\"\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr0 = parser.parseExpr()\n        val expected0 = \"(define fib (lambda (n) (if (< n 2) n (+ fib (- n 1) (fib (- n 2))))))\"\n        assertEquals(expected0, expr0.toString())\n        val expr1 = parser.parseExpr()",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:52-80"
+    },
+    "299": {
+        "file_id": 49,
+        "content": "These code snippets are testing different parsing scenarios for a programming language. Each test case defines a specific code block and asserts that the parser correctly interprets and converts it into the expected output format.",
+        "type": "comment"
+    }
+}

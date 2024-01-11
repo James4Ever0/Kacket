@@ -1,0 +1,10 @@
+{
+    "summary": "This class represents a punctuation token, containing its character, line number, and column number. It provides methods to check if the character is a left or right parenthesis and implements Token interface for line and column number access.",
+    "details": [
+        {
+            "comment": "This class represents a punctuation token, containing its character, line number, and column number. It provides methods to check if the character is a left or right parenthesis and implements Token interface for line and column number access.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/Punctuation.kt\":0-15",
+            "content": "package com.github.std.kacket.parse\nclass Punctuation(\n    val char: Char,\n    private val lineNum: Int,\n    private val columnNum: Int\n) : Token {\n    fun isLeftParenthesis(): Boolean = char == '(' || char == '['\n    fun isRightParenthesis(): Boolean = char == ')' || char == ']'\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String =\n        \"Punctuation#${char}@(${lineNumber()},${columnNumber()})\"\n}"
+        }
+    ]
+}

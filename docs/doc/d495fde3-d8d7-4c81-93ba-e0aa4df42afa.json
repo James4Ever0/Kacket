@@ -1,0 +1,10 @@
+{
+    "summary": "The Procedure class represents a lambda expression and holds its arguments, body expressions, and line/column information. It extends the Expression interface and provides lineNumber(), columnNumber() methods, and a toString() method to return a string representation of the lambda expression.",
+    "details": [
+        {
+            "comment": "The Procedure class represents a lambda expression and holds its arguments, body expressions, and line/column information. It extends the Expression interface and provides lineNumber(), columnNumber() methods, and a toString() method to return a string representation of the lambda expression.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/Procedure.kt\":0-25",
+            "content": "package com.github.std.kacket.expr\nclass Procedure(\n    val args: List<String>,\n    val body: List<Expression>,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(lambda \")\n        builder.append('(')\n        for (arg in args) {\n            builder.append(arg)\n            builder.append(' ')\n        }\n        builder.setLength(builder.length - 1)\n        builder.append(\") \")\n        for (expr in body) {\n            builder.append(expr)\n        }\n        builder.append(')')\n        return builder.toString()\n    }\n}"
+        }
+    ]
+}

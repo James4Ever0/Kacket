@@ -1,0 +1,10 @@
+{
+    "summary": "Class LexError extends RuntimeException and takes a message as parameter for custom error messages in the Kacket parsing process.",
+    "details": [
+        {
+            "comment": "Class LexError extends RuntimeException and takes a message as parameter for custom error messages in the Kacket parsing process.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/LexError.kt\":0-3",
+            "content": "package com.github.std.kacket.parse\nclass LexError(msg: String) : RuntimeException(msg) {\n}"
+        }
+    ]
+}

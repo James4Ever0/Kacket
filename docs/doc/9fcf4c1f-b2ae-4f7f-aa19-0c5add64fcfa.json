@@ -1,0 +1,10 @@
+{
+    "summary": "The code defines a sealed interface named \"Token\" with two abstract functions: \"lineNumber()\" and \"columnNumber()\". The functions return the line number and column number of the associated token.",
+    "details": [
+        {
+            "comment": "The code defines a sealed interface named \"Token\" with two abstract functions: \"lineNumber()\" and \"columnNumber()\". The functions return the line number and column number of the associated token.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/Token.kt\":0-5",
+            "content": "package com.github.std.kacket.parse\nsealed interface Token {\n    fun lineNumber(): Int\n    fun columnNumber(): Int\n}"
+        }
+    ]
+}

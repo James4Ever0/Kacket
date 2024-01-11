@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines an interface named \"Expression\" in the package \"com.github.std.kacket.expr\". The interface has two functions: \"lineNumber()\" and \"columnNumber()\", which return the line number and column number respectively for some expression context.",
+    "details": [
+        {
+            "comment": "This code defines an interface named \"Expression\" in the package \"com.github.std.kacket.expr\". The interface has two functions: \"lineNumber()\" and \"columnNumber()\", which return the line number and column number respectively for some expression context.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/Expression.kt\":0-5",
+            "content": "package com.github.std.kacket.expr\ninterface Expression {\n    fun lineNumber(): Int\n    fun columnNumber(): Int\n}"
+        }
+    ]
+}

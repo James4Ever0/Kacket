@@ -1,0 +1,10 @@
+{
+    "summary": "The sealed interface ProcEnv defines a set of rules for process environments. It has two functions: addRule to add rules with unique IDs, and applyRule to execute the rule corresponding to a specific process ID.",
+    "details": [
+        {
+            "comment": "The sealed interface ProcEnv defines a set of rules for process environments. It has two functions: addRule to add rules with unique IDs, and applyRule to execute the rule corresponding to a specific process ID.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/analysis/ProcEnv.kt\":0-6",
+            "content": "package com.github.std.kacket.analysis\nsealed interface ProcEnv {\n    fun addRule(id: String, rule: (Int) -> Unit)\n    fun applyRule(procId: String, actual: Int)\n}"
+        }
+    ]
+}

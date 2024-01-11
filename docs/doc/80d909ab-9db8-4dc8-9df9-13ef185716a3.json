@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a Symbol class that represents a symbol token in the Kacket parser. It has properties for line number, column number, and value, as well as overrides for lineNumber() and columnNumber() methods from Token interface. The toString() method returns a formatted string representing the Symbol object.",
+    "details": [
+        {
+            "comment": "This code defines a Symbol class that represents a symbol token in the Kacket parser. It has properties for line number, column number, and value, as well as overrides for lineNumber() and columnNumber() methods from Token interface. The toString() method returns a formatted string representing the Symbol object.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/Symbol.kt\":0-12",
+            "content": "package com.github.std.kacket.parse\nclass Symbol(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: String\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Symbol#'$value@(${lineNumber()},${columnNumber()})\"\n}"
+        }
+    ]
+}

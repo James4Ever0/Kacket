@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class named CMD, which takes an array of arguments as input and initializes two private Boolean variables, pcc and eopl, based on the presence of certain command line options in the argument list. The parse function loops through the argument list to check for specific flags. The class also provides getter methods pcc() and eopl() to retrieve the values of pcc and eopl respectively.",
+    "details": [
+        {
+            "comment": "This code defines a class named CMD, which takes an array of arguments as input and initializes two private Boolean variables, pcc and eopl, based on the presence of certain command line options in the argument list. The parse function loops through the argument list to check for specific flags. The class also provides getter methods pcc() and eopl() to retrieve the values of pcc and eopl respectively.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/CMD.kt\":0-20",
+            "content": "class CMD(args: Array<String>) {\n    val source: String = args[args.size - 1]\n    private var pcc = false\n    private var eopl = false\n    init {\n        parse(args)\n    }\n    private fun parse(args: Array<String>) {\n        for (i in 0..args.size - 2) {\n            when {\n                args[i] == \"--pcc\" -> pcc = true\n                args[i] == \"--eopl\" -> eopl = true\n            }\n        }\n    }\n    fun pcc(): Boolean = pcc\n    fun eopl(): Boolean = eopl\n}"
+        }
+    ]
+}

@@ -1,0 +1,534 @@
+{
+    "100": {
+        "file_id": 18,
+        "content": "package com.github.std.kacket.expr\ninterface Expression {\n    fun lineNumber(): Int\n    fun columnNumber(): Int\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Expression.kt:1-6"
+    },
+    "101": {
+        "file_id": 18,
+        "content": "This code defines an interface named \"Expression\" in the package \"com.github.std.kacket.expr\". The interface has two functions: \"lineNumber()\" and \"columnNumber()\", which return the line number and column number respectively for some expression context.",
+        "type": "comment"
+    },
+    "102": {
+        "file_id": 19,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/If.kt",
+        "type": "filepath"
+    },
+    "103": {
+        "file_id": 19,
+        "content": "The code defines a class \"If\" representing an if-expression in the Kacket expression language, with three expressions for predicate, consequence, and alternative. It also stores the line and column number of its origin in the code. The class extends the Expression interface and provides methods to retrieve line and column numbers as well as a string representation of the if-expression.",
+        "type": "summary"
+    },
+    "104": {
+        "file_id": 19,
+        "content": "package com.github.std.kacket.expr\nclass If(\n    val pred: Expression,\n    val conseq: Expression,\n    val alter: Expression,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(if \")\n        builder.append(pred.toString())\n        builder.append(' ')\n        builder.append(conseq.toString())\n        builder.append(' ')\n        builder.append(alter.toString())\n        builder.append(')')\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/If.kt:1-22"
+    },
+    "105": {
+        "file_id": 19,
+        "content": "The code defines a class \"If\" representing an if-expression in the Kacket expression language, with three expressions for predicate, consequence, and alternative. It also stores the line and column number of its origin in the code. The class extends the Expression interface and provides methods to retrieve line and column numbers as well as a string representation of the if-expression.",
+        "type": "comment"
+    },
+    "106": {
+        "file_id": 20,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Let.kt",
+        "type": "filepath"
+    },
+    "107": {
+        "file_id": 20,
+        "content": "The Let class represents a let expression, which binds variables to values and evaluates the body expressions using those bindings. It has lists for variables, values, and body expressions, and keeps track of its line and column numbers. It implements lineNumber and columnNumber functions for retrieving these values, as well as a custom toString function to represent itself in string form.",
+        "type": "summary"
+    },
+    "108": {
+        "file_id": 20,
+        "content": "package com.github.std.kacket.expr\nclass Let(\n    val variables: List<String>,\n    val values: List<Expression>,\n    val body: List<Expression>,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(let (\")\n        for ((variable, value) in variables zip values) {\n            builder.append('[')\n            builder.append(variable)\n            builder.append(' ')\n            builder.append(value)\n            builder.append(']')\n        }\n        builder.append(\") \")\n        for (expr in body) {\n            builder.append(expr.toString())\n        }\n        builder.append(')')\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Let.kt:1-28"
+    },
+    "109": {
+        "file_id": 20,
+        "content": "The Let class represents a let expression, which binds variables to values and evaluates the body expressions using those bindings. It has lists for variables, values, and body expressions, and keeps track of its line and column numbers. It implements lineNumber and columnNumber functions for retrieving these values, as well as a custom toString function to represent itself in string form.",
+        "type": "comment"
+    },
+    "110": {
+        "file_id": 21,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Letrec.kt",
+        "type": "filepath"
+    },
+    "111": {
+        "file_id": 21,
+        "content": "This code defines a Letrec class that represents the LETREC expression in Kacket's syntax tree. It contains a list of variables, values, and body expressions along with line and column information. The class overrides the lineNumber() and columnNumber() functions to return the associated metadata. The toString() function formats the Letrec expression as per the Kacket syntax.",
+        "type": "summary"
+    },
+    "112": {
+        "file_id": 21,
+        "content": "package com.github.std.kacket.expr\nclass Letrec(\n    val variables: List<String>,\n    val values: List<Expression>,\n    val body: List<Expression>,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(letrec (\")\n        for ((variable, value) in variables zip values) {\n            builder.append('[')\n            builder.append(variable)\n            builder.append(' ')\n            builder.append(value)\n            builder.append(']')\n        }\n        builder.append(\") \")\n        for (expr in body) {\n            builder.append(expr.toString())\n        }\n        builder.append(')')\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Letrec.kt:1-28"
+    },
+    "113": {
+        "file_id": 21,
+        "content": "This code defines a Letrec class that represents the LETREC expression in Kacket's syntax tree. It contains a list of variables, values, and body expressions along with line and column information. The class overrides the lineNumber() and columnNumber() functions to return the associated metadata. The toString() function formats the Letrec expression as per the Kacket syntax.",
+        "type": "comment"
+    },
+    "114": {
+        "file_id": 22,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Procedure.kt",
+        "type": "filepath"
+    },
+    "115": {
+        "file_id": 22,
+        "content": "The Procedure class represents a lambda expression and holds its arguments, body expressions, and line/column information. It extends the Expression interface and provides lineNumber(), columnNumber() methods, and a toString() method to return a string representation of the lambda expression.",
+        "type": "summary"
+    },
+    "116": {
+        "file_id": 22,
+        "content": "package com.github.std.kacket.expr\nclass Procedure(\n    val args: List<String>,\n    val body: List<Expression>,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(lambda \")\n        builder.append('(')\n        for (arg in args) {\n            builder.append(arg)\n            builder.append(' ')\n        }\n        builder.setLength(builder.length - 1)\n        builder.append(\") \")\n        for (expr in body) {\n            builder.append(expr)\n        }\n        builder.append(')')\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Procedure.kt:1-26"
+    },
+    "117": {
+        "file_id": 22,
+        "content": "The Procedure class represents a lambda expression and holds its arguments, body expressions, and line/column information. It extends the Expression interface and provides lineNumber(), columnNumber() methods, and a toString() method to return a string representation of the lambda expression.",
+        "type": "comment"
+    },
+    "118": {
+        "file_id": 23,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Quote.kt",
+        "type": "filepath"
+    },
+    "119": {
+        "file_id": 23,
+        "content": "The Quote class represents quote elements and their implementations, utilizing ElementConst for tokens to strings conversion and ElementQuotes for retrieving quote element lists with line/column numbers.",
+        "type": "summary"
+    },
+    "120": {
+        "file_id": 23,
+        "content": "package com.github.std.kacket.expr\nimport com.github.std.kacket.parse.*\nclass Quote(\n    private val line: Int,\n    private val column: Int,\n    private val elements: List<QuoteElement>\n) : Expression {\n    companion object {\n        val NIL = Quote(-1, -1, listOf())\n    }\n    interface QuoteElement\n    class ElementConst(private val token: Token) : QuoteElement {\n        override fun toString(): String = when {\n            token is Text -> {\n                \"\\\"${token.value}\\\"\"\n            }\n            token is Num -> {\n                token.value\n            }\n            token is Identifier -> {\n                token.value\n            }\n            token is Symbol -> {\n                \"'${token.value}\"\n            }\n            token is Character -> {\n                token.value.toString()\n            }\n            token is Bool && token.value -> {\n                \"#t\"\n            }\n            token is Bool && !token.value -> {\n                \"#f\"\n            }\n            else -> throw ExprError()\n        }\n    }\n    class ElementQuote(private val quote: Quote) : QuoteElement {",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Quote.kt:1-51"
+    },
+    "121": {
+        "file_id": 23,
+        "content": "This code defines a Quote class, which is an expression that can contain various elements such as constants, functions, symbols, etc. It also has a NIL object and two implementations of the QuoteElement interface: ElementConst and ElementQuote. The ElementConst implementation converts the token to a string representation based on its type (e.g., Text, Num, Identifier, Symbol, Character, Bool). The ElementQuote implementation takes another Quote object as input.",
+        "type": "comment"
+    },
+    "122": {
+        "file_id": 23,
+        "content": "        override fun toString(): String {\n            return quote.toString()\n        }\n    }\n    class ElementQuotes(private val elements: List<QuoteElement>) : QuoteElement {\n        override fun toString(): String {\n            val builder = StringBuilder(\"(\")\n            for (element in elements) {\n                builder.append(element.toString())\n                builder.append(' ')\n            }\n            if (elements.isNotEmpty()) {\n                builder.setLength(builder.length - 1)\n            }\n            builder.append(\")\")\n            return builder.toString()\n        }\n    }\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"'(\")\n        for (element in elements) {\n            builder.append(element.toString())\n            builder.append(' ')\n        }\n        if (elements.isNotEmpty()) {\n            builder.setLength(builder.length - 1)\n        }\n        builder.append(\")\")\n        return builder.toString()",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Quote.kt:52-86"
+    },
+    "123": {
+        "file_id": 23,
+        "content": "The code defines two classes: `Quote` and `ElementQuotes`, which both extend the `QuoteElement` interface. `Quote` represents a single quote element, while `ElementQuotes` represents a list of quote elements. Both classes override the `toString()` method to provide their string representation in different formats. The `ElementQuotes` class also has methods for retrieving line and column numbers, likely for error reporting or debugging purposes.",
+        "type": "comment"
+    },
+    "124": {
+        "file_id": 23,
+        "content": "    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Quote.kt:87-88"
+    },
+    "125": {
+        "file_id": 23,
+        "content": "The code snippet appears to be part of a class definition or method, and it is ending the current block of code. The specific functionality or purpose cannot be determined from this small piece of code alone.",
+        "type": "comment"
+    },
+    "126": {
+        "file_id": 24,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Var.kt",
+        "type": "filepath"
+    },
+    "127": {
+        "file_id": 24,
+        "content": "This class represents a variable expression in the Kacket language. It contains an identifier and implements Expression interface, providing lineNumber and columnNumber methods. The toString method returns the value of the identifier.",
+        "type": "summary"
+    },
+    "128": {
+        "file_id": 24,
+        "content": "package com.github.std.kacket.expr\nimport com.github.std.kacket.parse.Identifier\nimport com.github.std.kacket.parse.Token\nclass Var(\n    val id: Identifier\n) : Expression {\n    override fun lineNumber(): Int = id.lineNumber()\n    override fun columnNumber(): Int = id.columnNumber()\n    override fun toString(): String = id.value\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Var.kt:1-12"
+    },
+    "129": {
+        "file_id": 24,
+        "content": "This class represents a variable expression in the Kacket language. It contains an identifier and implements Expression interface, providing lineNumber and columnNumber methods. The toString method returns the value of the identifier.",
+        "type": "comment"
+    },
+    "130": {
+        "file_id": 25,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/exten/Cases.kt",
+        "type": "filepath"
+    },
+    "131": {
+        "file_id": 25,
+        "content": "The Cases class represents a case statement in Kacket, extending ExtExpr and having the Variant inner class for variants. The function generates an extension method to build a case statement using variants.",
+        "type": "summary"
+    },
+    "132": {
+        "file_id": 25,
+        "content": "package com.github.std.kacket.expr.exten\nimport com.github.std.kacket.expr.Expression\nclass Cases(\n    val typeName: String,\n    val case: Expression,\n    val variants: List<Variant>,\n    val default: Expression,\n    private val line: Int,\n    private val col: Int\n) : ExtExpr {\n    class Variant(\n        val name: String,\n        val fields: List<String>,\n        val conseq: Expression,\n        val line: Int,\n        val col: Int\n    ) {\n        override fun toString(): String {\n            val builder = StringBuilder(\"[ $name (\")\n            for (field in fields) {\n                builder.append(field)\n                builder.append(\" \")\n            }\n            if (fields.isNotEmpty()) {\n                builder.setLength(builder.length - 1)\n            }\n            builder.append(\")\")\n            builder.append(conseq.toString())\n            return builder.toString()\n        }\n    }\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = col\n    override fun toString(): String {\n        val builder = StringBuilder(\"(cases $typeName $case \")",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/exten/Cases.kt:1-39"
+    },
+    "133": {
+        "file_id": 25,
+        "content": "The Cases class represents a cases statement in Kacket, taking a type name, case expression, list of variants, and default expression. It extends the ExtExpr interface, providing line number and column number functions. The Variant inner class represents each variant within a case statement, consisting of a name, fields, and consequence expression. Each Variant has a toString function that formats the variant into a string representation.",
+        "type": "comment"
+    },
+    "134": {
+        "file_id": 25,
+        "content": "        for (variant in variants) {\n            builder.append(variant.toString())\n        }\n        builder.append(\"[else $default])\")\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/exten/Cases.kt:40-46"
+    },
+    "135": {
+        "file_id": 25,
+        "content": "This code snippet defines a function that generates an extension method for a class or interface. The 'variants' variable holds multiple variants, which are then iterated over to be appended to the builder object. Finally, the '[else $default]' is added before returning the builder content as a string.",
+        "type": "comment"
+    },
+    "136": {
+        "file_id": 26,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/exten/DefineDatatype.kt",
+        "type": "filepath"
+    },
+    "137": {
+        "file_id": 26,
+        "content": "DefineDatatype class in Kacket language, containing typeName, predName and variants. Variant class with name and fields map. ExtExpr for lineNumber/columnNumber functions, ToString method generates define-datatype string representation.",
+        "type": "summary"
+    },
+    "138": {
+        "file_id": 26,
+        "content": "package com.github.std.kacket.expr.exten\nimport com.github.std.kacket.analysis.ProcEnv\nimport com.github.std.kacket.expr.Expression\nclass DefineDatatype(\n    val typeName: String,\n    val predName: String,\n    val variants: List<Variant>,\n    private val line: Int,\n    private val col: Int\n) : ExtExpr {\n    class Variant(\n        val name: String,\n        val fields: Map<String, Expression>\n    ) {\n        override fun toString(): String {\n            val builder = StringBuilder(\"[$name\")\n            for ((fieldName, expr) in fields) {\n                builder.append(\"($fieldName \")\n                builder.append(expr.toString())\n                builder.append(\")\")\n            }\n            builder.append(\"]\")\n            return builder.toString()\n        }\n    }\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = col\n    override fun toString(): String {\n        val builder = StringBuilder(\"(define-datatype $typeName $predName \")\n        for (variant in variants) {\n            builder.append(variant.toString())",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/exten/DefineDatatype.kt:1-35"
+    },
+    "139": {
+        "file_id": 26,
+        "content": "DefineDatatype class represents a define-datatype expression in Kacket language. It contains typeName, predName, and variants list. Variant class represents each variant of the datatype with name and fields map. ExtExpr is implemented for lineNumber and columnNumber functions. ToString method generates the define-datatype string representation.",
+        "type": "comment"
+    },
+    "140": {
+        "file_id": 26,
+        "content": "        }\n        builder.append(\")\")\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/exten/DefineDatatype.kt:36-40"
+    },
+    "141": {
+        "file_id": 26,
+        "content": "This code snippet defines a method that returns a string representation of an argument with parentheses around it. It first checks if the argument is not null or empty, then appends an opening parenthesis to a StringBuilder object named 'builder', followed by the argument itself, and finally closes the parentheses before returning the concatenated string.",
+        "type": "comment"
+    },
+    "142": {
+        "file_id": 27,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/exten/ExtExpr.kt",
+        "type": "filepath"
+    },
+    "143": {
+        "file_id": 27,
+        "content": "Interface ExtExpr extends the Expression interface and imports necessary classes, defining a set of functions to be implemented by its subclasses.",
+        "type": "summary"
+    },
+    "144": {
+        "file_id": 27,
+        "content": "package com.github.std.kacket.expr.exten\nimport com.github.std.kacket.analysis.ProcEnv\nimport com.github.std.kacket.expr.Expression\ninterface ExtExpr : Expression",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/exten/ExtExpr.kt:1-6"
+    },
+    "145": {
+        "file_id": 27,
+        "content": "Interface ExtExpr extends the Expression interface and imports necessary classes, defining a set of functions to be implemented by its subclasses.",
+        "type": "comment"
+    },
+    "146": {
+        "file_id": 28,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Bool.kt",
+        "type": "filepath"
+    },
+    "147": {
+        "file_id": 28,
+        "content": "This class represents a Boolean token in the Kacket parser, containing line and column numbers and a value of true or false. It extends Token interface with methods for retrieving line and column numbers, as well as string representation.",
+        "type": "summary"
+    },
+    "148": {
+        "file_id": 28,
+        "content": "package com.github.std.kacket.parse\nclass Bool(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: Boolean\n) : Token {\n    override fun lineNumber(): Int {\n        return lineNum\n    }\n    override fun columnNumber(): Int {\n        return columnNum\n    }\n    override fun toString(): String = \"Bool#$value@(${lineNumber()},${columnNumber()})\"\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Bool.kt:1-17"
+    },
+    "149": {
+        "file_id": 28,
+        "content": "This class represents a Boolean token in the Kacket parser, containing line and column numbers and a value of true or false. It extends Token interface with methods for retrieving line and column numbers, as well as string representation.",
+        "type": "comment"
+    },
+    "150": {
+        "file_id": 29,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Character.kt",
+        "type": "filepath"
+    },
+    "151": {
+        "file_id": 29,
+        "content": "This class represents a character token with line number, column number, and value. It extends the Token class and overrides its methods to provide line and column numbers. The toString method returns a string representation of the Character object.",
+        "type": "summary"
+    },
+    "152": {
+        "file_id": 29,
+        "content": "package com.github.std.kacket.parse\nclass Character(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: Char\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Character#$value@(${lineNumber()},${columnNumber()})\"\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Character.kt:1-12"
+    },
+    "153": {
+        "file_id": 29,
+        "content": "This class represents a character token with line number, column number, and value. It extends the Token class and overrides its methods to provide line and column numbers. The toString method returns a string representation of the Character object.",
+        "type": "comment"
+    },
+    "154": {
+        "file_id": 30,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/EOF.kt",
+        "type": "filepath"
+    },
+    "155": {
+        "file_id": 30,
+        "content": "This code defines the EOF class, representing an end of file token with a line number and column number. It implements Token interface, providing lineNumber(), columnNumber(), and toString() methods to retrieve line number, column number, and string representation respectively.",
+        "type": "summary"
+    },
+    "156": {
+        "file_id": 30,
+        "content": "package com.github.std.kacket.parse\nclass EOF(\n    private val lineNum: Int,\n    private val columnNum: Int\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"EOF@(${lineNumber()},${columnNumber()})\"\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/EOF.kt:1-12"
+    },
+    "157": {
+        "file_id": 30,
+        "content": "This code defines the EOF class, representing an end of file token with a line number and column number. It implements Token interface, providing lineNumber(), columnNumber(), and toString() methods to retrieve line number, column number, and string representation respectively.",
+        "type": "comment"
+    },
+    "158": {
+        "file_id": 31,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Identifier.kt",
+        "type": "filepath"
+    },
+    "159": {
+        "file_id": 31,
+        "content": "This code defines the Identifier class, which represents an identifier token in a program. It has a value property (the actual identifier name), lineNum and columnNum properties to track its position in the source code, and overrides Token's lineNumber() and columnNumber() methods. It also provides a custom toString() method for displaying useful information about the Identifier object.",
+        "type": "summary"
+    },
+    "160": {
+        "file_id": 31,
+        "content": "package com.github.std.kacket.parse\nclass Identifier(\n    val value: String,\n    private val lineNum: Int,\n    private val columnNum: Int\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Identifier#$value@(${lineNumber()},${columnNumber()})\"\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Identifier.kt:1-13"
+    },
+    "161": {
+        "file_id": 31,
+        "content": "This code defines the Identifier class, which represents an identifier token in a program. It has a value property (the actual identifier name), lineNum and columnNum properties to track its position in the source code, and overrides Token's lineNumber() and columnNumber() methods. It also provides a custom toString() method for displaying useful information about the Identifier object.",
+        "type": "comment"
+    },
+    "162": {
+        "file_id": 32,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/LexError.kt",
+        "type": "filepath"
+    },
+    "163": {
+        "file_id": 32,
+        "content": "Class LexError extends RuntimeException and takes a message as parameter for custom error messages in the Kacket parsing process.",
+        "type": "summary"
+    },
+    "164": {
+        "file_id": 32,
+        "content": "package com.github.std.kacket.parse\nclass LexError(msg: String) : RuntimeException(msg) {\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/LexError.kt:1-4"
+    },
+    "165": {
+        "file_id": 32,
+        "content": "Class LexError extends RuntimeException and takes a message as parameter for custom error messages in the Kacket parsing process.",
+        "type": "comment"
+    },
+    "166": {
+        "file_id": 33,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt",
+        "type": "filepath"
+    },
+    "167": {
+        "file_id": 33,
+        "content": "The given code defines a Lexer class for parsing input text in the Kacket programming language, recognizing tokens such as comments and booleans. It reads characters, identifies tokens (numbers or punctuation), lexes various types of tokens, handles string starts and escapes, maintains a token buffer, and implements functions for checking identifier starts and characters to parse identifiers.",
+        "type": "summary"
+    },
+    "168": {
+        "file_id": 33,
+        "content": "package com.github.std.kacket.parse\nimport org.apache.commons.lang3.CharUtils.isAsciiPrintable\nimport java.io.BufferedReader\nimport java.io.Reader\nimport java.lang.StringBuilder\nimport java.util.LinkedList\nconst val BUFFER_SIZE = 50\nclass Lexer(\n    input: Reader,\n    private var lineNum: Int = 1,\n    private var columnNum: Int = 1\n) {\n    private val reader = BufferedReader(input)\n    private val tokenBuffer = LinkedList<Token>()\n    private var read = reader.read()\n    private fun close() {\n        tokenBuffer.add(EOF(lineNum, columnNum))\n        reader.close()\n    }\n    private fun lex() {\n        var tokenCount = 0\n        while (tokenCount <= BUFFER_SIZE) {\n            if (read == -1) {\n                close()\n                return\n            }\n            val char = read.toChar()\n            val (readNext, count) = when {\n                char == '\\n' -> {\n                    columnNum = 1\n                    lineNum++\n                    reader.read() to 0\n                }\n                char.isWhitespace() -> {",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt:1-42"
+    },
+    "169": {
+        "file_id": 33,
+        "content": "This code defines a Lexer class for parsing input text using a BufferedReader. It maintains a tokenBuffer to store tokens and tracks lineNum and columnNum for error reporting. The lex() method reads characters from the reader, keeps track of line numbers and column counts, and adds tokens to the buffer until reaching the maximum BUFFER_SIZE or EOF is encountered.",
+        "type": "comment"
+    },
+    "170": {
+        "file_id": 33,
+        "content": "                    reader.read() to 1\n                }\n                char == ';' -> {\n                    lexComment()\n                }\n                isIdentifierStart(char) -> {\n                    tokenCount++\n                    lexIdentifier(char)\n                }\n                isCharStart(char) -> {\n                    tokenCount++\n                    lexChar()\n                }\n                isBoolStart(char) -> {\n                    tokenCount++\n                    lexBool()\n                }\n                isStringStart(char) -> {\n                    tokenCount++\n                    lexString()\n                }\n                isNumberStart(char) -> {\n                    tokenCount++\n                    lexNumber(char)\n                }\n                isSymbolStart(char) -> {\n                    tokenCount++\n                    lexSymbol()\n                }\n                // should be after isSymbolStart\n                isPunctuation(char) -> {\n                    tokenCount++\n                    lexPunctuation(char)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt:43-83"
+    },
+    "171": {
+        "file_id": 33,
+        "content": "This code is a part of a lexer, responsible for identifying tokens in the input stream. It uses a series of if-else statements to determine the type of token based on the current character and calls corresponding lexing functions accordingly. The 'lexComment', 'lexIdentifier', 'lexChar', 'lexBool', 'lexString', 'lexNumber', and 'lexPunctuation' functions are used to handle different types of tokens, while 'tokenCount' keeps track of the number of tokens encountered.",
+        "type": "comment"
+    },
+    "172": {
+        "file_id": 33,
+        "content": "                }\n                else -> {\n                    throw LexError(\"Unknown Token at ($lineNum, $columnNum)\")\n                }\n            }\n            read = readNext\n            columnNum += count\n        }\n    }\n    private fun lexComment(): Pair<Int, Int> {\n        var read = reader.read()\n        while (read != -1 && read.toChar() != '\\n') {\n            read = reader.read()\n        }\n        return read to 0\n    }\n    private fun lexBool(): Pair<Int, Int> {\n        val read = reader.read()\n        val value = read.toChar() == 't'\n        tokenBuffer.add(Bool(lineNum, columnNum, value))\n        return reader.read() to 1\n    }\n    private fun isBoolStart(char: Char): Boolean {\n        if (char == '#') {\n            reader.mark(1)\n            val next = reader.read().toChar()\n            if (next == 'f' || next == 't') {\n                reader.reset()\n                return true\n            }\n            reader.reset()\n            return false\n        }\n        return false\n    }\n    private fun isSymbolChar(char: Char): Boolean =",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt:84-124"
+    },
+    "173": {
+        "file_id": 33,
+        "content": "This code snippet is part of a lexer in a programming language called Kacket. The lexer reads input from a reader, identifies tokens such as comments and booleans, and returns them along with the number of characters consumed. The `lexComment` function recognizes and skips lines starting with '#', while `lexBool` identifies true/false literals. The `isSymbolChar` function checks if a character is a valid symbol for further tokenization. Finally, `isBoolStart` checks if a given character is the start of a boolean literal.",
+        "type": "comment"
+    },
+    "174": {
+        "file_id": 33,
+        "content": "        !isPunctuation(char) && !char.isWhitespace() && isAsciiPrintable(char)\n    private fun lexSymbol(): Pair<Int, Int> {\n        var read = reader.read()\n        val builder = StringBuilder()\n        var count = 0\n        while (read != -1 && isSymbolChar(read.toChar())) {\n            count++\n            builder.append(read.toChar().toString())\n            read = reader.read()\n        }\n        if (count == 0) {\n            throw LexError(\"Bad Token at ($lineNum, $columnNum)\")\n        }\n        tokenBuffer.add(Symbol(lineNum, columnNum, builder.toString()))\n        return read to count\n    }\n    private fun isSymbolStart(first: Char): Boolean {\n        reader.mark(1)\n        val next = reader.read().toChar()\n        reader.reset()\n        if (first == '\\'' && isSymbolChar(next)) {\n            return true\n        }\n        return false\n    }\n    // (read, count)\n    private fun lexNumber(first: Char): Pair<Int, Int> {\n        var count = 0\n        var read = first.code\n        val builder = StringBuilder()\n        while (read != -1 && read.toChar().isDigit()) {",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt:125-159"
+    },
+    "175": {
+        "file_id": 33,
+        "content": "The code defines a lexer for parsing symbols and numbers in a stream of characters. The `lexSymbol()` function reads characters until it encounters a non-symbol character, appending them to a StringBuilder and counting the number of characters read. If no symbol characters are found, a LexError is thrown. The `isSymbolStart()` function checks if a given character is the start of a single-quoted symbol, and the `lexNumber(first: Char)` function reads characters until it encounters a non-digit character, appending them to a StringBuilder and counting the number of characters read.",
+        "type": "comment"
+    },
+    "176": {
+        "file_id": 33,
+        "content": "            count++\n            builder.append(read.toChar().toString())\n            read = reader.read()\n        }\n        if (read.toChar() == '.') {\n            count++\n            builder.append(\".\")\n            read = reader.read()\n        }\n        while (read.toChar().isDigit()) {\n            count++\n            builder.append(read.toChar().toString())\n            read = reader.read()\n        }\n        tokenBuffer.add(Num(lineNum, columnNum, builder.toString()))\n        return read to count\n    }\n    private fun isPunctuation(char: Char): Boolean =\n        char == '\\'' ||\n                char == '#' ||\n                char == '\"' ||\n                isParenthesis(char)\n    private fun isNumberStart(char: Char): Boolean = char.isDigit()\n    private fun isParenthesis(char: Char): Boolean =\n        char == '(' || char == ')' || char == '[' || char == ']'\n    private fun lexPunctuation(first: Char): Pair<Int, Int> {\n        tokenBuffer.add(Punctuation(first, lineNum, columnNum))\n        return reader.read() to 1",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt:160-190"
+    },
+    "177": {
+        "file_id": 33,
+        "content": "This code reads characters from a reader, appends them to a builder if they're not punctuation or digits, and adds the resulting token (number or punctuation) to the token buffer. The isPunctuation, isNumberStart, and isParenthesis helper functions are used for identifying different types of tokens.",
+        "type": "comment"
+    },
+    "178": {
+        "file_id": 33,
+        "content": "    }\n    private fun lexString(): Pair<Int, Int> {\n        // TODO: escape characters\n        var read = reader.read()\n        val builder = StringBuilder()\n        var count = 0\n        while (read != -1 && read.toChar() != '\\\"') {\n            builder.append(read.toChar().toString())\n            read = reader.read()\n            count++\n        }\n        read = reader.read()\n        tokenBuffer.add(Text(lineNum, columnNum, builder.toString()))\n        return read to count + 2\n    }\n    private fun isStringStart(char: Char): Boolean = char == '\\\"'\n    private fun lexChar(): Pair<Int, Int> {\n        val value = reader.read().toChar()\n        tokenBuffer.add(Character(lineNum, columnNum, value))\n        return reader.read() to 3\n    }\n    private fun isCharStart(char: Char): Boolean {\n        if (char == '#') {\n            reader.mark(1)\n            if (reader.read().toChar() == '\\\\') {\n                return true\n            }\n            reader.reset()\n            return false\n        }\n        return false\n    }\n    private fun lexIdentifier(first: Char): Pair<Int, Int> {",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt:191-229"
+    },
+    "179": {
+        "file_id": 33,
+        "content": "This code defines various functions for lexing different types of tokens (strings, characters) and includes checks for string and character starts. It reads input from a reader, maintains a token buffer to store parsed data, and handles potential escapes in strings.",
+        "type": "comment"
+    },
+    "180": {
+        "file_id": 33,
+        "content": "        fun isIdentifierChar(char: Char): Boolean =\n            !isPunctuation(char) && !char.isWhitespace() && isAsciiPrintable(char)\n        var read = first.code\n        var count = 0\n        val builder = StringBuilder()\n        while (read != 1 && isIdentifierChar(read.toChar())) {\n            count++\n            builder.append(read.toChar())\n            read = reader.read()\n        }\n        tokenBuffer.add(Identifier(builder.toString(), lineNum, columnNum))\n        return read to count\n    }\n    // TODO: check standard\n    private fun isIdentifierStart(char: Char): Boolean =\n        !isPunctuation(char) &&\n                !char.isDigit() &&\n                isAsciiPrintable(char)\n    fun nextToken(): Token {\n        if (tokenBuffer.isEmpty()) {\n            lex()\n        }\n        return tokenBuffer.removeFirst()\n    }\n    fun peekToken(): Token {\n        if (tokenBuffer.isEmpty()) {\n            lex()\n        }\n        return tokenBuffer.peek()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt:230-266"
+    },
+    "181": {
+        "file_id": 33,
+        "content": "This code is implementing a lexer for parsing identifiers. It defines functions for checking if a character is an identifier start or an identifier character, and uses these functions to read input and add identified tokens to a buffer. The buffer can be used to retrieve the next or peek at the next token in the parsed input.",
+        "type": "comment"
+    },
+    "182": {
+        "file_id": 34,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Num.kt",
+        "type": "filepath"
+    },
+    "183": {
+        "file_id": 34,
+        "content": "The Num class represents a number token with line and column numbers, and overrides the lineNumber and columnNumber functions as well as toString method.",
+        "type": "summary"
+    },
+    "184": {
+        "file_id": 34,
+        "content": "package com.github.std.kacket.parse\nclass Num(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: String\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Number$value@(${lineNumber()},${columnNumber()})\"\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Num.kt:1-12"
+    },
+    "185": {
+        "file_id": 34,
+        "content": "The Num class represents a number token with line and column numbers, and overrides the lineNumber and columnNumber functions as well as toString method.",
+        "type": "comment"
+    },
+    "186": {
+        "file_id": 35,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/ParseError.kt",
+        "type": "filepath"
+    },
+    "187": {
+        "file_id": 35,
+        "content": "This code defines a custom exception class called ParseError, which extends the built-in RuntimeException. It has two constructors - one for creating an instance with a Token object and another for creating an instance with a custom error message. The token's line number and column number are used to indicate the location of the syntax error in the input text.",
+        "type": "summary"
+    },
+    "188": {
+        "file_id": 35,
+        "content": "package com.github.std.kacket.parse\nimport java.lang.RuntimeException\nclass ParseError : RuntimeException {\n    constructor(token: Token) : super(\"Syntax Error near (${token.lineNumber()}, ${token.columnNumber()}): $token\")\n    constructor(msg:String) : super(msg)\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/ParseError.kt:1-8"
+    },
+    "189": {
+        "file_id": 35,
+        "content": "This code defines a custom exception class called ParseError, which extends the built-in RuntimeException. It has two constructors - one for creating an instance with a Token object and another for creating an instance with a custom error message. The token's line number and column number are used to indicate the location of the syntax error in the input text.",
+        "type": "comment"
+    },
+    "190": {
+        "file_id": 36,
+        "content": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt",
+        "type": "filepath"
+    },
+    "191": {
+        "file_id": 36,
+        "content": "The Kacket language parser identifies syntax, supports functions and parentheses, and includes parsing functions for let-expressions, letrec-expressions, if expressions, and \"define\" syntax sugar.",
+        "type": "summary"
+    },
+    "192": {
+        "file_id": 36,
+        "content": "package com.github.std.kacket.parse\nimport com.github.std.kacket.expr.*\nimport com.github.std.kacket.parse.exten.SExprExtParser\nclass Parser(\n    private val lexer: Lexer\n) {\n    private val sExprExts = mutableListOf<SExprExtParser>()\n    private val reservedWords = mutableListOf(\"define\", \"if\", \"else\", \"let\", \"letrec\", \"let*\", \"cond\", \"lambda\")\n    fun isEnd(): Boolean = lexer.peekToken() is EOF\n    fun addSExprExt(ext: SExprExtParser): Parser {\n        reservedWords.add(ext.start())\n        sExprExts.add(ext)\n        return this\n    }\n    fun isRightParenthesis(token: Token): Boolean = token is Punctuation && token.isRightParenthesis()\n    fun isLeftParenthesis(token: Token): Boolean = token is Punctuation && token.isLeftParenthesis()\n    fun shouldBeLeftParenthesis(token: Token) {\n        if (!(isLeftParenthesis(token))) {\n            throw ParseError(token)\n        }\n    }\n    fun shouldBeRightParenthesis(token: Token) {\n        if (!(isRightParenthesis(token))) {\n            throw ParseError(token)\n        }",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:1-32"
+    },
+    "193": {
+        "file_id": 36,
+        "content": "This code defines a Parser class that takes a Lexer as input and has methods to check if the next token is an end, add SExprExtParser, check if the token is a right or left parenthesis, and throw ParseError if it should be a specific type of token. It also maintains lists of reserved words and SExprExtParsers.",
+        "type": "comment"
+    },
+    "194": {
+        "file_id": 36,
+        "content": "    }\n    fun shouldBeNameToken(token: Token) {\n        if (token !is Identifier || reservedWords.contains(token.value)) {\n            throw ParseError(token)\n        }\n    }\n    fun parseExpr(): Expression {\n        val token = lexer.nextToken()\n        return when {\n            token is Identifier && !isReservedWord(token.value) -> {\n                Var(token)\n            }\n            token is Character || token is Bool || token is Num || token is Symbol || token is Text -> {\n                Const(token)\n            }\n            isLeftParenthesis(token) -> {\n                parseSExpr(token.lineNumber(), token.columnNumber())\n            }\n            token is Punctuation && token.char == '\\'' -> {\n                parseQuote(token.lineNumber(), token.columnNumber())\n            }\n            else -> {\n                throw ParseError(token)\n            }\n        }\n    }\n    private fun parseQuote(lineNumber: Int, columnNumber: Int): Quote {\n        val start = lexer.nextToken()\n//        shouldBeLeftParenthesis(start)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:33-68"
+    },
+    "195": {
+        "file_id": 36,
+        "content": "This code defines a `parseExpr` function that parses expressions in Kacket language. It checks the token type and returns corresponding expression objects like `Var`, `Const`, or throws a `ParseError` for invalid input. It also includes functions to parse other expression types such as `parseSExpr`, `parseQuote`.",
+        "type": "comment"
+    },
+    "196": {
+        "file_id": 36,
+        "content": "        val elements = mutableListOf<Quote.QuoteElement>()\n        var token = lexer.nextToken()\n        while (!(isRightParenthesis(token))) {\n            elements.add(parseQuoteElement(token))\n            token = lexer.nextToken()\n        }\n        shouldBeRightParenthesis(token)\n        return Quote(lineNumber, columnNumber, elements)\n    }\n    private fun parseQuoteElement(token: Token): Quote.QuoteElement {\n        return when {\n            token is Character || token is Bool || token is Num || token is Identifier || token is Symbol || token is Text -> {\n                Quote.ElementConst(token)\n            }\n            token is Punctuation && token.char == '\\'' -> {\n                Quote.ElementQuote(parseQuote(token.lineNumber(), token.columnNumber()))\n            }\n            isLeftParenthesis(token) -> {\n                val elements = mutableListOf<Quote.QuoteElement>()\n                var next = lexer.nextToken()\n                while (!(isRightParenthesis(next))) {\n                    elements.add(parseQuoteElement(next))",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:70-95"
+    },
+    "197": {
+        "file_id": 36,
+        "content": "The code parses a quote element in Kacket language. It checks the token type and creates different QuoteElement instances based on the token. If the token is a Punctuation with a single quote, it recursively calls parseQuote to handle nested quotes. The process continues until a right parenthesis is encountered.",
+        "type": "comment"
+    },
+    "198": {
+        "file_id": 36,
+        "content": "                    next = lexer.nextToken()\n                }\n                shouldBeRightParenthesis(next)\n                Quote.ElementQuotes(elements)\n            }\n            else -> throw ParseError(token)\n        }\n    }\n    private fun parseSExpr(line: Int, column: Int): Expression {\n        val token = lexer.nextToken()\n        val result = when {\n            token is Identifier && token.value == \"define\" -> parseDefine(line, column)\n            token is Identifier && token.value == \"if\" -> parseIf(line, column)\n            token is Identifier && token.value == \"let\" -> parseLet(line, column)\n            token is Identifier && token.value == \"lambda\" -> parseProc(line, column)\n            token is Identifier && token.value == \"letrec\" -> parseLetrec(line, column)\n            token is Identifier && token.value == \"let*\" -> parseLetstar(line, column)\n            token is Identifier && token.value == \"cond\" -> parseCond(line, column)\n            token is Identifier && token.value == \"begin\" -> parseBegin(line, column)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt:96-116"
+    },
+    "199": {
+        "file_id": 36,
+        "content": "This code is a parser for a programming language. It identifies different syntax elements and creates corresponding expressions based on the type of token encountered. The code handles various keyword identifiers such as 'define', 'if', 'let', 'lambda', 'letrec', 'let*', and 'cond'. If an unexpected token is encountered, it throws a ParseError.",
+        "type": "comment"
+    }
+}

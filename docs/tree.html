@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="github-markdown.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .directory:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        :target {
+            background-color: yellow !important;
+        }
+
+        .folded::before {
+            content: '\25B6';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+
+        .expanded::before {
+            content: '\25BC';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+    </style>
+    <script>
+        function toggleVisibility(element) {
+            let mclass = element.getAttribute("class");
+            if (mclass == "expanded") {
+                element.setAttribute('class', 'folded');
+            } else {
+                element.setAttribute('class', 'expanded');
+            }
+            const siblings = element.parentNode.children;
+            for (const sibling of siblings) {
+                if (sibling !== element) {
+                    sibling.style.display = (sibling.style.display === 'none') ? 'block' : 'none';
+                }
+            }
+        }
+    </script>
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+
+            .partial-repository-url {
+                display: none;
+            }
+        }
+
+        ul {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <article class="markdown-body">
+        <h2>Project Structure<span hierarchy="0" class="partial-repository-url"> of: ShorterThanDijkstra/Kacket</span><div style="float: right;"><a href="index.html"><i class="bi bi-search"></i></a></div></h2>
+<ul>
+<li><span hierarchy="0" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/"><code>Kacket</code></strong> <em>Comprehensive source code collection</em></span><ul>
+<li><a href="index.html?q=/README.md" id="/README.md"><code>README&period;md</code></a> <em>Analyzes Racket/Scheme code using Kotlin</em></li>
+<li><a href="index.html?q=/TODO.md" id="/TODO.md"><code>TODO&period;md</code></a> <em>TODO: Lambda case, dynamic arg proc, block comment.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/"><code>src</code></strong> <em>Source code repository</em></span><ul>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/"><code>main</code></strong> <em>Main source directory</em></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/"><code>kotlin</code></strong> <em>Kotlin classes, functions, error handling</em></span><ul>
+<li><a href="index.html?q=/src/main/kotlin/CMD.kt" id="/src/main/kotlin/CMD.kt"><code>CMD&period;kt</code></a> <em>CMD class with pcc and eopl Boolean variables, parse function for options.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/Main.kt" id="/src/main/kotlin/Main.kt"><code>Main&period;kt</code></a> <em>Kotlin code with functions, imports, parsing, and error handling</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/"><code>com</code></strong></span><ul>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/"><code>github</code></strong></span><ul>
+<li><span hierarchy="6" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/"><code>std</code></strong></span><ul>
+<li><span hierarchy="7" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/kacket/"><code>kacket</code></strong> <em>Kacket: Kotlin interpreter for Scheme scripts.</em></span><ul>
+<li><span hierarchy="8" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/kacket/analysis/"><code>analysis</code></strong> <em>Analyze and extend environments with Kacket expressions.</em></span><ul>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/AnalysisError.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/AnalysisError.kt"><code>AnalysisError&period;kt</code></a> <em>Custom exception class for Kacket analysis module</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/InitProcEnv.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/InitProcEnv.kt"><code>InitProcEnv&period;kt</code></a> <em>Initializes class for Kacket analysis and applies rules</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt"><code>ProcCallAnalyzer&period;kt</code></a> <em>Analyzes Kacket language procedure calls</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/ProcCallRule.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/ProcCallRule.kt"><code>ProcCallRule&period;kt</code></a> <em>Procedure analysis functions</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/ProcEnv.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/ProcEnv.kt"><code>ProcEnv&period;kt</code></a> <em>Defines rules for process environments with unique IDs.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/RestProcEnv.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/RestProcEnv.kt"><code>RestProcEnv&period;kt</code></a> <em>RestProcEnv: ProcEnv extension, rule ID-based application.</em></li>
+<li><span hierarchy="9" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/kacket/analysis/exten/"><code>exten</code></strong> <em>Analyze, modify environment with Kacket expressions.</em></span><ul>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/exten/CasesAnalyzer.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/exten/CasesAnalyzer.kt"><code>CasesAnalyzer&period;kt</code></a> <em>Analyzes Kacket Cases expressions, modifies environment.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/exten/DefineDatatypeAnalyzer.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/exten/DefineDatatypeAnalyzer.kt"><code>DefineDatatypeAnalyzer&period;kt</code></a> <em>Analyzes DefineDatatype expressions and modifies environment.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/analysis/exten/ExtAnalyzer.kt" id="/src/main/kotlin/com/github/std/kacket/analysis/exten/ExtAnalyzer.kt"><code>ExtAnalyzer&period;kt</code></a> <em>Analyze, modify, support: ExtExpr and InitProcEnv.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="8" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/kacket/expr/"><code>expr</code></strong> <em>Kacket language extensions through Kotlin expression library</em></span><ul>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Begin.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Begin.kt"><code>Begin&period;kt</code></a> <em>Kotlin Begin Expression Class</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Call.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Call.kt"><code>Call&period;kt</code></a> <em>Function call expression class</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Const.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Const.kt"><code>Const&period;kt</code></a> <em>Represents constant expression in kacket language.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Define.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Define.kt"><code>Define&period;kt</code></a> <em>Defines '(define)' expressions in language.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/ExprError.kt" id="/src/main/kotlin/com/github/std/kacket/expr/ExprError.kt"><code>ExprError&period;kt</code></a> <em>Custom exception for Kacket library expressions</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Expression.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Expression.kt"><code>Expression&period;kt</code></a> <em>Interface for expression context location.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/If.kt" id="/src/main/kotlin/com/github/std/kacket/expr/If.kt"><code>If&period;kt</code></a> <em>If expression class for Kacket language.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Let.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Let.kt"><code>Let&period;kt</code></a> <em>Let expression class with bindings and evaluations</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Letrec.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Letrec.kt"><code>Letrec&period;kt</code></a> <em>Letrec: LETREC class for Kacket's syntax tree</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Procedure.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Procedure.kt"><code>Procedure&period;kt</code></a> <em>Lambda Expression Class with Arguments, Body and Line Info.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Quote.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Quote.kt"><code>Quote&period;kt</code></a> <em>Quote class: Token to string, quote element list with loc.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/Var.kt" id="/src/main/kotlin/com/github/std/kacket/expr/Var.kt"><code>Var&period;kt</code></a> <em>Variable expression class in Kacket language</em></li>
+<li><span hierarchy="9" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/kacket/expr/exten/"><code>exten</code></strong> <em>Kacket language: Extensions directory for custom Expressions</em></span><ul>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/exten/Cases.kt" id="/src/main/kotlin/com/github/std/kacket/expr/exten/Cases.kt"><code>Cases&period;kt</code></a> <em>Cases: Case statement builder in Kacket</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/exten/DefineDatatype.kt" id="/src/main/kotlin/com/github/std/kacket/expr/exten/DefineDatatype.kt"><code>DefineDatatype&period;kt</code></a> <em>DefineDatatype: Kacket language type definition class</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/expr/exten/ExtExpr.kt" id="/src/main/kotlin/com/github/std/kacket/expr/exten/ExtExpr.kt"><code>ExtExpr&period;kt</code></a> <em>Implements extendable Expression interface functions.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="8" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/kacket/parse/"><code>parse</code></strong> <em>Kotlin parsing tools with error handling.</em></span><ul>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Bool.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Bool.kt"><code>Bool&period;kt</code></a> <em>Boolean Kacket parser token class with line, column info</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Character.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Character.kt"><code>Character&period;kt</code></a> <em>Represents character token with line, column, and value. Extends Token class.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/EOF.kt" id="/src/main/kotlin/com/github/std/kacket/parse/EOF.kt"><code>EOF&period;kt</code></a> <em>EOF token class with line, column, and string representation.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Identifier.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Identifier.kt"><code>Identifier&period;kt</code></a> <em>Identifier class for program identifiers with position tracking</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/LexError.kt" id="/src/main/kotlin/com/github/std/kacket/parse/LexError.kt"><code>LexError&period;kt</code></a> <em>Custom error class for Kacket parsing.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt"><code>Lexer&period;kt</code></a> <em>Kacket Lexer for input parsing</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Num.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Num.kt"><code>Num&period;kt</code></a> <em>Num class: Number token with line, column numbers and custom toString.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/ParseError.kt" id="/src/main/kotlin/com/github/std/kacket/parse/ParseError.kt"><code>ParseError&period;kt</code></a> <em>Custom exception class for syntax errors with location info</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Parser.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Parser.kt"><code>Parser&period;kt</code></a> <em>Kacket language parser: syntax, functions, parentheses, let-expressions.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Punctuation.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Punctuation.kt"><code>Punctuation&period;kt</code></a> <em>Punctuation class for parentheses with line, column.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Symbol.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Symbol.kt"><code>Symbol&period;kt</code></a> <em>Symbol class: Kacket parser's symbol token representation.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Text.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Text.kt"><code>Text&period;kt</code></a> <em>Text class: Token representation with line, column, and value.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/Token.kt" id="/src/main/kotlin/com/github/std/kacket/parse/Token.kt"><code>Token&period;kt</code></a> <em>Token class with line/column functions</em></li>
+<li><span hierarchy="9" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/kacket/parse/exten/"><code>exten</code></strong> <em>Exten package: Kotlin extensions for parsing extended regex in specific contexts.</em></span><ul>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/exten/CasesParser.kt" id="/src/main/kotlin/com/github/std/kacket/parse/exten/CasesParser.kt"><code>CasesParser&period;kt</code></a> <em>CasesParser: Parser for switch statement cases.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt" id="/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt"><code>DefineDatatypeParser&period;kt</code></a> <em>Parse define-datatype statements, extract fields.</em></li>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/parse/exten/SExprExtParser.kt" id="/src/main/kotlin/com/github/std/kacket/parse/exten/SExprExtParser.kt"><code>SExprExtParser&period;kt</code></a> <em>Parse extended regex in specific context.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="8" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/kotlin/com/github/std/kacket/transpiler/"><code>transpiler</code></strong></span><ul>
+<li><a href="index.html?q=/src/main/kotlin/com/github/std/kacket/transpiler/scheme-js.js" id="/src/main/kotlin/com/github/std/kacket/transpiler/scheme-js.js"><code>scheme-js&period;js</code></a> <em>Transpiles Scheme to JavaScript with nested functions, loops, and recursion.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/main/resources/"><code>resources</code></strong> <em>Project resources</em></span><ul>
+<li><a href="index.html?q=/src/main/resources/grammar.txt" id="/src/main/resources/grammar.txt"><code>grammar&period;txt</code></a> <em>EBNF grammar for programming language with nested expressions and quoting.</em></li>
+<li><a href="index.html?q=/src/main/resources/test.rkt" id="/src/main/resources/test.rkt"><code>test&period;rkt</code></a> <em>Fibonacci, Lambda, Recursive Loops, Tree Data Type</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/test/"><code>test</code></strong></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/test/kotlin/"><code>kotlin</code></strong></span><ul>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/test/kotlin/com/"><code>com</code></strong></span><ul>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/test/kotlin/com/github/"><code>github</code></strong></span><ul>
+<li><span hierarchy="6" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/test/kotlin/com/github/std/"><code>std</code></strong></span><ul>
+<li><span hierarchy="7" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/test/kotlin/com/github/std/kacket/"><code>kacket</code></strong> <em>Kacket parser tests for Lisp-like features.</em></span><ul>
+<li><span hierarchy="8" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/test/kotlin/com/github/std/kacket/analysis/"><code>analysis</code></strong></span><ul>
+<li><a href="index.html?q=/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt" id="/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt"><code>ProcCallAnalyzerTest&period;kt</code></a> <em>Test ProcCallAnalyzer functions for Lisp-like features.</em></li>
+</ul>
+</li>
+<li><span hierarchy="8" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/src/test/kotlin/com/github/std/kacket/parse/"><code>parse</code></strong> <em>Kacket parse tests for lexer and parser.</em></span><ul>
+<li><a href="index.html?q=/src/test/kotlin/com/github/std/kacket/parse/LexerTest.kt" id="/src/test/kotlin/com/github/std/kacket/parse/LexerTest.kt"><code>LexerTest&period;kt</code></a> <em>Tests Lexer by parsing Scheme code using JUnit and ByteArrayInputStream.</em></li>
+<li><a href="index.html?q=/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt" id="/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt"><code>ParserTest&period;kt</code></a> <em>Kacket Parser tests expressions, nested lets.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+    </article>
+    <script type="text/javascript">
+        function getQueryParams() {
+            var search = window.location.search.substring(1); // Remove leading '?'
+            var queryParams = {};
+            search.split('&').forEach(function (pair) {
+                var parts = pair.split('=');
+                var key = decodeURIComponent(parts[0]);
+                var value = decodeURIComponent(parts[1]);
+                queryParams[key] = value;
+            });
+            return queryParams;
+        }
+
+        const queryParams = getQueryParams(window.location.search);
+        const show_full = queryParams.full == "true";
+        if (!show_full) {
+            const spans = document.querySelectorAll('span');
+            for (let span of spans) {
+                if (span.getAttribute("hierarchy") == '0') { continue }
+
+                toggleVisibility(span);
+            }
+        }
+    </script>
+</body>
+
+</html>

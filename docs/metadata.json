@@ -1,0 +1,260 @@
+{
+    "url": {
+        "full": "https://github.com/ShorterThanDijkstra/Kacket",
+        "partial": "ShorterThanDijkstra/Kacket"
+    },
+    "file_mapping": {
+        "0": {
+            "filepath": "/README.md",
+            "entry_id": 0,
+            "language_id": "markdown"
+        },
+        "1": {
+            "filepath": "/TODO.md",
+            "entry_id": 4,
+            "language_id": "markdown"
+        },
+        "2": {
+            "filepath": "/src/main/kotlin/CMD.kt",
+            "entry_id": 8,
+            "language_id": "kotlin"
+        },
+        "3": {
+            "filepath": "/src/main/kotlin/Main.kt",
+            "entry_id": 12,
+            "language_id": "kotlin"
+        },
+        "4": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/AnalysisError.kt",
+            "entry_id": 20,
+            "language_id": "kotlin"
+        },
+        "5": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/InitProcEnv.kt",
+            "entry_id": 24,
+            "language_id": "kotlin"
+        },
+        "6": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt",
+            "entry_id": 32,
+            "language_id": "kotlin"
+        },
+        "7": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallRule.kt",
+            "entry_id": 48,
+            "language_id": "kotlin"
+        },
+        "8": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/ProcEnv.kt",
+            "entry_id": 52,
+            "language_id": "kotlin"
+        },
+        "9": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/RestProcEnv.kt",
+            "entry_id": 56,
+            "language_id": "kotlin"
+        },
+        "10": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/exten/CasesAnalyzer.kt",
+            "entry_id": 60,
+            "language_id": "kotlin"
+        },
+        "11": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/exten/DefineDatatypeAnalyzer.kt",
+            "entry_id": 66,
+            "language_id": "kotlin"
+        },
+        "12": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/analysis/exten/ExtAnalyzer.kt",
+            "entry_id": 74,
+            "language_id": "kotlin"
+        },
+        "13": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Begin.kt",
+            "entry_id": 78,
+            "language_id": "kotlin"
+        },
+        "14": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Call.kt",
+            "entry_id": 82,
+            "language_id": "kotlin"
+        },
+        "15": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Const.kt",
+            "entry_id": 86,
+            "language_id": "kotlin"
+        },
+        "16": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Define.kt",
+            "entry_id": 90,
+            "language_id": "kotlin"
+        },
+        "17": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/ExprError.kt",
+            "entry_id": 94,
+            "language_id": "kotlin"
+        },
+        "18": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Expression.kt",
+            "entry_id": 98,
+            "language_id": "kotlin"
+        },
+        "19": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/If.kt",
+            "entry_id": 102,
+            "language_id": "kotlin"
+        },
+        "20": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Let.kt",
+            "entry_id": 106,
+            "language_id": "kotlin"
+        },
+        "21": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Letrec.kt",
+            "entry_id": 110,
+            "language_id": "kotlin"
+        },
+        "22": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Procedure.kt",
+            "entry_id": 114,
+            "language_id": "kotlin"
+        },
+        "23": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Quote.kt",
+            "entry_id": 118,
+            "language_id": "kotlin"
+        },
+        "24": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/Var.kt",
+            "entry_id": 126,
+            "language_id": "kotlin"
+        },
+        "25": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/exten/Cases.kt",
+            "entry_id": 130,
+            "language_id": "kotlin"
+        },
+        "26": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/exten/DefineDatatype.kt",
+            "entry_id": 136,
+            "language_id": "kotlin"
+        },
+        "27": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/expr/exten/ExtExpr.kt",
+            "entry_id": 142,
+            "language_id": "kotlin"
+        },
+        "28": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Bool.kt",
+            "entry_id": 146,
+            "language_id": "kotlin"
+        },
+        "29": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Character.kt",
+            "entry_id": 150,
+            "language_id": "kotlin"
+        },
+        "30": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/EOF.kt",
+            "entry_id": 154,
+            "language_id": "kotlin"
+        },
+        "31": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Identifier.kt",
+            "entry_id": 158,
+            "language_id": "kotlin"
+        },
+        "32": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/LexError.kt",
+            "entry_id": 162,
+            "language_id": "kotlin"
+        },
+        "33": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Lexer.kt",
+            "entry_id": 166,
+            "language_id": "kotlin"
+        },
+        "34": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Num.kt",
+            "entry_id": 182,
+            "language_id": "kotlin"
+        },
+        "35": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/ParseError.kt",
+            "entry_id": 186,
+            "language_id": "kotlin"
+        },
+        "36": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Parser.kt",
+            "entry_id": 190,
+            "language_id": "kotlin"
+        },
+        "37": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Punctuation.kt",
+            "entry_id": 220,
+            "language_id": "kotlin"
+        },
+        "38": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Symbol.kt",
+            "entry_id": 224,
+            "language_id": "kotlin"
+        },
+        "39": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Text.kt",
+            "entry_id": 228,
+            "language_id": "kotlin"
+        },
+        "40": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/Token.kt",
+            "entry_id": 232,
+            "language_id": "kotlin"
+        },
+        "41": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/exten/CasesParser.kt",
+            "entry_id": 236,
+            "language_id": "kotlin"
+        },
+        "42": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt",
+            "entry_id": 244,
+            "language_id": "kotlin"
+        },
+        "43": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/parse/exten/SExprExtParser.kt",
+            "entry_id": 252,
+            "language_id": "kotlin"
+        },
+        "44": {
+            "filepath": "/src/main/kotlin/com/github/std/kacket/transpiler/scheme-js.js",
+            "entry_id": 256,
+            "language_id": "javascript"
+        },
+        "45": {
+            "filepath": "/src/main/resources/grammar.txt",
+            "entry_id": 260,
+            "language_id": "plain-text"
+        },
+        "46": {
+            "filepath": "/src/main/resources/test.rkt",
+            "entry_id": 264,
+            "language_id": "text"
+        },
+        "47": {
+            "filepath": "/src/test/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzerTest.kt",
+            "entry_id": 268,
+            "language_id": "kotlin"
+        },
+        "48": {
+            "filepath": "/src/test/kotlin/com/github/std/kacket/parse/LexerTest.kt",
+            "entry_id": 286,
+            "language_id": "kotlin"
+        },
+        "49": {
+            "filepath": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt",
+            "entry_id": 292,
+            "language_id": "kotlin"
+        }
+    },
+    "project_name": "Kacket",
+    "split_count": 4
+}

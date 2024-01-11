@@ -1,0 +1,533 @@
+{
+    "0": {
+        "file_id": 0,
+        "content": "/README.md",
+        "type": "filepath"
+    },
+    "1": {
+        "file_id": 0,
+        "content": "This code snippet is a brief description of the \"Kacket\" project, which is a Racket/Scheme code analyzer written in Kotlin. It provides basic information about its purpose and the programming languages it supports for analysis.",
+        "type": "summary"
+    },
+    "2": {
+        "file_id": 0,
+        "content": "# Kacket\nA toy Racket/Scheme code analyzer written in Kotlin.",
+        "type": "code",
+        "location": "/README.md:1-2"
+    },
+    "3": {
+        "file_id": 0,
+        "content": "This code snippet is a brief description of the \"Kacket\" project, which is a Racket/Scheme code analyzer written in Kotlin. It provides basic information about its purpose and the programming languages it supports for analysis.",
+        "type": "comment"
+    },
+    "4": {
+        "file_id": 1,
+        "content": "/TODO.md",
+        "type": "filepath"
+    },
+    "5": {
+        "file_id": 1,
+        "content": "This code appears to define a case for a lambda function, an arbitrary argument procedure (possibly used in dynamic programming), and includes a block comment likely for documentation or future reference.",
+        "type": "summary"
+    },
+    "6": {
+        "file_id": 1,
+        "content": "* case lambda\n* arbitrary argument procedure\n* block comment",
+        "type": "code",
+        "location": "/TODO.md:1-3"
+    },
+    "7": {
+        "file_id": 1,
+        "content": "This code appears to define a case for a lambda function, an arbitrary argument procedure (possibly used in dynamic programming), and includes a block comment likely for documentation or future reference.",
+        "type": "comment"
+    },
+    "8": {
+        "file_id": 2,
+        "content": "/src/main/kotlin/CMD.kt",
+        "type": "filepath"
+    },
+    "9": {
+        "file_id": 2,
+        "content": "This code defines a class named CMD, which takes an array of arguments as input and initializes two private Boolean variables, pcc and eopl, based on the presence of certain command line options in the argument list. The parse function loops through the argument list to check for specific flags. The class also provides getter methods pcc() and eopl() to retrieve the values of pcc and eopl respectively.",
+        "type": "summary"
+    },
+    "10": {
+        "file_id": 2,
+        "content": "class CMD(args: Array<String>) {\n    val source: String = args[args.size - 1]\n    private var pcc = false\n    private var eopl = false\n    init {\n        parse(args)\n    }\n    private fun parse(args: Array<String>) {\n        for (i in 0..args.size - 2) {\n            when {\n                args[i] == \"--pcc\" -> pcc = true\n                args[i] == \"--eopl\" -> eopl = true\n            }\n        }\n    }\n    fun pcc(): Boolean = pcc\n    fun eopl(): Boolean = eopl\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/CMD.kt:1-21"
+    },
+    "11": {
+        "file_id": 2,
+        "content": "This code defines a class named CMD, which takes an array of arguments as input and initializes two private Boolean variables, pcc and eopl, based on the presence of certain command line options in the argument list. The parse function loops through the argument list to check for specific flags. The class also provides getter methods pcc() and eopl() to retrieve the values of pcc and eopl respectively.",
+        "type": "comment"
+    },
+    "12": {
+        "file_id": 3,
+        "content": "/src/main/kotlin/Main.kt",
+        "type": "filepath"
+    },
+    "13": {
+        "file_id": 3,
+        "content": "The code imports classes, defines functions for usage instructions and checks. It initializes an analyzer with parser configuration, handles specific commands like EOPL, PCC, and others, using error handling through try-catch blocks.",
+        "type": "summary"
+    },
+    "14": {
+        "file_id": 3,
+        "content": "import com.github.std.kacket.analysis.ProcCallAnalyzer\nimport com.github.std.kacket.analysis.arityEqual\nimport com.github.std.kacket.analysis.arityGreaterEqual\nimport com.github.std.kacket.analysis.exten.CasesAnalyzer\nimport com.github.std.kacket.analysis.exten.DefineDatatypeAnalyzer\nimport com.github.std.kacket.parse.Lexer\nimport com.github.std.kacket.parse.Parser\nimport com.github.std.kacket.parse.exten.CasesParser\nimport com.github.std.kacket.parse.exten.DefineDatatypeParser\nimport java.io.FileReader\nprivate fun help() {\n    val usage = \"\"\"\n        Usage: kacket <options> <source files>\n        where possible options include:\n        --pcc          procedure call check\n        --eopl         check #lang eopl of racket\n    \"\"\".trimIndent()\n    println(usage)\n}\nprivate fun procedureCallCheck(source: String) {\n    val input = FileReader(source)\n    val lexer = Lexer(input)\n    val parser = Parser(lexer)\n    val analyzer = ProcCallAnalyzer(parser)\n    analyzer.analyzeProgram()\n}\nprivate fun eoplCheck(source: String) {",
+        "type": "code",
+        "location": "/src/main/kotlin/Main.kt:1-30"
+    },
+    "15": {
+        "file_id": 3,
+        "content": "Code imports necessary classes for analysis and parsing, defines a help function to show usage instructions, and includes private functions for procedure call check and EOPL check on source files.",
+        "type": "comment"
+    },
+    "16": {
+        "file_id": 3,
+        "content": "    val input = FileReader(source)\n    var read = input.read()\n    while (read.toChar() != '\\n') {\n        read = input.read()\n    }\n    val lexer = Lexer(input, 2, 1)\n    val parser = Parser(lexer)\n        .addSExprExt(DefineDatatypeParser)\n        .addSExprExt(CasesParser)\n    val analyzer = ProcCallAnalyzer(parser)\n        .addExtAnalyzer(DefineDatatypeAnalyzer)\n        .addExtAnalyzer(CasesAnalyzer)\n        .addProcRule(\"list-of\", arityEqual(1))\n        .addProcRule(\"eopl:error\", arityGreaterEqual(1))\n        .addProcRule(\"eopl:printf\", arityGreaterEqual(1))\n        .addProcRule(\"sllgen:make-define-datatypes\", arityEqual(2))\n        .addProcRule(\"sllgen:list-define-datatypes\", arityEqual(2))\n        .addProcRule(\"sllgen:make-string-scanner\", arityEqual(2))\n        .addProcRule(\"sllgen:make-string-parser\", arityEqual(2))\n        .addProcRule(\"sllgen:make-rep-loop\", arityEqual(3))\n    analyzer.analyzeProgram()\n}\nfun main(args: Array<String>) {\n    if (args.size < 2) {\n        help()\n        return\n    }\n    val cmd = CMD(args)",
+        "type": "code",
+        "location": "/src/main/kotlin/Main.kt:31-61"
+    },
+    "17": {
+        "file_id": 3,
+        "content": "Initializes an analyzer for the program by configuring a parser and adding analyzers and procedure rules.",
+        "type": "comment"
+    },
+    "18": {
+        "file_id": 3,
+        "content": "    try {\n        when {\n            cmd.eopl() -> {\n                eoplCheck(cmd.source)\n            }\n            cmd.pcc() -> {\n                procedureCallCheck(cmd.source)\n            }\n            else -> help()\n        }\n    } catch (ex: Throwable) {\n        println(ex.message)\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/Main.kt:62-78"
+    },
+    "19": {
+        "file_id": 3,
+        "content": "The code attempts to execute commands and handles three specific cases: eopl, pcc, and any other unspecified command. It uses a try-catch block for error handling, with the catch block printing the exception message if thrown.",
+        "type": "comment"
+    },
+    "20": {
+        "file_id": 4,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/AnalysisError.kt",
+        "type": "filepath"
+    },
+    "21": {
+        "file_id": 4,
+        "content": "This code defines a custom exception class \"AnalysisError\" that extends the built-in Java RuntimeException, allowing for more specific error handling in the Kacket analysis module.",
+        "type": "summary"
+    },
+    "22": {
+        "file_id": 4,
+        "content": "package com.github.std.kacket.analysis\nimport java.lang.RuntimeException\nclass AnalysisError(msg: String) : RuntimeException(msg) {\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/AnalysisError.kt:1-6"
+    },
+    "23": {
+        "file_id": 4,
+        "content": "This code defines a custom exception class \"AnalysisError\" that extends the built-in Java RuntimeException, allowing for more specific error handling in the Kacket analysis module.",
+        "type": "comment"
+    },
+    "24": {
+        "file_id": 5,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/InitProcEnv.kt",
+        "type": "filepath"
+    },
+    "25": {
+        "file_id": 5,
+        "content": "This code initializes a class \"InitProcEnv\" extending \"ProcEnv\", defining functions with their corresponding arity in the map. It also defines a class implementing `RuleApplier` for Kacket analysis, applying rules to procedures and overriding the `applyRule` function.",
+        "type": "summary"
+    },
+    "26": {
+        "file_id": 5,
+        "content": "package com.github.std.kacket.analysis\nclass InitProcEnv : ProcEnv {\n    private val map = HashMap<String, (Int) -> Unit>()\n    init {\n        addPrimitiveProcsRules()\n    }\n    private fun addPrimitiveProcsRules() {\n        map[\"+\"] = arityAny()\n        map[\"-\"] = arityAny()\n        map[\"*\"] = arityAny()\n        map[\"/\"] = arityAny()\n        map[\"=\"] = arityGreaterEqual(1)\n        map[\">\"] = arityGreaterEqual(1)\n        map[\">=\"] = arityGreaterEqual(1)\n        map[\"<\"] = arityGreaterEqual(1)\n        map[\"<=\"] = arityGreaterEqual(1)\n        map[\"null?\"] = arityEqual(1)\n        map[\"eq?\"] = arityEqual(2)\n        map[\"eqv?\"] = arityEqual(2)\n        map[\"equal?\"] = arityEqual(2)\n        map[\"car\"] = arityEqual(1)\n        map[\"cdr\"] = arityEqual(1)\n        map[\"cadr\"] = arityEqual(1)\n        map[\"cddr\"] = arityEqual(1)\n        map[\"caddr\"] = arityEqual(1)\n        map[\"cdddr\"] = arityEqual(1)\n        map[\"cadddr\"] = arityEqual(1)\n        map[\"cons\"] = arityEqual(2)\n        map[\"append\"] = arityAny()\n        map[\"list\"] = arityAny()",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/InitProcEnv.kt:1-35"
+    },
+    "27": {
+        "file_id": 5,
+        "content": "The code defines a class \"InitProcEnv\" which extends the \"ProcEnv\" class. It initializes a private HashMap named \"map\" that stores primitive procedural functions with their corresponding function rules. The class also includes an initialization method to add primitive process rules using a predefined list of key-value pairs representing different mathematical and list operations as keys and their corresponding arity definitions as values.",
+        "type": "comment"
+    },
+    "28": {
+        "file_id": 5,
+        "content": "        map[\"length\"] = arityGreaterEqual(1)\n        map[\"list-ref\"] = arityEqual(2)\n        map[\"reverse\"] = arityEqual(1)\n        map[\"map\"] = arityGreaterEqual(2)\n        map[\"make-vector\"] = arityGreaterEqual(1)\n        map[\"vector-set!\"] = arityEqual(3)\n        map[\"vector-ref\"] = arityEqual(2)\n        map[\"vector\"] = arityAny()\n        map[\"vector-length\"] = arityEqual(1)\n        map[\"set!\"] = arityEqual(2)\n        map[\"and\"] = arityAny()\n        map[\"or\"] = arityAny()\n        map[\"not\"] = arityEqual(1)\n        map[\"number?\"] = arityEqual(1)\n        map[\"symbol?\"] = arityEqual(1)\n        map[\"list?\"] = arityEqual(1)\n        map[\"boolean?\"] = arityEqual(1)\n        map[\"integer?\"] = arityEqual(1)\n        map[\"zero?\"] = arityEqual(1)\n        map[\"vector?\"] = arityEqual(1)\n        map[\"pair?\"]  = arityEqual(1)\n        map[\"write\"] = arityGreaterEqual(1) // TODO: <=2 && >=1\n        map[\"newline\"] = arityAny() // TODO: <=1 && >=0\n    }\n    override fun addRule(id: String, rule: (Int) -> Unit) {\n        map[id] = rule",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/InitProcEnv.kt:36-67"
+    },
+    "29": {
+        "file_id": 5,
+        "content": "This code initializes a map with various functions and their corresponding arities. It defines the function names as keys in the map, associating each with its required number of arguments (arity). The arity definitions range from 1 to any number of arguments, or specific cases like \"arityAny()\" for any number of arguments.",
+        "type": "comment"
+    },
+    "30": {
+        "file_id": 5,
+        "content": "    }\n    override fun applyRule(procId: String, actual: Int) {\n        val rule = map[procId] ?: throw AnalysisError(\"Can't find procedure $procId\")\n        rule.invoke(actual)\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/InitProcEnv.kt:68-75"
+    },
+    "31": {
+        "file_id": 5,
+        "content": "This code defines a class implementing the `RuleApplier` interface, which applies rules to procedures in Kacket analysis. It overrides the `applyRule` function, retrieves the rule for the given procedure ID from the map, and invokes it with the provided actual value.",
+        "type": "comment"
+    },
+    "32": {
+        "file_id": 6,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt",
+        "type": "filepath"
+    },
+    "33": {
+        "file_id": 6,
+        "content": "This code initializes a `ProcCallAnalyzer` for Kacket language procedure calls, defining an initialization environment and methods to add rules/analyzers. It performs syntax analysis on expressions like procedures, defines, consts, quotes, and if statements, extending the environment and applying expression-based rules.",
+        "type": "summary"
+    },
+    "34": {
+        "file_id": 6,
+        "content": "package com.github.std.kacket.analysis\nimport com.github.std.kacket.analysis.exten.ExtAnalyzer\nimport com.github.std.kacket.expr.*\nimport com.github.std.kacket.expr.exten.ExtExpr\nimport com.github.std.kacket.parse.Parser\nimport java.io.Reader\nclass ProcCallAnalyzer(private val parser: Parser) {\n    private val initEnv = InitProcEnv()\n    private val body = mutableListOf<Expression>()\n    private val extAnalyzers = mutableListOf<ExtAnalyzer>()\n    private fun init() {\n        while (!parser.isEnd()) {\n            val expr = parser.parseExpr()\n            body.add(expr)\n            // TODO: Other situations\n            if (expr is Define) {\n                when (expr.expr) {\n                    is Procedure -> {\n                        addProcRule(initEnv, expr.name, expr.expr)\n                    }\n                    is Begin, is Call, is If, is Let, is Letrec, is Var -> {\n                        initEnv.addRule(expr.name, arityAny())\n                    }\n                    else -> ignore()\n                }",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt:1-30"
+    },
+    "35": {
+        "file_id": 6,
+        "content": "This code initializes a ProcCallAnalyzer object, which analyzes procedure calls in the Kacket language. It uses a Parser to parse expressions and defines an initialization environment (initEnv) to track defined procedures and variables. The body stores expressions for further processing, and extAnalyzers is a list of additional analyzer objects.",
+        "type": "comment"
+    },
+    "36": {
+        "file_id": 6,
+        "content": "            }\n            for (analyzer in extAnalyzers) {\n                if (expr is ExtExpr && analyzer.support(expr)) {\n                    analyzer.modifyEnv(initEnv, expr)\n                }\n            }\n        }\n    }\n    fun addProcRule(procId: String, rule: (Int) -> Unit): ProcCallAnalyzer {\n        initEnv.addRule(procId, rule)\n        return this\n    }\n    fun addExtAnalyzer(analyzer: ExtAnalyzer): ProcCallAnalyzer {\n        extAnalyzers.add(analyzer)\n        return this\n    }\n    private fun addProcRule(env: ProcEnv, id: String, proc: Procedure) {\n        // TODO: Other situations\n        env.addRule(id, arityEqual(proc.args.size))\n    }\n    fun analyzeProgram() {\n        init()\n        analyzeExprs(body, initEnv)\n    }\n    fun analyzeExprs(exprs: List<Expression>, env: ProcEnv) {\n        for (expr in exprs) {\n            analyzeExpr(expr, env)\n        }\n    }\n    fun analyzeExpr(expr: Expression, env: ProcEnv) {\n        when (expr) {\n            is Call -> analyzeCall(expr, env)\n            is Define -> analyzeDefine(expr, env)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt:32-70"
+    },
+    "37": {
+        "file_id": 6,
+        "content": "This code defines a class `ProcCallAnalyzer` with methods to add procedure rules and external analyzers, and functions for analyzing expressions and the program as a whole. It initializes the environment and applies rules and analyzers to specified expressions.",
+        "type": "comment"
+    },
+    "38": {
+        "file_id": 6,
+        "content": "            is If -> analyzeIf(expr, env)\n            is Let -> analyzeLet(expr, env)\n            is Letrec -> analyzeLetrec(expr, env)\n            is Procedure -> analyzeProc(expr, env)\n            is Begin -> analyzeBegin(expr, env)\n            is Var -> ignore()\n            is Const -> ignore()\n            is Quote -> ignore()\n            is ExtExpr -> {\n                val analyzer = extAnalyzers.find { it.support(expr) }\n                analyzer?.analyze(expr, env, this)\n            }\n            else -> {\n                throw AnalysisError(\"Unknown Expression: $expr\")\n            }\n        }\n    }\n    private fun analyzeBegin(expr: Begin, env: ProcEnv) {\n        analyzeExprs(expr.body, env)\n    }\n    private fun ignore() {}\n    private fun analyzeProc(proc: Procedure, env: ProcEnv) {\n        val extended = RestProcEnv(env)\n        for (name in proc.args) {\n            extended.addRule(name, arityAny())\n        }\n        analyzeExprs(proc.body, extended)\n    }\n    private fun analyzeLetrec(letrec: Letrec, env: ProcEnv) {",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt:71-105"
+    },
+    "39": {
+        "file_id": 6,
+        "content": "This code implements an expression analyzer for a programming language, handling various types of expressions including If, Let, Letrec, Procedure, Begin, Var, Const, Quote, and ExtExpr. It defines methods to analyze each expression type and handles unknown expressions by throwing an error. The analyzeBegin method handles Begin expressions by recursively calling analyzeExprs on the body expressions. The analyzeProc method extends the environment for the given procedure's arguments and analyzes the procedure's body using the extended environment. The analyzeLetrec method is used to analyze Letrec expressions, extending the current environment with the letrec-bound variables.",
+        "type": "comment"
+    },
+    "40": {
+        "file_id": 6,
+        "content": "        val extended = RestProcEnv(env)\n        for ((name, expr) in letrec.variables zip letrec.values) {\n            when (expr) {\n                is Procedure -> {\n                    addProcRule(extended, name, expr)\n                }\n                is Define -> {\n                    throw AnalysisError(\"Invalid Define at (${expr.lineNumber()}, ${expr.columnNumber()})\")\n                }\n                is Const -> {\n                    extended.addRule(name, notProc())\n                }\n                is Quote -> {\n                    extended.addRule(name, notProc())\n                }\n                else -> {\n                    extended.addRule(name, arityAny())\n                }\n            }\n        }\n        for (expr in letrec.values) {\n            analyzeExpr(expr, extended)\n        }\n        analyzeExprs(letrec.body, extended)\n    }\n    private fun analyzeLet(let: Let, env: ProcEnv) {\n        val extended = RestProcEnv(env)\n        for ((name, expr) in let.variables zip let.values) {\n            analyzeExpr(expr, env)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt:106-140"
+    },
+    "41": {
+        "file_id": 6,
+        "content": "This code analyzes a let expression by creating an extended environment and adding rules for defined procedures, constants, and quotes. It then analyzes the values and body of the let expression using the extended environment.",
+        "type": "comment"
+    },
+    "42": {
+        "file_id": 6,
+        "content": "            when (expr) {\n                is Procedure -> {\n                    addProcRule(extended, name, expr)\n                }\n                is Define -> {\n                    throw AnalysisError(\"Invalid Define at (${expr.lineNumber()}, ${expr.columnNumber()})\")\n                }\n                is Const -> {\n                    extended.addRule(name, notProc())\n                }\n                is Quote -> {\n                    extended.addRule(name, notProc())\n                }\n                else -> {\n                    extended.addRule(name, arityAny())\n                }\n            }\n        }\n        analyzeExprs(let.body, extended)\n    }\n    private fun analyzeIf(ifExpr: If, env: ProcEnv) {\n        analyzeExpr(ifExpr.pred, env)\n        analyzeExpr(ifExpr.conseq, env)\n        analyzeExpr(ifExpr.alter, env)\n    }\n    private fun analyzeDefine(define: Define, env: ProcEnv) {\n        if (define.expr is Procedure) {\n            val extended = RestProcEnv(env)\n            addProcRule(extended, define.name, define.expr)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt:141-175"
+    },
+    "43": {
+        "file_id": 6,
+        "content": "This code performs syntax analysis on a programming language and handles different types of expressions, including procedures, defines, consts, quotes, and if statements. It extends the environment for procedures and adds rules based on the expression type.",
+        "type": "comment"
+    },
+    "44": {
+        "file_id": 6,
+        "content": "            analyzeExpr(define.expr, extended)\n        } else {\n            analyzeExpr(define.expr, env)\n        }\n    }\n    private fun analyzeCall(call: Call, env: ProcEnv) {\n        val proc = call.proc\n        val args = call.args\n        when (proc) {\n            is Var -> {\n                try {\n                    env.applyRule(proc.id.value, args.size)\n                } catch (ex: AnalysisError) {\n                    println(\"${ex.message}, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure:${proc.id.value}\")\n                }\n            }\n            is Procedure -> {\n                if (proc.args.size != args.size) {\n                    println(\"Arity Mismatch: expected:${proc.args.size}, actual:${args.size}, at (${proc.lineNumber()}, ${proc.columnNumber()}), procedure:<procedure>\")\n                }\n                analyzeProc(proc, env)\n            }\n            is Const -> {\n                throw AnalysisError(\"Invalid Const, at (${proc.lineNumber()}, ${proc.columnNumber()})\")\n            }",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt:176-204"
+    },
+    "45": {
+        "file_id": 6,
+        "content": "The code performs procedure analysis by calling different functions based on the type of proc. It applies rules to variables, checks for arity mismatches in procedures, and throws an error if a constant is used improperly. If define.expr exists, it analyzes the expression using extended context; otherwise, it uses the environment.",
+        "type": "comment"
+    },
+    "46": {
+        "file_id": 6,
+        "content": "            is Define -> {\n                throw AnalysisError(\"Invalid Define, at (${proc.lineNumber()}, ${proc.columnNumber()})\")\n            }\n            is Quote -> {\n                throw AnalysisError(\"Invalid Quote at (${proc.lineNumber()}, ${proc.columnNumber()})\")\n            }\n            else -> {\n                analyzeExpr(proc, env)\n            }\n        }\n        analyzeExprs(args, env)\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallAnalyzer.kt:206-221"
+    },
+    "47": {
+        "file_id": 6,
+        "content": "This code snippet is used to analyze expressions in a programming language. It checks the type of the expression and throws an error if it's a \"Define\" or \"Quote\". Otherwise, it calls the analyzeExpr function with the proc (procedure) and env (environment) parameters. Finally, it calls another function called analyzeExprs with the args (arguments) and env as parameters.",
+        "type": "comment"
+    },
+    "48": {
+        "file_id": 7,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallRule.kt",
+        "type": "filepath"
+    },
+    "49": {
+        "file_id": 7,
+        "content": "This code defines functions for handling procedure analysis, such as checking arity (number of arguments), ensuring it is a procedure, and throwing errors when the conditions are not met.",
+        "type": "summary"
+    },
+    "50": {
+        "file_id": 7,
+        "content": "package com.github.std.kacket.analysis\nfun arityAny(): (Int) -> Unit = { }\nfun arityEqual(expected: Int): (Int) -> Unit =\n    { actual ->\n        if (actual != expected) {\n            throw AnalysisError(\"Arity Mismatch: expected:$expected, actual:$actual\")\n        }\n    }\nfun arityGreaterEqual(expected: Int): (Int) -> Unit =\n    { actual ->\n        if (actual < expected) {\n            throw AnalysisError(\"Arity Mismatch: at least:$expected, got:$actual\")\n        }\n    }\nfun notProc(): (Int) -> Unit =\n    { _ -> throw AnalysisError(\"Not a procedure\") }",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcCallRule.kt:1-21"
+    },
+    "51": {
+        "file_id": 7,
+        "content": "This code defines functions for handling procedure analysis, such as checking arity (number of arguments), ensuring it is a procedure, and throwing errors when the conditions are not met.",
+        "type": "comment"
+    },
+    "52": {
+        "file_id": 8,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/ProcEnv.kt",
+        "type": "filepath"
+    },
+    "53": {
+        "file_id": 8,
+        "content": "The sealed interface ProcEnv defines a set of rules for process environments. It has two functions: addRule to add rules with unique IDs, and applyRule to execute the rule corresponding to a specific process ID.",
+        "type": "summary"
+    },
+    "54": {
+        "file_id": 8,
+        "content": "package com.github.std.kacket.analysis\nsealed interface ProcEnv {\n    fun addRule(id: String, rule: (Int) -> Unit)\n    fun applyRule(procId: String, actual: Int)\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/ProcEnv.kt:1-7"
+    },
+    "55": {
+        "file_id": 8,
+        "content": "The sealed interface ProcEnv defines a set of rules for process environments. It has two functions: addRule to add rules with unique IDs, and applyRule to execute the rule corresponding to a specific process ID.",
+        "type": "comment"
+    },
+    "56": {
+        "file_id": 9,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/RestProcEnv.kt",
+        "type": "filepath"
+    },
+    "57": {
+        "file_id": 9,
+        "content": "RestProcEnv is a class that extends ProcEnv and stores rules in a HashMap, allowing for rule application based on id.",
+        "type": "summary"
+    },
+    "58": {
+        "file_id": 9,
+        "content": "package com.github.std.kacket.analysis\nclass RestProcEnv(private val out: ProcEnv) : ProcEnv {\n    private val map = HashMap<String, (Int) -> Unit>()\n    override fun addRule(id: String, rule: (Int) -> Unit) {\n        map[id] = rule\n    }\n    override fun applyRule(procId: String, actual: Int) {\n        val rule = map[procId]\n        if (rule == null) {\n            out.applyRule(procId, actual)\n            return\n        }\n        rule.invoke(actual)\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/RestProcEnv.kt:1-18"
+    },
+    "59": {
+        "file_id": 9,
+        "content": "RestProcEnv is a class that extends ProcEnv and stores rules in a HashMap, allowing for rule application based on id.",
+        "type": "comment"
+    },
+    "60": {
+        "file_id": 10,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/exten/CasesAnalyzer.kt",
+        "type": "filepath"
+    },
+    "61": {
+        "file_id": 10,
+        "content": "Analyzes Cases expressions in Kacket programming language, modifies environment as needed. Code block creates default expression and calls analyzeExpr function with expression and environment.",
+        "type": "summary"
+    },
+    "62": {
+        "file_id": 10,
+        "content": "package com.github.std.kacket.analysis.exten\nimport com.github.std.kacket.analysis.*\nimport com.github.std.kacket.expr.exten.Cases\nimport com.github.std.kacket.expr.exten.ExtExpr\nobject CasesAnalyzer : ExtAnalyzer {\n    override fun modifyEnv(env: InitProcEnv, expr: ExtExpr) {\n        return\n    }\n    override fun support(expr: ExtExpr): Boolean = expr is Cases\n    override fun analyze(expr: ExtExpr, env: ProcEnv, root: ProcCallAnalyzer) {\n        val case = expr as Cases\n        with(case) {\n            root.analyzeExpr(case.case, env)\n            variants.forEach {\n                try {\n                    env.applyRule(it.name, it.fields.size)\n                } catch (ex: AnalysisError) {\n                    println(\"Cases: Wrong fields count, at (${it.line},${it.col}), name:${it.name}\")\n                }\n                val extended = RestProcEnv(env)\n                for (field in it.fields) {\n                    extended.addRule(field, arityAny())\n                }\n                root.analyzeExpr(it.conseq, extended)",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/exten/CasesAnalyzer.kt:1-28"
+    },
+    "63": {
+        "file_id": 10,
+        "content": "Analyzes cases expressions in the Kacket programming language and modifies the environment accordingly. Supports only Cases expressions and performs analysis on each variant's consequences and environment modifications.",
+        "type": "comment"
+    },
+    "64": {
+        "file_id": 10,
+        "content": "            }\n            root.analyzeExpr(default, env)\n        }\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/exten/CasesAnalyzer.kt:29-33"
+    },
+    "65": {
+        "file_id": 10,
+        "content": "Code block creates a default expression based on provided cases, and then calls the analyzeExpr function with the default expression and the environment.",
+        "type": "comment"
+    },
+    "66": {
+        "file_id": 11,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/exten/DefineDatatypeAnalyzer.kt",
+        "type": "filepath"
+    },
+    "67": {
+        "file_id": 11,
+        "content": "The code defines an object that modifies the environment based on a DefineDatatype expression, using support() and analyze() methods. It checks if the expression is of type DefineDatatype and handles Vars by applying rules to their ID value.",
+        "type": "summary"
+    },
+    "68": {
+        "file_id": 11,
+        "content": "package com.github.std.kacket.analysis.exten\nimport com.github.std.kacket.analysis.*\nimport com.github.std.kacket.expr.*\nimport com.github.std.kacket.expr.exten.DefineDatatype\nimport com.github.std.kacket.expr.exten.ExtExpr\nimport kotlin.math.exp\nobject DefineDatatypeAnalyzer : ExtAnalyzer {\n    override fun modifyEnv(env: InitProcEnv, expr: ExtExpr) {\n        val dtdf = expr as DefineDatatype\n        env.addRule(dtdf.predName, arityEqual(1))\n        for (variant in dtdf.variants) {\n            env.addRule(variant.name, arityEqual(variant.fields.size))\n        }\n    }\n    override fun support(expr: ExtExpr): Boolean = expr is DefineDatatype\n    override fun analyze(expr: ExtExpr, env: ProcEnv, root: ProcCallAnalyzer) {\n        val dtdf = expr as DefineDatatype\n        for (variant in dtdf.variants) {\n            for (pred in variant.fields.values) {\n                when (pred) {\n                    is Var -> {\n                        try {\n                            env.applyRule(pred.id.value, 1)\n                        } catch (ex: AnalysisError) {",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/exten/DefineDatatypeAnalyzer.kt:1-27"
+    },
+    "69": {
+        "file_id": 11,
+        "content": "This code defines an object `DefineDatatypeAnalyzer` that extends the `ExtAnalyzer` class. It provides a `modifyEnv()` method to modify an environment (env) based on an expression (expr) of type `DefineDatatype`. The `support()` method checks if the given expr is of type `DefineDatatype`, and the `analyze()` method iterates over variants in the `DefineDatatype` expression and applies rules to each field. It handles `Var` instances by applying a rule based on their ID value, but catches any potential `AnalysisError` exceptions.",
+        "type": "comment"
+    },
+    "70": {
+        "file_id": 11,
+        "content": "                            println(\"Expect a procedure with 1 arity, at (${pred.lineNumber()}, ${pred.columnNumber()}), procedure:${pred.id.value}\")\n                        }\n                    }\n                    is Procedure -> {\n                        if (pred.args.size != 1) {\n                            println(\"Expect a procedure with 1 arity, at (${pred.lineNumber()}, ${pred.columnNumber()}): procedure:<procedure>\")\n                        }\n                        root.analyzeExpr(pred, env)\n                    }\n                    is Const -> {\n                        throw AnalysisError(\"Expect a procedure, at (${pred.lineNumber()}, ${pred.columnNumber()})\")\n                    }\n                    is Define -> {\n                        throw AnalysisError(\"Expect a procedure, at (${pred.lineNumber()}, ${pred.columnNumber()})\")\n                    }\n                    is Quote -> {\n                        throw AnalysisError(\"Expect a procedure, at (${pred.lineNumber()}, ${pred.columnNumber()})\")",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/exten/DefineDatatypeAnalyzer.kt:28-48"
+    },
+    "71": {
+        "file_id": 11,
+        "content": "This code is checking the type of a predicate and ensuring it is a procedure with exactly 1 argument. If not, it prints an error message indicating the expected procedure with 1 arity. If the predicate is a Define, Const or Quote, it throws an AnalysisError.",
+        "type": "comment"
+    },
+    "72": {
+        "file_id": 11,
+        "content": "                    }\n                    else -> {\n                        root.analyzeExpr(pred, env)\n                    }\n                }\n            }\n        }\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/exten/DefineDatatypeAnalyzer.kt:49-58"
+    },
+    "73": {
+        "file_id": 11,
+        "content": "Code block is within the DefineDatatypeAnalyzer class and contains a conditional statement to determine if an expression should be analyzed as an extension variable or as a standard Asterisk CLI pattern. If the expression matches the expected format of an extension variable, it proceeds with defining the datatype. Otherwise, it calls the analyzeExpr method from the root object to handle regular Asterisk CLI patterns.",
+        "type": "comment"
+    },
+    "74": {
+        "file_id": 12,
+        "content": "/src/main/kotlin/com/github/std/kacket/analysis/exten/ExtAnalyzer.kt",
+        "type": "filepath"
+    },
+    "75": {
+        "file_id": 12,
+        "content": "This code defines an interface, ExtAnalyzer, that has three methods: modifyEnv, support, and analyze. The class implementing this interface is responsible for analyzing expressions of the type ExtExpr, modifying InitProcEnv based on the expression, and determining if it supports a given expression.",
+        "type": "summary"
+    },
+    "76": {
+        "file_id": 12,
+        "content": "package com.github.std.kacket.analysis.exten\nimport com.github.std.kacket.analysis.InitProcEnv\nimport com.github.std.kacket.analysis.ProcCallAnalyzer\nimport com.github.std.kacket.analysis.ProcEnv\nimport com.github.std.kacket.expr.exten.ExtExpr\ninterface ExtAnalyzer {\n    fun modifyEnv(env: InitProcEnv, expr: ExtExpr)\n    fun support(expr: ExtExpr): Boolean\n    fun analyze(expr: ExtExpr, env: ProcEnv, root: ProcCallAnalyzer)\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/analysis/exten/ExtAnalyzer.kt:1-12"
+    },
+    "77": {
+        "file_id": 12,
+        "content": "This code defines an interface, ExtAnalyzer, that has three methods: modifyEnv, support, and analyze. The class implementing this interface is responsible for analyzing expressions of the type ExtExpr, modifying InitProcEnv based on the expression, and determining if it supports a given expression.",
+        "type": "comment"
+    },
+    "78": {
+        "file_id": 13,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Begin.kt",
+        "type": "filepath"
+    },
+    "79": {
+        "file_id": 13,
+        "content": "The `Begin` class represents a begin expression in the codebase. It contains a list of expressions within its body, along with line and column details for tracking purposes. The class extends the Expression interface and overrides its lineNumber() and columnNumber() methods to provide location information. The toString() method constructs a string representation of the begin expression using a StringBuilder.",
+        "type": "summary"
+    },
+    "80": {
+        "file_id": 13,
+        "content": "package com.github.std.kacket.expr\nclass Begin(\n    val body: List<Expression>,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(begin \")\n        for (expr in body){\n            builder.append(expr.toString())\n        }\n        builder.append(\")\")\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Begin.kt:1-20"
+    },
+    "81": {
+        "file_id": 13,
+        "content": "The `Begin` class represents a begin expression in the codebase. It contains a list of expressions within its body, along with line and column details for tracking purposes. The class extends the Expression interface and overrides its lineNumber() and columnNumber() methods to provide location information. The toString() method constructs a string representation of the begin expression using a StringBuilder.",
+        "type": "comment"
+    },
+    "82": {
+        "file_id": 14,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Call.kt",
+        "type": "filepath"
+    },
+    "83": {
+        "file_id": 14,
+        "content": "This class represents a function call expression, containing the procedure name, arguments list, and line/column information. It's an extension of the Expression interface and provides methods to access line/column numbers and convert to a string representation.",
+        "type": "summary"
+    },
+    "84": {
+        "file_id": 14,
+        "content": "package com.github.std.kacket.expr\nclass Call(\n    val proc: Expression, // Var, Procedure: known; If, Let: maybe; Call: unknown; Others: Error\n    val args: List<Expression>,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder()\n        builder.append('(')\n        builder.append(proc.toString())\n        for (arg in args) {\n            builder.append(' ')\n            builder.append(arg.toString())\n        }\n        builder.append(')')\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Call.kt:1-23"
+    },
+    "85": {
+        "file_id": 14,
+        "content": "This class represents a function call expression, containing the procedure name, arguments list, and line/column information. It's an extension of the Expression interface and provides methods to access line/column numbers and convert to a string representation.",
+        "type": "comment"
+    },
+    "86": {
+        "file_id": 15,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Const.kt",
+        "type": "filepath"
+    },
+    "87": {
+        "file_id": 15,
+        "content": "The Const class represents a constant expression in the kacket language. It takes a Token as input and provides methods to retrieve line and column numbers, and a toString() method that handles different types of tokens differently, returning the appropriate string representation.",
+        "type": "summary"
+    },
+    "88": {
+        "file_id": 15,
+        "content": "package com.github.std.kacket.expr\nimport com.github.std.kacket.parse.*\nclass Const(\n    val token: Token\n) : Expression {\n    override fun lineNumber(): Int = token.lineNumber()\n    override fun columnNumber(): Int = token.columnNumber()\n    override fun toString(): String = when {\n        token is Text -> {\n            \"\\\"${token.value}\\\"\"\n        }\n        token is Num -> {\n            token.value\n        }\n        token is Symbol -> {\n            \"'${token.value}\"\n        }\n        token is Character -> {\n            token.value.toString()\n        }\n        token is Bool && token.value -> {\n            \"#t\"\n        }\n        token is Bool && !token.value -> {\n            \"#f\"\n        }\n        else -> throw ExprError()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Const.kt:1-37"
+    },
+    "89": {
+        "file_id": 15,
+        "content": "The Const class represents a constant expression in the kacket language. It takes a Token as input and provides methods to retrieve line and column numbers, and a toString() method that handles different types of tokens differently, returning the appropriate string representation.",
+        "type": "comment"
+    },
+    "90": {
+        "file_id": 16,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Define.kt",
+        "type": "filepath"
+    },
+    "91": {
+        "file_id": 16,
+        "content": "This class defines a \"Define\" expression which represents a '(define)' statement in the language. It contains a name and an associated expression, along with line and column information for error reporting. The toString() method returns the string representation of the define expression.",
+        "type": "summary"
+    },
+    "92": {
+        "file_id": 16,
+        "content": "package com.github.std.kacket.expr\nclass Define(\n    val name: String,\n    val expr: Expression,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(define \")\n        builder.append(name)\n        builder.append(' ')\n        builder.append(expr.toString())\n        builder.append(')')\n        return builder.toString()\n    }\n}",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/Define.kt:1-19"
+    },
+    "93": {
+        "file_id": 16,
+        "content": "This class defines a \"Define\" expression which represents a '(define)' statement in the language. It contains a name and an associated expression, along with line and column information for error reporting. The toString() method returns the string representation of the define expression.",
+        "type": "comment"
+    },
+    "94": {
+        "file_id": 17,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/ExprError.kt",
+        "type": "filepath"
+    },
+    "95": {
+        "file_id": 17,
+        "content": "This code defines a custom exception class, \"ExprError\", which extends the built-in \"RuntimeException\" in Kotlin. It provides a mechanism to handle and throw exceptions related to expressions within the Kacket library.",
+        "type": "summary"
+    },
+    "96": {
+        "file_id": 17,
+        "content": "package com.github.std.kacket.expr\nimport java.lang.RuntimeException\nclass ExprError :RuntimeException()",
+        "type": "code",
+        "location": "/src/main/kotlin/com/github/std/kacket/expr/ExprError.kt:1-5"
+    },
+    "97": {
+        "file_id": 17,
+        "content": "This code defines a custom exception class, \"ExprError\", which extends the built-in \"RuntimeException\" in Kotlin. It provides a mechanism to handle and throw exceptions related to expressions within the Kacket library.",
+        "type": "comment"
+    },
+    "98": {
+        "file_id": 18,
+        "content": "/src/main/kotlin/com/github/std/kacket/expr/Expression.kt",
+        "type": "filepath"
+    },
+    "99": {
+        "file_id": 18,
+        "content": "This code defines an interface named \"Expression\" in the package \"com.github.std.kacket.expr\". The interface has two functions: \"lineNumber()\" and \"columnNumber()\", which return the line number and column number respectively for some expression context.",
+        "type": "summary"
+    }
+}

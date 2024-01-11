@@ -1,0 +1,20 @@
+{
+    "summary": "The DefineDatatypeParser in Kacket parses define-datatype statements, extracting type name, predicate name, and variants. The code iterates over each field to retrieve names and expressions, adding them to a map until encountering a closing parenthesis. It defines a function that parses the \"Define\" directive in an extension file and returns associated fields, including variable name, datatype, arguments, and documentation.",
+    "details": [
+        {
+            "comment": "The DefineDatatypeParser is responsible for parsing define-datatype statements in Kacket. It expects the type name, predicate name, and a list of variants. The parseVariants function recursively parses the variants until reaching the right parenthesis.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt\":0-25",
+            "content": "package com.github.std.kacket.parse.exten\nimport com.github.std.kacket.expr.Expression\nimport com.github.std.kacket.expr.exten.DefineDatatype\nimport com.github.std.kacket.expr.exten.ExtExpr\nimport com.github.std.kacket.parse.*\nobject DefineDatatypeParser : SExprExtParser {\n    override fun start(): String = \"define-datatype\"\n    override fun parse(lexer: Lexer, line: Int, col: Int, root: Parser): DefineDatatype {\n        val typeNameToken = lexer.nextToken()\n        root.shouldBeNameToken(typeNameToken)\n        val typeName = (typeNameToken as Identifier).value\n        val predNameToken = lexer.nextToken()\n        root.shouldBeNameToken(predNameToken)\n        val predName = (predNameToken as Identifier).value\n        val variants = parseVariants(lexer, root)\n        return DefineDatatype(typeName, predName, variants, line, col)\n    }\n    private fun parseVariants(lexer: Lexer, root: Parser): List<DefineDatatype.Variant> {\n        val variants = mutableListOf<DefineDatatype.Variant>()\n        while (!(root.isRightParenthesis(lexer.peekToken()))) {"
+        },
+        {
+            "comment": "This code parses a define datatype block, extracting the variant name and fields from its AST. It iterates over each field in the block, retrieves the field name and expression, and adds them to a map before moving on to the next field until it encounters a closing parenthesis.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt\":26-54",
+            "content": "            root.shouldBeLeftParenthesis(lexer.nextToken())\n            val variNameToken = lexer.nextToken()\n            root.shouldBeNameToken(variNameToken)\n            val variName = (variNameToken as Identifier).value\n            val fields = parseVariantFields(lexer, root)\n            variants.add(DefineDatatype.Variant(variName, fields))\n            root.shouldBeRightParenthesis(lexer.nextToken())\n        }\n        return variants\n    }\n    private fun parseVariantFields(lexer: Lexer, root: Parser): Map<String, Expression> {\n        val fields = mutableMapOf<String, Expression>()\n        while (!root.isRightParenthesis(lexer.peekToken())) {\n            root.shouldBeLeftParenthesis(lexer.nextToken())\n            val fieldNameToken = lexer.nextToken()\n            root.shouldBeNameToken(fieldNameToken)\n            val fieldName = (fieldNameToken as Identifier).value\n            val pred = root.parseExpr()\n            fields[fieldName] = pred\n            root.shouldBeRightParenthesis(lexer.nextToken())"
+        },
+        {
+            "comment": "This code defines a function that parses the \"Define\" directive in an extension file and returns the associated fields. The parsed fields include the variable name, datatype, arguments, and documentation.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/exten/DefineDatatypeParser.kt\":55-58",
+            "content": "        }\n        return fields\n    }\n}"
+        }
+    ]
+}

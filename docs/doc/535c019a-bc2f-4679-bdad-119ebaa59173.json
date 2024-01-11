@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines an interface, ExtAnalyzer, that has three methods: modifyEnv, support, and analyze. The class implementing this interface is responsible for analyzing expressions of the type ExtExpr, modifying InitProcEnv based on the expression, and determining if it supports a given expression.",
+    "details": [
+        {
+            "comment": "This code defines an interface, ExtAnalyzer, that has three methods: modifyEnv, support, and analyze. The class implementing this interface is responsible for analyzing expressions of the type ExtExpr, modifying InitProcEnv based on the expression, and determining if it supports a given expression.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/analysis/exten/ExtAnalyzer.kt\":0-11",
+            "content": "package com.github.std.kacket.analysis.exten\nimport com.github.std.kacket.analysis.InitProcEnv\nimport com.github.std.kacket.analysis.ProcCallAnalyzer\nimport com.github.std.kacket.analysis.ProcEnv\nimport com.github.std.kacket.expr.exten.ExtExpr\ninterface ExtAnalyzer {\n    fun modifyEnv(env: InitProcEnv, expr: ExtExpr)\n    fun support(expr: ExtExpr): Boolean\n    fun analyze(expr: ExtExpr, env: ProcEnv, root: ProcCallAnalyzer)\n}"
+        }
+    ]
+}

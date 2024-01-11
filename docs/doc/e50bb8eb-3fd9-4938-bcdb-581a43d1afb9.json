@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the Identifier class, which represents an identifier token in a program. It has a value property (the actual identifier name), lineNum and columnNum properties to track its position in the source code, and overrides Token's lineNumber() and columnNumber() methods. It also provides a custom toString() method for displaying useful information about the Identifier object.",
+    "details": [
+        {
+            "comment": "This code defines the Identifier class, which represents an identifier token in a program. It has a value property (the actual identifier name), lineNum and columnNum properties to track its position in the source code, and overrides Token's lineNumber() and columnNumber() methods. It also provides a custom toString() method for displaying useful information about the Identifier object.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/Identifier.kt\":0-12",
+            "content": "package com.github.std.kacket.parse\nclass Identifier(\n    val value: String,\n    private val lineNum: Int,\n    private val columnNum: Int\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Identifier#$value@(${lineNumber()},${columnNumber()})\"\n}"
+        }
+    ]
+}

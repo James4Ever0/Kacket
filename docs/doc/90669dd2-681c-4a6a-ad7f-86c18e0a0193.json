@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines functions for handling procedure analysis, such as checking arity (number of arguments), ensuring it is a procedure, and throwing errors when the conditions are not met.",
+    "details": [
+        {
+            "comment": "This code defines functions for handling procedure analysis, such as checking arity (number of arguments), ensuring it is a procedure, and throwing errors when the conditions are not met.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/analysis/ProcCallRule.kt\":0-20",
+            "content": "package com.github.std.kacket.analysis\nfun arityAny(): (Int) -> Unit = { }\nfun arityEqual(expected: Int): (Int) -> Unit =\n    { actual ->\n        if (actual != expected) {\n            throw AnalysisError(\"Arity Mismatch: expected:$expected, actual:$actual\")\n        }\n    }\nfun arityGreaterEqual(expected: Int): (Int) -> Unit =\n    { actual ->\n        if (actual < expected) {\n            throw AnalysisError(\"Arity Mismatch: at least:$expected, got:$actual\")\n        }\n    }\nfun notProc(): (Int) -> Unit =\n    { _ -> throw AnalysisError(\"Not a procedure\") }"
+        }
+    ]
+}

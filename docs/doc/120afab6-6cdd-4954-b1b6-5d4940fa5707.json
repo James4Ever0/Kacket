@@ -1,0 +1,10 @@
+{
+    "summary": "The code defines a Text class representing a text token with line number, column number, and value. It implements Token interface with functions for retrieving line and column numbers, and has a custom toString method.",
+    "details": [
+        {
+            "comment": "The code defines a Text class representing a text token with line number, column number, and value. It implements Token interface with functions for retrieving line and column numbers, and has a custom toString method.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/Text.kt\":0-12",
+            "content": "package com.github.std.kacket.parse\nclass Text(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: String\n) : Token {\n    override fun lineNumber(): Int = lineNum\n    override fun columnNumber(): Int = columnNum\n    override fun toString(): String = \"Text#$value@(${lineNumber()},${columnNumber()})\"\n}"
+        }
+    ]
+}

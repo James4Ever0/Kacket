@@ -1,0 +1,10 @@
+{
+    "summary": "\"RestProcEnv is a class that extends ProcEnv and stores rules in a HashMap, allowing for rule application based on id.\"",
+    "details": [
+        {
+            "comment": "\"RestProcEnv is a class that extends ProcEnv and stores rules in a HashMap, allowing for rule application based on id.\"",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/analysis/RestProcEnv.kt\":0-17",
+            "content": "package com.github.std.kacket.analysis\nclass RestProcEnv(private val out: ProcEnv) : ProcEnv {\n    private val map = HashMap<String, (Int) -> Unit>()\n    override fun addRule(id: String, rule: (Int) -> Unit) {\n        map[id] = rule\n    }\n    override fun applyRule(procId: String, actual: Int) {\n        val rule = map[procId]\n        if (rule == null) {\n            out.applyRule(procId, actual)\n            return\n        }\n        rule.invoke(actual)\n    }\n}"
+        }
+    ]
+}

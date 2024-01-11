@@ -1,0 +1,20 @@
+{
+    "summary": "The code imports classes, defines functions for usage instructions and checks. It initializes an analyzer with parser configuration, handles specific commands like EOPL, PCC, and others, using error handling through try-catch blocks.",
+    "details": [
+        {
+            "comment": "Code imports necessary classes for analysis and parsing, defines a help function to show usage instructions, and includes private functions for procedure call check and EOPL check on source files.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/Main.kt\":0-29",
+            "content": "import com.github.std.kacket.analysis.ProcCallAnalyzer\nimport com.github.std.kacket.analysis.arityEqual\nimport com.github.std.kacket.analysis.arityGreaterEqual\nimport com.github.std.kacket.analysis.exten.CasesAnalyzer\nimport com.github.std.kacket.analysis.exten.DefineDatatypeAnalyzer\nimport com.github.std.kacket.parse.Lexer\nimport com.github.std.kacket.parse.Parser\nimport com.github.std.kacket.parse.exten.CasesParser\nimport com.github.std.kacket.parse.exten.DefineDatatypeParser\nimport java.io.FileReader\nprivate fun help() {\n    val usage = \"\"\"\n        Usage: kacket <options> <source files>\n        where possible options include:\n        --pcc          procedure call check\n        --eopl         check #lang eopl of racket\n    \"\"\".trimIndent()\n    println(usage)\n}\nprivate fun procedureCallCheck(source: String) {\n    val input = FileReader(source)\n    val lexer = Lexer(input)\n    val parser = Parser(lexer)\n    val analyzer = ProcCallAnalyzer(parser)\n    analyzer.analyzeProgram()\n}\nprivate fun eoplCheck(source: String) {"
+        },
+        {
+            "comment": "Initializes an analyzer for the program by configuring a parser and adding analyzers and procedure rules.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/Main.kt\":30-60",
+            "content": "    val input = FileReader(source)\n    var read = input.read()\n    while (read.toChar() != '\\n') {\n        read = input.read()\n    }\n    val lexer = Lexer(input, 2, 1)\n    val parser = Parser(lexer)\n        .addSExprExt(DefineDatatypeParser)\n        .addSExprExt(CasesParser)\n    val analyzer = ProcCallAnalyzer(parser)\n        .addExtAnalyzer(DefineDatatypeAnalyzer)\n        .addExtAnalyzer(CasesAnalyzer)\n        .addProcRule(\"list-of\", arityEqual(1))\n        .addProcRule(\"eopl:error\", arityGreaterEqual(1))\n        .addProcRule(\"eopl:printf\", arityGreaterEqual(1))\n        .addProcRule(\"sllgen:make-define-datatypes\", arityEqual(2))\n        .addProcRule(\"sllgen:list-define-datatypes\", arityEqual(2))\n        .addProcRule(\"sllgen:make-string-scanner\", arityEqual(2))\n        .addProcRule(\"sllgen:make-string-parser\", arityEqual(2))\n        .addProcRule(\"sllgen:make-rep-loop\", arityEqual(3))\n    analyzer.analyzeProgram()\n}\nfun main(args: Array<String>) {\n    if (args.size < 2) {\n        help()\n        return\n    }\n    val cmd = CMD(args)"
+        },
+        {
+            "comment": "The code attempts to execute commands and handles three specific cases: eopl, pcc, and any other unspecified command. It uses a try-catch block for error handling, with the catch block printing the exception message if thrown.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/Main.kt\":61-77",
+            "content": "    try {\n        when {\n            cmd.eopl() -> {\n                eoplCheck(cmd.source)\n            }\n            cmd.pcc() -> {\n                procedureCallCheck(cmd.source)\n            }\n            else -> help()\n        }\n    } catch (ex: Throwable) {\n        println(ex.message)\n    }\n}"
+        }
+    ]
+}

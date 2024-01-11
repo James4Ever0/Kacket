@@ -1,0 +1,10 @@
+{
+    "summary": "This class represents a function call expression, containing the procedure name, arguments list, and line/column information. It's an extension of the Expression interface and provides methods to access line/column numbers and convert to a string representation.",
+    "details": [
+        {
+            "comment": "This class represents a function call expression, containing the procedure name, arguments list, and line/column information. It's an extension of the Expression interface and provides methods to access line/column numbers and convert to a string representation.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/Call.kt\":0-22",
+            "content": "package com.github.std.kacket.expr\nclass Call(\n    val proc: Expression, // Var, Procedure: known; If, Let: maybe; Call: unknown; Others: Error\n    val args: List<Expression>,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder()\n        builder.append('(')\n        builder.append(proc.toString())\n        for (arg in args) {\n            builder.append(' ')\n            builder.append(arg.toString())\n        }\n        builder.append(')')\n        return builder.toString()\n    }\n}"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "The Const class represents a constant expression in the kacket language. It takes a Token as input and provides methods to retrieve line and column numbers, and a toString() method that handles different types of tokens differently, returning the appropriate string representation.",
+    "details": [
+        {
+            "comment": "The Const class represents a constant expression in the kacket language. It takes a Token as input and provides methods to retrieve line and column numbers, and a toString() method that handles different types of tokens differently, returning the appropriate string representation.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/Const.kt\":0-36",
+            "content": "package com.github.std.kacket.expr\nimport com.github.std.kacket.parse.*\nclass Const(\n    val token: Token\n) : Expression {\n    override fun lineNumber(): Int = token.lineNumber()\n    override fun columnNumber(): Int = token.columnNumber()\n    override fun toString(): String = when {\n        token is Text -> {\n            \"\\\"${token.value}\\\"\"\n        }\n        token is Num -> {\n            token.value\n        }\n        token is Symbol -> {\n            \"'${token.value}\"\n        }\n        token is Character -> {\n            token.value.toString()\n        }\n        token is Bool && token.value -> {\n            \"#t\"\n        }\n        token is Bool && !token.value -> {\n            \"#f\"\n        }\n        else -> throw ExprError()\n    }\n}"
+        }
+    ]
+}

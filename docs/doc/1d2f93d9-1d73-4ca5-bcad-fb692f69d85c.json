@@ -1,0 +1,10 @@
+{
+    "summary": "The code defines a class \"If\" representing an if-expression in the Kacket expression language, with three expressions for predicate, consequence, and alternative. It also stores the line and column number of its origin in the code. The class extends the Expression interface and provides methods to retrieve line and column numbers as well as a string representation of the if-expression.",
+    "details": [
+        {
+            "comment": "The code defines a class \"If\" representing an if-expression in the Kacket expression language, with three expressions for predicate, consequence, and alternative. It also stores the line and column number of its origin in the code. The class extends the Expression interface and provides methods to retrieve line and column numbers as well as a string representation of the if-expression.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/If.kt\":0-21",
+            "content": "package com.github.std.kacket.expr\nclass If(\n    val pred: Expression,\n    val conseq: Expression,\n    val alter: Expression,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(if \")\n        builder.append(pred.toString())\n        builder.append(' ')\n        builder.append(conseq.toString())\n        builder.append(' ')\n        builder.append(alter.toString())\n        builder.append(')')\n        return builder.toString()\n    }\n}"
+        }
+    ]
+}

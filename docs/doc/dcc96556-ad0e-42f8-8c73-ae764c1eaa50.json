@@ -1,0 +1,10 @@
+{
+    "summary": "This class defines a \"Define\" expression which represents a '(define)' statement in the language. It contains a name and an associated expression, along with line and column information for error reporting. The toString() method returns the string representation of the define expression.",
+    "details": [
+        {
+            "comment": "This class defines a \"Define\" expression which represents a '(define)' statement in the language. It contains a name and an associated expression, along with line and column information for error reporting. The toString() method returns the string representation of the define expression.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/expr/Define.kt\":0-18",
+            "content": "package com.github.std.kacket.expr\nclass Define(\n    val name: String,\n    val expr: Expression,\n    private val line: Int,\n    private val column: Int\n) : Expression {\n    override fun lineNumber(): Int = line\n    override fun columnNumber(): Int = column\n    override fun toString(): String {\n        val builder = StringBuilder(\"(define \")\n        builder.append(name)\n        builder.append(' ')\n        builder.append(expr.toString())\n        builder.append(')')\n        return builder.toString()\n    }\n}"
+        }
+    ]
+}

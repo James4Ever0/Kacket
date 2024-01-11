@@ -1,0 +1,10 @@
+{
+    "summary": "This class represents a Boolean token in the Kacket parser, containing line and column numbers and a value of true or false. It extends Token interface with methods for retrieving line and column numbers, as well as string representation.",
+    "details": [
+        {
+            "comment": "This class represents a Boolean token in the Kacket parser, containing line and column numbers and a value of true or false. It extends Token interface with methods for retrieving line and column numbers, as well as string representation.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/Bool.kt\":0-16",
+            "content": "package com.github.std.kacket.parse\nclass Bool(\n    private val lineNum: Int,\n    private val columnNum: Int,\n    val value: Boolean\n) : Token {\n    override fun lineNumber(): Int {\n        return lineNum\n    }\n    override fun columnNumber(): Int {\n        return columnNum\n    }\n    override fun toString(): String = \"Bool#$value@(${lineNumber()},${columnNumber()})\"\n}"
+        }
+    ]
+}

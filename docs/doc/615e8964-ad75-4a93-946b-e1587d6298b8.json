@@ -1,0 +1,10 @@
+{
+    "summary": "This code is a transpiler for the Scheme programming language to JavaScript. It converts Scheme code into equivalent JavaScript functions. The provided code demonstrates nested function definitions and lambda expressions, as well as conversion of looping constructs like 'letrec' and recursive functions like 'fact'.",
+    "details": [
+        {
+            "comment": "This code is a transpiler for the Scheme programming language to JavaScript. It converts Scheme code into equivalent JavaScript functions. The provided code demonstrates nested function definitions and lambda expressions, as well as conversion of looping constructs like 'letrec' and recursive functions like 'fact'.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/transpiler/scheme-js.js\":0-29",
+            "content": "// (let ((x 5) (y 4))\n//   (+ x y))\n((x, y) => x + y)(5, 4)\n// (letrec ((fact\n//          (lambda (n)\n//             (if (= n 0)\n//                 1\n//                 (* n (fact (- n 1)))))))\n//     (fact 10))\n// ((fact) => fact(10))((n) => {\n//     if (n === 0) \n//     return 1\n//     else return fact(n - 1) * n\n// })\n((fact) => fact(10, fact))((n, fact) => {\n    if (n === 0) \n    return 1\n    else return fact(n - 1, fact) * n\n})\n// (let ((fact\n//          (lambda (n fact)\n//             (if (= n 0)\n//                 1\n//                 (* n (fact (- n 1) fact))))))\n//     (fact 10 fact))"
+        }
+    ]
+}

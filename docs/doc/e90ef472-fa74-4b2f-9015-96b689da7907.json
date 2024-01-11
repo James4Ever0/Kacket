@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines an interface called SExprExtParser, which has two methods: start() and parse(). The start() method returns a string, while the parse() method takes in a Lexer object, line number, column number, and a Parser object as parameters, and returns an ExtExpr object. This indicates that this code is responsible for parsing extended regular expressions in a specific context using the provided parser and lexer.",
+    "details": [
+        {
+            "comment": "This code defines an interface called SExprExtParser, which has two methods: start() and parse(). The start() method returns a string, while the parse() method takes in a Lexer object, line number, column number, and a Parser object as parameters, and returns an ExtExpr object. This indicates that this code is responsible for parsing extended regular expressions in a specific context using the provided parser and lexer.",
+            "location": "\"/media/root/Toshiba XG3/works/Kacket/docs/src/src/main/kotlin/com/github/std/kacket/parse/exten/SExprExtParser.kt\":0-10",
+            "content": "package com.github.std.kacket.parse.exten\nimport com.github.std.kacket.expr.Expression\nimport com.github.std.kacket.expr.exten.ExtExpr\nimport com.github.std.kacket.parse.Lexer\nimport com.github.std.kacket.parse.Parser\ninterface SExprExtParser {\n    fun start(): String\n    fun parse(lexer: Lexer, line: Int, col: Int,root: Parser): ExtExpr\n}"
+        }
+    ]
+}

@@ -1,0 +1,112 @@
+{
+    "300": {
+        "file_id": 49,
+        "content": "        val expected1 = \"(define fib-iter (lambda (i n fst snd) (if (= i n) snd (fib-iter (+ i 1) n snd (+ fst snd)))))\"\n        assertEquals(expected1, expr1.toString())\n    }\n    @Test\n    fun parseExpr7() {\n        val code = \"\"\"\n            (let ((a 1) (b 2))\n              (let ((c 3))\n                (+ a b c)))\n            (define x 10)\n        \"\"\".trimIndent()\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr0 = parser.parseExpr()\n        val expected0 = \"(let ([a 1][b 2]) (let ([c 3]) (+ a b c)))\"\n        assertEquals(expected0, expr0.toString())\n        val expr1 = parser.parseExpr()\n        val expected1 = \"(define x 10)\"\n        assertEquals(expected1, expr1.toString())\n    }\n    @Test\n    fun parseExpr8() {\n        val code = \"\"\"\n            '(a b c)\n            '(a (b c))\n            '(a 'b c)\n            '(#t 3 '(b c))\n            '()\n        \"\"\".trimIndent()\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:81-115"
+    },
+    "301": {
+        "file_id": 49,
+        "content": "This code contains multiple test functions for parsing different expressions in a programming language. The parser is tested with various input examples, including nested let statements, list expressions, and symbolic constants. Each test function asserts that the parsed expression matches the expected output.",
+        "type": "comment"
+    },
+    "302": {
+        "file_id": 49,
+        "content": "        val parser = Parser(lexer)\n        val expr0 = parser.parseExpr()\n        val expected0 = \"'(a b c)\"\n        assertEquals(expected0, expr0.toString())\n        val expr1 = parser.parseExpr()\n        val expected1 = \"'(a (b c))\"\n        assertEquals(expected1, expr1.toString())\n        val expr2 = parser.parseExpr()\n        val expected2 = \"'(a 'b c)\"\n        assertEquals(expected2, expr2.toString())\n        val expr3 = parser.parseExpr()\n        val expected3 = \"'(#t 3 '(b c))\"\n        assertEquals(expected3, expr3.toString())\n        val expr4 = parser.parseExpr()\n        val expected4 = \"'()\"\n        assertEquals(expected4, expr4.toString())\n    }\n    @Test\n    fun parseExpr9() {\n        val code =\n            \"\"\"\n        (let ((foo '(a b c))\n              (bar #t))\n             (bar 12)\n             (foo 114 514))\n        \"\"\"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr0 = parser.parseExpr()\n        val expected0 = \"(let ([foo '(a b c)][bar #t]) (bar 12)(foo 114 514))\"",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:116-152"
+    },
+    "303": {
+        "file_id": 49,
+        "content": "This code tests the parsing of different expressions using the Parser class. It covers various scenarios such as nested parentheses, quotes, and symbols. The tests compare the parsed expression with expected strings for correctness.",
+        "type": "comment"
+    },
+    "304": {
+        "file_id": 49,
+        "content": "        assertEquals(expected0, expr0.toString())\n    }\n    @Test\n    @Disabled\n    fun parseExpr10() {\n        val code = \" ('(a b c) 114 514) \"\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        parser.parseExpr()\n    }\n    @Test\n    fun parseExpr11() {\n        val code = \"\"\"\n            (let loop ([lst '(a b c)]\n                       [cnt 0])\n                (if (null? lst)\n                    cnt\n                    (let ([fst (car lst)]\n                          [rest (cdr lst)])\n                      (if (eqv? fst 'a)\n                          (loop 114 rest (+ cnt 1))\n                          (loop 514 rest cnt)))))\n        \"\"\".trimIndent()\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr0 = parser.parseExpr()\n        val expected0 =\n            \"(letrec ([loop (lambda (lst cnt) (if (null? lst) cnt (let ([fst (car lst)][rest (cdr lst)]) (if (eqv? fst 'a) (loop 114 rest (+ cnt 1)) (loop 514 rest cnt)))))]) (loop '(a b c) 0))\"",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:153-184"
+    },
+    "305": {
+        "file_id": 49,
+        "content": "This code contains test functions for parsing expressions in the Kacket programming language. The parseExpr10 function tests a specific code snippet using a Lexer and Parser, while parseExpr11 function tests a more complex expression with recursion and conditionals. The expected output for parseExpr11 is provided to compare against the parsed expression.",
+        "type": "comment"
+    },
+    "306": {
+        "file_id": 49,
+        "content": "        assertEquals(expected0, expr0.toString())\n    }\n    @Test\n    fun parseExpr12() {\n        val code = \"\"\"\n            (let* ([foo '(a b c)]\n                   [f1 (lambda (x) x)]\n                   [f2 (f1 foo)])\n               (f2 114 514))\n            (let* () 114514)\n        \"\"\".trimIndent()\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr0 = parser.parseExpr()\n        val expected0 = \"(let ([foo '(a b c)]) (let ([f1 (lambda (x) x)]) (let ([f2 (f1 foo)]) (f2 114 514))))\"\n        assertEquals(expected0, expr0.toString())\n        val expr1 = parser.parseExpr()\n        val expected1 = \"(let () 114514)\"\n        assertEquals(expected1, expr1.toString())\n    }\n    @Test\n    fun parseExpr13() {\n        val code = \"\"\"\n             (cond [(foo1) bar1] [foo2 bar2] [else bar3])\n             (cond [(foo1) bar1] [foo2 bar2])\n             (cond) \n             (cond [else 2])\n        \"\"\".trimIndent()\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:185-220"
+    },
+    "307": {
+        "file_id": 49,
+        "content": "The code is a set of test cases for parsing Lisp-like expressions. It uses the Lexer and Parser classes to tokenize and parse the input code into a data structure that can be evaluated or represented as a string. The tests ensure that the parser correctly handles various scenarios, including nested let expressions, lambda functions, conditional expressions, and empty blocks.",
+        "type": "comment"
+    },
+    "308": {
+        "file_id": 49,
+        "content": "        val parser = Parser(lexer)\n        val expr0 = parser.parseExpr()\n        val expected0 = \"(if (foo1) bar1 (if foo2 bar2 bar3))\"\n        assertEquals(expected0, expr0.toString())\n        val expr1 = parser.parseExpr()\n        val expected1 = \"(if (foo1) bar1 (if foo2 bar2 '()))\"\n        assertEquals(expected1, expr1.toString())\n        val expr2 = parser.parseExpr()\n        val expected2 = \"'()\"\n        assertEquals(expected2, expr2.toString())\n        val expr3 = parser.parseExpr()\n        val expected3 = \"2\"\n        assertEquals(expected3, expr3.toString())\n    }\n    @Test\n    fun parseExpr14() {\n        val code = \"\"\"\n            (let ([foo '(a b 9 (c d))]\n                  [bar (lambda (x) x)])\n              (begin \n                 (bar)\n                 (foo)))\n        \"\"\".trimIndent()\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        val expr0 = parser.parseExpr()\n        val expected0 = \"(let ([foo '(a b 9 (c d))][bar (lambda (x) x)]) (begin (bar)(foo)))\"",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:221-254"
+    },
+    "309": {
+        "file_id": 49,
+        "content": "This code is testing the Parser class by parsing different expressions and comparing their string representations to expected values. It uses a Lexer to tokenize input code, which is then parsed into expressions by the Parser. The code includes a test for an expression with nested if statements and function calls, as well as tests for other types of expressions like lists, strings, numbers, and lambda functions.",
+        "type": "comment"
+    },
+    "310": {
+        "file_id": 49,
+        "content": "        assertEquals(expected0, expr0.toString())\n    }\n    @Test\n    fun parseExpr15() {\n        val code = \"\"\"\n            (define-datatype expression expression?\n               (const-exp\n                (num number?))\n               (if-exp\n                (exp1 expression?)\n                (exp2 expression?)\n                (exp3 expression?))\n               (zero?-exp\n                (exp1 expression?))\n               (var-exp\n                (var identifier?))\n               (diff-exp\n                (exp1 expression?)\n                (exp2 expression?))\n               (let-exp\n                (var  identifier?)\n                (exp  expression?)\n                (body expression?))\n               (letrec-exp\n                (p-name identifier?)\n                (b-var identifier?)\n                (p-body expression?)\n                (letrec-body expression?))\n               (proc-exp\n                (var identifier?)\n                (body expression?))\n               (call-exp\n                (rator expression?)",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:255-288"
+    },
+    "311": {
+        "file_id": 49,
+        "content": "This code is a unit test for the `parseExpr15` function that tests if the provided code can be parsed correctly into an expression object. The code defines a Scheme-like syntax with various expression types and their corresponding structures. The test verifies the correct parsing of different expression types.",
+        "type": "comment"
+    },
+    "312": {
+        "file_id": 49,
+        "content": "                (rand expression?))\n               )\n        \"\"\".trimIndent()\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        parser.addSExprExt(DefineDatatypeParser)\n        val expected0 =\n            \"(define-datatype expression expression? [const-exp(num number?)][if-exp(exp1 expression?)(exp2 expression?)(exp3 expression?)][zero?-exp(exp1 expression?)][var-exp(var identifier?)][diff-exp(exp1 expression?)(exp2 expression?)][let-exp(var identifier?)(exp expression?)(body expression?)][letrec-exp(p-name identifier?)(b-var identifier?)(p-body expression?)(letrec-body expression?)][proc-exp(var identifier?)(body expression?)][call-exp(rator expression?)(rand expression?)])\"\n        val expr0 = parser.parseExpr()\n        assertEquals(expected0, expr0.toString())\n    }\n    @Test\n    fun parseExpr16() {\n        val code = \"\"\"\n            (define value-of\n               (lambda (exp env)\n                (cases expression exp\n                  (const-exp (num) (num-val num))",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:289-308"
+    },
+    "313": {
+        "file_id": 49,
+        "content": "This code defines a test case for parsing expressions using the \"ParserTest\" class. The code tests the parser's ability to parse various types of expressions correctly, such as define-datatype, lambda functions, and cases expressions. The expected output is provided for comparison with the actual parsed expression.",
+        "type": "comment"
+    },
+    "314": {
+        "file_id": 49,
+        "content": "                  (var-exp (var) (apply-env env var))\n                  (diff-exp (exp1 exp2)\n                            (let ((val1 (value-of exp1 env))\n                                  (val2 (value-of exp2 env)))\n                              (let ((num1 (expval->num val1))\n                                    (num2 (expval->num val2)))\n                                (num-val\n                                 (- num1 num2)))))\n                  (if-exp (exp1 exp2 exp3)\n                          (let ((val1 (value-of exp1 env)))\n                            (if (expval->bool val1)\n                                (value-of exp2 env)\n                                (value-of exp3 env))))\n                  (zero?-exp (exp1)\n                             (let ((val1 (value-of exp1 env)))\n                               (let ((num1 (expval->num val1)))\n                                 (if (zero? num1)\n                                     (bool-val #t)\n                                     (bool-val #f)))))\n                  (let-exp (var exp body)",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:309-328"
+    },
+    "315": {
+        "file_id": 49,
+        "content": "This code defines a parser for a simple programming language. It supports variable expressions, difference expressions, if-expressions, zero? expressions, and let expressions. The parser takes an environment and evaluates expressions to generate values.",
+        "type": "comment"
+    },
+    "316": {
+        "file_id": 49,
+        "content": "                           (value-of body\n                                     (extend-env var (value-of exp env) env)))\n                  (letrec-exp (proc-name bound-var proc-body letrec-body)\n                              (value-of letrec-body (extend-env-rec proc-name bound-var proc-body env)))\n                  (proc-exp (var body)\n                            (proc-val (procedure var body env)))\n                  (call-exp (rator rand)\n                            ; (write env)\n                            ; (newline)\n                            (let ((proc (expval->proc (value-of rator env)))\n                                  (arg (value-of rand env)))\n                              (apply-procedure proc arg)))\n                  (else \"error ~s\")\n                  )))\n        \"\"\".trimIndent()\n        val lexer = Lexer(InputStreamReader(ByteArrayInputStream(code.toByteArray())))\n        val parser = Parser(lexer)\n        parser.addSExprExt(CasesParser)\n        val expr0 = parser.parseExpr()\n        println(expr0)",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:329-348"
+    },
+    "317": {
+        "file_id": 49,
+        "content": "This code is parsing an expression using a lexer and parser. It adds a custom parser for cases (CasesParser) and then calls the parseExpr method to obtain the parsed expression. The parsed expression is then printed to the console.",
+        "type": "comment"
+    },
+    "318": {
+        "file_id": 49,
+        "content": "    }\n}",
+        "type": "code",
+        "location": "/src/test/kotlin/com/github/std/kacket/parse/ParserTest.kt:349-350"
+    },
+    "319": {
+        "file_id": 49,
+        "content": "This code snippet appears to be the closing curly brace for a function or method, marking the end of the block of code within it. It's likely followed by another opening curly brace that marks the start of a new block of code or indicates the closure of an outer block.",
+        "type": "comment"
+    }
+}
